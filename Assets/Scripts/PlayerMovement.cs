@@ -8,6 +8,7 @@ public class PlayerMovement : MonoBehaviour
     public float currentSpeed =5f;
     public float normalSpeed = 5f;
     public float sprintSpeed = 9f;
+    public bool isMoving;
 
     public float dashForce = 40f;
     
@@ -49,10 +50,9 @@ public class PlayerMovement : MonoBehaviour
         Vector3 right = cameraTransform.right;
         right.y = 0;
         right.Normalize();
-
+        
         Vector3 moveDirection = forward * Input.GetAxis("Vertical") + right * Input.GetAxis("Horizontal");
         moveDirection = moveDirection.normalized;
-        
         
         if (moveDirection != Vector3.zero && !Input.GetMouseButton(1))
         {
