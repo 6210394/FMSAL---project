@@ -6,13 +6,14 @@ using UnityEngine;
 public class DoorScript : Interactable
 {
     public bool isMissionSelected = true;
+    public string missionName = "Mission";
 
     public override void Interact()
     {
         base.Interact();
         if (isMissionSelected)
         {
-            GameManager.instance.LoadMission("Mission");
+            GameManager.instance.LoadMission(missionName);
         }
         else
         {

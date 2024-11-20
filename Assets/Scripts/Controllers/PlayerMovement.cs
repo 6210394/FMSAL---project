@@ -23,6 +23,8 @@ public class PlayerMovement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        DebugTools();
+
         if (GameObject.FindGameObjectWithTag("PlayerCamera"))
         {
             cameraTransform = GameObject.FindGameObjectWithTag("PlayerCamera").transform;
@@ -119,4 +121,12 @@ public class PlayerMovement : MonoBehaviour
         transform.rotation = Quaternion.LookRotation(orientation);
     }
 
+
+    void DebugTools()
+    {
+        if(!GameObject.FindGameObjectWithTag("GameManager"))
+        {
+            Debug.LogWarning("No GameManager found!!!!");
+        }
+    }
 }
