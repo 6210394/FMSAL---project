@@ -20,7 +20,7 @@ public class FadeInOutScript : MonoBehaviour
 
     public void FadeIn()
     {
-        sprite.color = new Color(0, 0, 0, 0);
+        sprite.color = new Color(0, 0, 0, 1);
         sprite.CrossFadeAlpha(0, 1, false);
     }
 

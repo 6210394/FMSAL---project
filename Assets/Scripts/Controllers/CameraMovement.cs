@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraMovement : MonoBehaviour
@@ -71,34 +69,26 @@ public class CameraMovement : MonoBehaviour
             }
         }
 
-        if(Input.GetKeyDown(KeyCode.L))
-        {
-            lockMode = !lockMode;
-        }
-        if(!lockMode)
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        }
-        else
-        {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-        }
+        
+
+        DebugFunctions();      
     }
     void LateUpdate()
     {   
+        Vector3 position = target.position;
         Quaternion rotation = Quaternion.Euler(rotationY, rotationX, 0);
         transform.rotation = rotation;
 
         if(!isAiming)
         {
-            transform.position = target.position + rotation * new Vector3(baseDistanceX, baseDistanceY, baseDistanceZ);
+            position = target.position + rotation * new Vector3(baseDistanceX, baseDistanceY, baseDistanceZ);
         }
         if(isAiming)
         {
-            transform.position = target.position + rotation * new Vector3(aimDistanceX, aimDistanceY, aimDistanceZ);
+            position = target.position + rotation * new Vector3(aimDistanceX, aimDistanceY, aimDistanceZ);
         }
+        
+        transform.position = position;
     }
 
     void AimCheckAndFOV()
@@ -112,6 +102,24 @@ public class CameraMovement : MonoBehaviour
         {
             isAiming = false;
             cam.fieldOfView = baseFOV;
+        }
+    }
+
+    void DebugFunctions()
+    {
+        if(Input.GetKeyDown(KeyCode.L))
+        {
+            lockMode = !lockMode;
+        }
+        if(!lockMode)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
     }
 }
