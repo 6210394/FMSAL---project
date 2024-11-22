@@ -28,7 +28,7 @@ public class Interactable : MonoBehaviour
         }
     }
 
-    void OnTriggerExit(Collider other)
+    public virtual void OnTriggerExit(Collider other)
     {
         if (other.gameObject.tag == "Player")
         {
@@ -40,7 +40,6 @@ public class Interactable : MonoBehaviour
     void Update()
     {
         PlayerInRangeCheck();
-        
     }
     
 

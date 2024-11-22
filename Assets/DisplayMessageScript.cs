@@ -85,12 +85,14 @@ public class DisplayMessageScript : MonoBehaviour
     #region Immidiate Display and Hide
     public void ImmidiatelyDisplayMessage()
     {
+        StopAllCoroutines();
         displayMessageText.color = new Color(displayMessageText.color.r, displayMessageText.color.g, displayMessageText.color.b, 1);
         displayBackground.color = new Color(displayBackground.color.r, displayBackground.color.g, displayBackground.color.b, 1);
     }
 
     public void ImmidiatelyHideMessage()
     {
+        StopAllCoroutines();
         displayMessageText.color = new Color(displayMessageText.color.r, displayMessageText.color.g, displayMessageText.color.b, 0);
         displayBackground.color = new Color(displayBackground.color.r, displayBackground.color.g, displayBackground.color.b, 0);
     }
@@ -127,6 +129,7 @@ public class DisplayMessageScript : MonoBehaviour
             StartCoroutine(FadeOutText(speed));
         }
     }
+
 
     private IEnumerator FadeOutText(float speed)
     {

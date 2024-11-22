@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    public bool isControlled = true;
+
     public float currentSpeed =5f;
     public float normalSpeed = 5f;
     public float sprintSpeed = 9f;
@@ -40,17 +42,20 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(!isDashing)
+        if(isControlled)
         {
-            Move();
-            if(Input.GetMouseButton(1))
+            if(!isDashing)
             {
-                Vector3 direction = new Vector3(cameraTransform.forward.x, 0, cameraTransform.forward.z);
-                FaceTowards(direction);
+                Move();
+                if(Input.GetMouseButton(1))
+                {
+                    Vector3 direction = new Vector3(cameraTransform.forward.x, 0, cameraTransform.forward.z);
+                    FaceTowards(direction);
+                }
             }
+            Sprinting();
+            Dash();
         }
-        Sprinting();
-        Dash();
     }
 
     void Move()
