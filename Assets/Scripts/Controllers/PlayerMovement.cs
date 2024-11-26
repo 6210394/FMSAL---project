@@ -20,10 +20,12 @@ public class PlayerMovement : MonoBehaviour
     public GameObject backupCamera;
     public Transform cameraTransform; 
     public Rigidbody rb;
+    public CharacterController characterController;
 
     // Start is called before the first frame update
     void Start()
     {
+        characterController = GetComponent<CharacterController>();
         DebugTools();
 
         if (GameObject.FindGameObjectWithTag("PlayerCamera"))
@@ -75,7 +77,8 @@ public class PlayerMovement : MonoBehaviour
             FaceTowards(moveDirection);
         }
         
-        transform.position += moveDirection * currentSpeed * Time.deltaTime;
+        //transform.position += moveDirection * currentSpeed * Time.deltaTime;
+        characterController.Move(moveDirection * currentSpeed * Time.deltaTime);
     }
 
     void Sprinting()
@@ -132,5 +135,11 @@ public class PlayerMovement : MonoBehaviour
         {
             Debug.LogWarning("No GameManager found!!!!");
         }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.matrix = transform.localToWorldMatrix;
+        Gizmos.DrawCube(transform.position, Vector3.one * 2);
     }
 }
