@@ -60,6 +60,7 @@ public class LevelManager : MonoBehaviour
         SceneManager.LoadScene(endOfMissionDestination);
         GameManager.instance.money += rewardMoney;
         GameManager.instance.hasCompletedDailyMission = true;
+        Debug.Log(GameManager.instance.hasCompletedDailyMission);
         instance = null;
     }
 

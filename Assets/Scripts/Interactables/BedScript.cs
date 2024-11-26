@@ -28,11 +28,12 @@ public class BedScript : Interactable
         if(GameManager.instance.interactEnabled)
         {
             
-            if(GameManager.instance.hasCompletedDailyMission || confirmSleep)
+            if(GameManager.instance.hasCompletedDailyMission)
             {
                 Sleep();
                 return;
             }
+            if(confirmSleep) { Sleep(); return; }
 
             DisplayMessageScript.instance.ChangeDisplayMessage("Can I just sleep without working?..", 1, 2);
             confirmSleep = true;
