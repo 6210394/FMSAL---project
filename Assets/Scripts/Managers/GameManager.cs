@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour
     
     public bool hasCompletedDailyMission = false; //this is used in the BedScript
     public FadeInOutScript fadeScript;
-    public List<PlayerMovement> players = new List<PlayerMovement>(); // change this to the actual player script later
+    public List<PlayerMovement> players = new List<PlayerMovement>();
 
 
     // Start is called before the first frame update
@@ -67,9 +67,9 @@ public class GameManager : MonoBehaviour
 
         hasCompletedDailyMission = false;
 
-        foreach (PlayerMovement player in GameObject.FindObjectsOfType<PlayerMovement>())
+        foreach (PlayerMovement playerMovement in GameObject.FindObjectsOfType<PlayerMovement>())
         {
-            players.Add(player);
+            players.Add(playerMovement);
         }
     }
 
@@ -91,9 +91,9 @@ public class GameManager : MonoBehaviour
             IncreaseWeek();
         }
 
-        foreach (PlayerMovement player in players)
+        foreach (PlayerMovement playerMovement in players)
         {
-            player.isControlled = false;
+            playerMovement.isControlled = false;
         }
         DisplayMessageScript.instance.ImmidiatelyHideMessage();
         StartCoroutine(fadeScript.FadeOutInCycle(fadeSpeed, fadeLength));
