@@ -56,6 +56,12 @@ public class Interactable : MonoBehaviour
 
     void PlayerInRangeCheck()
     {
+        if(!GameManager.instance.interactEnabled)
+        {
+            return;
+        }
+
+
         if(player != null && Vector3.Distance(player.transform.position, transform.position) <= interactRadius)
         {   
             PlayerMovement playerMovement = player.GetComponent<PlayerMovement>();

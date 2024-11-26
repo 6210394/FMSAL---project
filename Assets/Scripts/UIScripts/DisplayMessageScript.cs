@@ -25,7 +25,7 @@ public class DisplayMessageScript : MonoBehaviour
 
     public Color baseTextColor;
     public Color baseBackgroundColor;
-    private List<Message> messageQueue = new List<Message>();
+    private List<Message> messageList = new List<Message>();
     public bool isDisplayingMessage = false;
 
     struct Message
@@ -41,19 +41,22 @@ public class DisplayMessageScript : MonoBehaviour
         baseBackgroundColor = displayBackground.color;
 
         ImmidiatelyHideMessage();
+        messageList.Clear();
     }
 
 
     public void ChangeDisplayMessage(string message, float speed, float length)
     {
-        if(messageQueue.Count >= 1)
+        if(messageList.Count >= 1)
         {
-            Debug.Log("Message Queue is Full");
+            foreach (Message msg in messageList)
+            {
+                Debug.Log(msg.message);
+            }
             return;
         }
 
-        Debug.Log("Message Added to Queue");
-        messageQueue.Add(new Message { message = message, speed = speed, length = length });
+        messageList.Add(new Message { message = message, speed = speed, length = length });
 
         if (!isDisplayingMessage)
         {
@@ -63,10 +66,10 @@ public class DisplayMessageScript : MonoBehaviour
 
     public IEnumerator DisplayNextMessage()
     {
-        if (messageQueue.Count > 0)
+        if (messageList.Count > 0)
         {
-            Message message = messageQueue[0];
-            messageQueue.RemoveAt(0);
+            Message message = messageList[0];
+            messageList.RemoveAt(0);
             displayMessageText.text = message.message;
             yield return StartCoroutine(FadeInText(message.speed, message.length));
         }
@@ -83,16 +86,20 @@ public class DisplayMessageScript : MonoBehaviour
     }
 
     #region Immidiate Display and Hide
-    public void ImmidiatelyDisplayMessage()
+    public void ImmidiatelyDisplayMessage() //unfinised
     {
         StopAllCoroutines();
+        messageList.Clear();
         displayMessageText.color = new Color(displayMessageText.color.r, displayMessageText.color.g, displayMessageText.color.b, 1);
         displayBackground.color = new Color(displayBackground.color.r, displayBackground.color.g, displayBackground.color.b, 1);
     }
 
     public void ImmidiatelyHideMessage()
     {
+        messageList.Clear();
         StopAllCoroutines();
+        isDisplayingMessage = false;
+
         displayMessageText.color = new Color(displayMessageText.color.r, displayMessageText.color.g, displayMessageText.color.b, 0);
         displayBackground.color = new Color(displayBackground.color.r, displayBackground.color.g, displayBackground.color.b, 0);
     }

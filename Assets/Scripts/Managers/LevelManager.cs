@@ -37,7 +37,7 @@ public class LevelManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.P))
         {
-            EndMission();
+            CompleteMission();
         }
     }
 
@@ -53,12 +53,21 @@ public class LevelManager : MonoBehaviour
         
     }
 
-    public void EndMission()
+    public void CompleteMission()
     {
         Debug.Log("Mission Complete");
         Debug.Log("You have earned " + rewardMoney + " money");
         SceneManager.LoadScene(endOfMissionDestination);
         GameManager.instance.money += rewardMoney;
+        GameManager.instance.hasCompletedDailyMission = true;
         instance = null;
-    }   
+    }
+
+    public void FailMission()
+    {
+        Debug.Log("Mission Failed");
+        SceneManager.LoadScene(endOfMissionDestination);
+        GameManager.instance.hasCompletedDailyMission = true;
+        instance = null;
+    }
 }

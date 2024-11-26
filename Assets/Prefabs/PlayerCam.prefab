@@ -103,7 +103,7 @@ MonoBehaviour:
   target: {fileID: 0}
   baseDistanceX: 0
   baseDistanceY: 1
-  baseDistanceZ: -4
+  baseDistanceZ: -4.5
   aimDistanceX: 1
   aimDistanceY: 1.09
   aimDistanceZ: -4

@@ -36,7 +36,8 @@ public class GameManager : MonoBehaviour
 
     
     public bool hasCompletedDailyMission = false; //this is used in the BedScript
-    public FadeInOutScript fadeScript;
+    public bool interactEnabled = true;
+
     public List<PlayerMovement> players = new List<PlayerMovement>(); // change this to the actual player script later
 
 
@@ -49,7 +50,14 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-                
+        if(Input.GetKeyDown(KeyCode.K))
+        {
+            DisplayMessageScript.instance.ChangeDisplayMessage("This is a test message", 1, 2);
+        }
+        if(Input.GetKeyDown(KeyCode.H))
+        {
+            DisplayMessageScript.instance.ImmidiatelyHideMessage();
+        }
     }
 
     public void LoadMission(string missionName)
@@ -82,62 +90,15 @@ public class GameManager : MonoBehaviour
 
     public void GoToNextDay()
     {
-        float fadeSpeed = 2;
-        float fadeLength = 1;
-
         day++;
         if (day > 7)
         {
             IncreaseWeek();
         }
-
-        foreach (PlayerMovement player in players)
-        {
-            player.isControlled = false;
-        }
-        DisplayMessageScript.instance.ImmidiatelyHideMessage();
-        StartCoroutine(fadeScript.FadeOutInCycle(fadeSpeed, fadeLength));
-        StartCoroutine(WakeUp(fadeSpeed + fadeLength, 1));
-    }
-
-    public IEnumerator WakeUp(float animationLength, float waitLength)
-    {
-        yield return new WaitForSeconds(animationLength + waitLength);
-        foreach (PlayerMovement player in players)
-        {
-            player.isControlled = true;
-        }
-        
-        DisplayMessageScript.instance.ChangeDisplayMessage(RandomMorningMessage(), 1, 2);
         hasCompletedDailyMission = false;
     }
 
-    public string RandomMorningMessage()
-    {
-        string message;
-        int random = Random.Range(0, 4);
+    
 
-        switch (random)
-        {
-            case 0:
-                message = "I need to get up..";
-                break;
-            case 1:
-                message = "My back hurts..";
-                break;
-            case 2:
-                message = "I feel pretty good today..";
-                break;
-            case 3:
-                message = "This bed sucks..";
-                break;
-            case 4:
-                message = "I'm thirsty..";
-                break;
-            default:
-                message = "I need to get up..";
-                break;
-        }
-        return message;
-    }
+    
 }

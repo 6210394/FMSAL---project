@@ -549,7 +549,7 @@ GameObject:
   - component: {fileID: 1763257902998596382}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -609,9 +609,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab3ccdd6d5ed6b149958122680c79883, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isControlled: 1
   currentSpeed: 0
-  normalSpeed: 2
-  sprintSpeed: 15
+  normalSpeed: 4
+  sprintSpeed: 10
   isMoving: 0
   dashForce: 30
   maxDashTime: 0.5
@@ -640,6 +641,6 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
-  m_Height: 1
+  m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
