@@ -9,11 +9,12 @@ TagManager:
   - PlayerCamera
   - GameManager
   - Environment
+  - Ground
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Ground
   - Water
   - UI
   - 

@@ -1,3 +1,4 @@
+using Cinemachine;
 using UnityEngine;
 
 public class CameraMovement : MonoBehaviour

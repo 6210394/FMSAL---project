@@ -5,6 +5,8 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     public bool isControlled = true;
+    public bool isGrounded;
+    public float gravityScale = 9.8f;
 
     public float currentSpeed =5f;
     public float normalSpeed = 5f;
@@ -20,12 +22,12 @@ public class PlayerMovement : MonoBehaviour
     public GameObject backupCamera;
     public Transform cameraTransform; 
     public Rigidbody rb;
-    public CharacterController characterController;
+    //public CharacterController characterController;
 
     // Start is called before the first frame update
     void Start()
     {
-        characterController = GetComponent<CharacterController>();
+        //characterController = GetComponent<CharacterController>();
         DebugTools();
 
         if (GameObject.FindGameObjectWithTag("PlayerCamera"))
@@ -59,6 +61,11 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    void FixedUpdate()
+    {
+        ApplyGravity();
+    }
+
     void Move()
     {
         Vector3 forward = cameraTransform.forward;
@@ -77,8 +84,8 @@ public class PlayerMovement : MonoBehaviour
             FaceTowards(moveDirection);
         }
         
-        //transform.position += moveDirection * currentSpeed * Time.deltaTime;
-        characterController.Move(moveDirection * currentSpeed * Time.deltaTime);
+        transform.position += moveDirection * currentSpeed * Time.deltaTime;
+        //characterController.Move(moveDirection * currentSpeed * Time.deltaTime);
     }
 
     void Sprinting()
@@ -95,6 +102,17 @@ public class PlayerMovement : MonoBehaviour
 
     void Dash()
     {   
+        Vector3 forward = cameraTransform.forward;
+        forward.y = 0;
+        forward.Normalize();
+
+        Vector3 right = cameraTransform.right;
+        right.y = 0;
+        right.Normalize();
+        
+        Vector3 dashDirection = forward * Input.GetAxis("Vertical") + right * Input.GetAxis("Horizontal");
+        dashDirection = dashDirection.normalized;
+
         if (isDashing && currentDashTime <= 0)
         {
             currentDashTime = maxDashTime;
@@ -117,10 +135,27 @@ public class PlayerMovement : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 isDashing = true;
-                rb.AddForce(transform.forward * dashForce, ForceMode.Impulse);
+                rb.AddForce(dashDirection * dashForce, ForceMode.Impulse);
             }
         }
+    }
 
+
+    void ApplyGravity()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, 0.1f))
+        {
+            isGrounded = true;
+        }
+        else
+        {
+            isGrounded = false;
+        }
+        if(!isGrounded)
+        {
+            transform.position += Vector3.down * gravityScale * Time.deltaTime;
+        }
     }
 
     void FaceTowards(Vector3 orientation)
@@ -137,9 +172,4 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmos()
-    {
-        Gizmos.matrix = transform.localToWorldMatrix;
-        Gizmos.DrawCube(transform.position, Vector3.one * 2);
-    }
 }

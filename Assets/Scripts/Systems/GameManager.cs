@@ -96,9 +96,5 @@ public class GameManager : MonoBehaviour
             IncreaseWeek();
         }
         hasCompletedDailyMission = false;
-    }
-
-    
-
-    
+    }   
 }
