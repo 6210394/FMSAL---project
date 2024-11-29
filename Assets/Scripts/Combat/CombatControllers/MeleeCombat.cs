@@ -4,12 +4,15 @@ using UnityEngine;
 
 public class MeleeCombat : MonoBehaviour
 {
+    public bool canAttack = false;
+
     PlayerMovement playerMovement;
     public float nudgeForce = 30f;
 
     public float animationTime = 0.1f;
 
-    bool canAttack = true;
+    bool attackAvailable = true;    
+    public int attackDamage = 1;
     public float attackCooldown = 0.5f;
     float attackCooldownTimer = 0f;
 
@@ -32,6 +35,7 @@ public class MeleeCombat : MonoBehaviour
         NudgeEntity();
         Vector3 spawnPosition = transform.TransformPoint(attackPoint);
         hitBoxMemory = Instantiate(hitBoxPrefab, spawnPosition, transform.rotation);
+        hitBoxMemory.GetComponent<Hitbox>().damage = attackDamage;
         hitBoxMemory.GetComponent<Hitbox>().owner = gameObject;
         yield return new WaitForSeconds(animationTime);
         Destroy(hitBoxMemory);
@@ -41,7 +45,7 @@ public class MeleeCombat : MonoBehaviour
 
     public void Attack()
     {
-        if(!isAttacking && canAttack)
+        if(!isAttacking && attackAvailable)
         {
             isAttacking = true;
             StartCoroutine(AttackRoutine());
@@ -50,6 +54,11 @@ public class MeleeCombat : MonoBehaviour
 
     void Update()
     {
+        if (!canAttack)
+        {
+            return;
+        }
+
         AttackCooldownCountdown();
 
         if(Input.GetMouseButtonDown(0))
@@ -80,13 +89,13 @@ public class MeleeCombat : MonoBehaviour
 
         if (attackCooldownTimer >= 0)
         {
-            canAttack = false;
+            attackAvailable = false;
             attackCooldownTimer -= Time.deltaTime;
             
             if (attackCooldownTimer <= 0)
             {
                 attackCooldownTimer = 0;
-                canAttack = true;
+                attackAvailable = true;
             }
         }
     }
