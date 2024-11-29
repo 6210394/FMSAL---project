@@ -43,7 +43,7 @@ public class LevelManager : MonoBehaviour
 
     void InitializeLevel()
     {
-        Destroy(GameObject.FindGameObjectWithTag("MainCamera"));
+        Destroy(GameObject.Find("MainCamera"));
 
         foreach (var spawnPoint in GameObject.FindGameObjectsWithTag("EnemySpawnPoint"))
         {

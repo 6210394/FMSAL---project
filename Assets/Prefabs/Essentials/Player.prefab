@@ -576,6 +576,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4170848390567775362}
   - component: {fileID: 4416159547452902258}
+  - component: {fileID: 2716140090493698256}
+  - component: {fileID: 5751620535288312741}
   - component: {fileID: 5720523247777047060}
   - component: {fileID: 6779007132249043213}
   - component: {fileID: 1763257902998596382}
@@ -602,6 +604,7 @@ Transform:
   m_Children:
   - {fileID: 6291661237728034848}
   - {fileID: 459122662929397878}
+  - {fileID: 4578630470139458280}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &4416159547452902258
@@ -631,6 +634,35 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 2
+--- !u!114 &2716140090493698256
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6739474880526340487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d30f809d721c03946af54a024340f58f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5751620535288312741
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6739474880526340487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04094a68ccc689d4790d7fd81727a969, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canShoot: 1
+  heldGunDamage: 1
+  reticleOffset: {x: 0, y: 0, z: 0}
+  bulletVisualsPrefab: {fileID: 784678390884737661, guid: 979cf8a7666ee2646b6697967d46dbad, type: 3}
+  spawnOriginOffset: {fileID: 4578630470139458280}
 --- !u!114 &5720523247777047060
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -643,10 +675,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a8ef733ed8e0dc41a1a6b672435519d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canAttack: 0
   nudgeForce: 8
   animationTime: 0.1
+  attackDamage: 1
   attackCooldown: 0.3
-  attackPoint: {x: 0, y: 0, z: 2}
+  attackPoint: {x: 0, y: 1, z: 2}
   hitBoxPrefab: {fileID: 7299048808960947322, guid: a07f8d821ee19774aae0e4d3c21646cf, type: 3}
 --- !u!114 &6779007132249043213
 MonoBehaviour:
@@ -718,3 +752,34 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!1 &6949846103159818603
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4578630470139458280}
+  m_Layer: 0
+  m_Name: BarrelAnchor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4578630470139458280
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6949846103159818603}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4170848390567775362}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

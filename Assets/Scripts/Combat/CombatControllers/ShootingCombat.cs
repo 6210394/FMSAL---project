@@ -6,8 +6,10 @@ public class ShootingCombat : MonoBehaviour
 
     public int heldGunDamage = 1;
 
+    public Vector3 reticleOffset;
+
     public GameObject bulletVisualsPrefab;
-    public Vector3 spawnOriginOffset;
+    public Transform spawnOriginOffset;
 
     void Update()
     {
@@ -18,20 +20,31 @@ public class ShootingCombat : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            Shoot(Camera.main.ScreenToWorldPoint(Input.mousePosition), heldGunDamage);
+            Shoot();
         }
     }
 
-    public void Shoot(Vector3 target, int damageToPassOnToBullet)
+    public void Shoot()
     {
-        GameObject bullet = Instantiate(bulletVisualsPrefab, transform.position + transform.rotation * spawnOriginOffset, transform.rotation);
-        bullet.GetComponent<AutomaticMovementScript>().target = target;
-        bullet.GetComponent<Hitbox>().damage = damageToPassOnToBullet;
+        RaycastHit hit;
+        Camera renderingCamera = Camera.main;
+        Ray ray = renderingCamera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
+        ray.origin += renderingCamera.transform.TransformDirection(reticleOffset);
+
+        if (Physics.Raycast(ray, out hit))
+        {
+            if (hit.collider.gameObject.GetComponent<CombatEntity>() != null)
+            {
+                hit.collider.gameObject.GetComponent<CombatEntity>().LoseHealth(heldGunDamage);
+            }
+        }
+        GameObject bulletVisuals = Instantiate(bulletVisualsPrefab, transform.position + transform.rotation * spawnOriginOffset.position, transform.rotation);
+        bulletVisuals.GetComponent<AutomaticMovementScript>().target = hit.point;
     }
 
     void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawSphere(transform.position + transform.rotation * spawnOriginOffset, 0.1f);
+        Gizmos.DrawSphere(transform.position + transform.rotation * spawnOriginOffset.position, 0.1f);
     }
 }
