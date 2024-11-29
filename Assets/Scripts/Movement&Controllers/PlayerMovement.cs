@@ -22,9 +22,16 @@ public class PlayerMovement : MonoBehaviour
     public GameObject backupCamera;
     public Transform cameraTransform; 
     public Rigidbody rb;
+    public Animator animator;
+
     //public CharacterController characterController;
 
     // Start is called before the first frame update
+    void Awake()
+    {
+        Intizialize();
+    }
+    
     void Start()
     {
         //characterController = GetComponent<CharacterController>();
@@ -46,7 +53,8 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         if(isControlled)
-        {
+        {   
+            Sprinting();
             if(!isDashing)
             {
                 Move();
@@ -56,14 +64,25 @@ public class PlayerMovement : MonoBehaviour
                     FaceTowards(direction);
                 }
             }
-            Sprinting();
             Dash();
         }
+        UpdateAnimator();
     }
 
     void FixedUpdate()
     {
         ApplyGravity();
+    }
+
+        void Intizialize()
+    {
+        rb = GetComponent<Rigidbody>();
+        animator = GetComponentInChildren<Animator>();
+    }
+
+    void UpdateAnimator()
+    {
+        animator.SetFloat("Speed", currentSpeed);
     }
 
     void Move()
@@ -171,5 +190,7 @@ public class PlayerMovement : MonoBehaviour
             Debug.LogWarning("No GameManager found!!!!");
         }
     }
+
+    
 
 }
