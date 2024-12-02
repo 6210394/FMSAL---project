@@ -11,7 +11,7 @@ public class FloatingIcons : MonoBehaviour
 
     void Update()
     {
-        transform.LookAt(GameObject.FindGameObjectWithTag("PlayerCamera").transform);
+        transform.LookAt(GameObject.FindGameObjectWithTag("MainCamera").transform);
     }
 
     public void SetIconActive(bool active)

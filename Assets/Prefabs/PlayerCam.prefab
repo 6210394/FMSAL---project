@@ -96,14 +96,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27e1833b59463ff49be5d4ad2705136e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lockMode: 0
+  lockMode: 1
   baseFOV: 60
   aimFOV: 40
   cam: {fileID: 0}
   target: {fileID: 0}
   baseDistanceX: 0
-  baseDistanceY: 1
-  baseDistanceZ: -4.5
+  baseDistanceY: 1.45
+  baseDistanceZ: -3.5
   aimDistanceX: 1
   aimDistanceY: 1.09
   aimDistanceZ: -4

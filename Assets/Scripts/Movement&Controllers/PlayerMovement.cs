@@ -8,10 +8,12 @@ public class PlayerMovement : MonoBehaviour
     public bool isGrounded;
     public float gravityScale = 9.8f;
 
-    public float currentSpeed =5f;
+
+    public float movementSpeed =5f;
     public float normalSpeed = 5f;
     public float sprintSpeed = 9f;
     public bool isMoving;
+    public bool isSprinting;
 
     public float dashForce = 40f;
     
@@ -24,7 +26,7 @@ public class PlayerMovement : MonoBehaviour
     public Rigidbody rb;
     public Animator animator;
 
-    //public CharacterController characterController;
+    public CharacterController characterController;
 
     // Start is called before the first frame update
     void Awake()
@@ -37,9 +39,9 @@ public class PlayerMovement : MonoBehaviour
         //characterController = GetComponent<CharacterController>();
         DebugTools();
 
-        if (GameObject.FindGameObjectWithTag("PlayerCamera"))
+        if (GameObject.FindGameObjectWithTag("MainCamera"))
         {
-            cameraTransform = GameObject.FindGameObjectWithTag("PlayerCamera").transform;
+            cameraTransform = GameObject.FindGameObjectWithTag("MainCamera").transform;
         }
         else
         {
@@ -54,7 +56,6 @@ public class PlayerMovement : MonoBehaviour
     {
         if(isControlled)
         {   
-            Sprinting();
             if(!isDashing)
             {
                 Move();
@@ -82,11 +83,15 @@ public class PlayerMovement : MonoBehaviour
 
     void UpdateAnimator()
     {
-        animator.SetFloat("Speed", currentSpeed);
+        animator.SetFloat("Speed", movementSpeed);
+        animator.SetBool("Sprinting", isSprinting);
+        animator.SetBool("Dashing", isDashing);
     }
 
     void Move()
     {
+        Sprinting();
+
         Vector3 forward = cameraTransform.forward;
         forward.y = 0;
         forward.Normalize();
@@ -94,6 +99,16 @@ public class PlayerMovement : MonoBehaviour
         Vector3 right = cameraTransform.right;
         right.y = 0;
         right.Normalize();
+
+        if(Input.GetAxis("Vertical") != 0 || Input.GetAxis("Horizontal") != 0)
+        {
+            isMoving = true;
+        }
+        else
+        {
+            isMoving = false;
+            movementSpeed = 0;
+        }
         
         Vector3 moveDirection = forward * Input.GetAxis("Vertical") + right * Input.GetAxis("Horizontal");
         moveDirection = moveDirection.normalized;
@@ -103,19 +118,21 @@ public class PlayerMovement : MonoBehaviour
             FaceTowards(moveDirection);
         }
         
-        transform.position += moveDirection * currentSpeed * Time.deltaTime;
-        //characterController.Move(moveDirection * currentSpeed * Time.deltaTime);
+        //transform.position += moveDirection * movementSpeed * Time.deltaTime;
+        characterController.Move(moveDirection * movementSpeed * Time.deltaTime);
     }
 
     void Sprinting()
     {
-        if (Input.GetKey(KeyCode.LeftShift) && !Input.GetMouseButton(1))
+        if (Input.GetKey(KeyCode.LeftShift) && !Input.GetMouseButton(1)) // cant run while aiming
         {
-            currentSpeed = sprintSpeed;
+            movementSpeed = sprintSpeed;
+            isSprinting = true;
         }
         else
         {
-            currentSpeed = normalSpeed;
+            movementSpeed = normalSpeed;
+            isSprinting = false;
         }
     }
 
@@ -153,6 +170,8 @@ public class PlayerMovement : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
+                animator.SetTrigger("DashingTrigger");
+
                 isDashing = true;
                 rb.AddForce(dashDirection * dashForce, ForceMode.Impulse);
             }
