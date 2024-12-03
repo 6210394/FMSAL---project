@@ -8,6 +8,7 @@ public class MeleeCombat : MonoBehaviour
 
     PlayerMovement playerMovement;
     public float nudgeForce = 30f;
+    RecieveImpact impact;
 
     public float animationTime = 0.1f;
 
@@ -27,6 +28,7 @@ public class MeleeCombat : MonoBehaviour
     {
         attackCooldownTimer = 0;
         playerMovement = GetComponent<PlayerMovement>();
+        impact = GetComponent<RecieveImpact>();
     }
 
     public IEnumerator AttackRoutine()
@@ -102,6 +104,6 @@ public class MeleeCombat : MonoBehaviour
 
     public void NudgeEntity()
     {
-        playerMovement.rb.AddForce(transform.forward * nudgeForce, ForceMode.Impulse);
+         impact.AddImpact(transform.forward, nudgeForce);
     }
 }

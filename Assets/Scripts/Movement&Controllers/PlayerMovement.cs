@@ -28,6 +28,8 @@ public class PlayerMovement : MonoBehaviour
 
     public CharacterController characterController;
 
+    public RecieveImpact recieveImpact;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -79,6 +81,7 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         animator = GetComponentInChildren<Animator>();
+        recieveImpact = GetComponent<RecieveImpact>();
     }
 
     void UpdateAnimator()
@@ -173,10 +176,12 @@ public class PlayerMovement : MonoBehaviour
                 animator.SetTrigger("DashingTrigger");
 
                 isDashing = true;
-                rb.AddForce(dashDirection * dashForce, ForceMode.Impulse);
+                recieveImpact.AddImpact(dashDirection, dashForce);
+                
             }
         }
     }
+
 
 
     void ApplyGravity()

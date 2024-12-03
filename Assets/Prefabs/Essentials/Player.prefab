@@ -579,6 +579,8 @@ GameObject:
   - component: {fileID: 2716140090493698256}
   - component: {fileID: 5751620535288312741}
   - component: {fileID: 5720523247777047060}
+  - component: {fileID: 1678084322987576834}
+  - component: {fileID: 843584278684860}
   - component: {fileID: 6779007132249043213}
   - component: {fileID: 8507021317883215589}
   m_Layer: 0
@@ -675,13 +677,43 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a8ef733ed8e0dc41a1a6b672435519d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  canAttack: 0
+  canAttack: 1
   nudgeForce: 9.87
   animationTime: 0.1
   attackDamage: 1
   attackCooldown: 0.3
   attackPoint: {x: 0, y: 1, z: 2}
   hitBoxPrefab: {fileID: 7299048808960947322, guid: a07f8d821ee19774aae0e4d3c21646cf, type: 3}
+--- !u!114 &1678084322987576834
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6739474880526340487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3bcab46d48797f4f89fb41b4c7c1963, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  combatEntity: {fileID: 0}
+  takesKnockback: 1
+  entityWeight: 1
+  isPlayer: 1
+  recieveImpact: {fileID: 843584278684860}
+--- !u!114 &843584278684860
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6739474880526340487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75ba9f7a94e019c4b931399916e9175f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  characterMass: 1
 --- !u!114 &6779007132249043213
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -711,6 +743,7 @@ MonoBehaviour:
   rb: {fileID: 4416159547452902258}
   animator: {fileID: 0}
   characterController: {fileID: 8507021317883215589}
+  recieveImpact: {fileID: 0}
 --- !u!143 &8507021317883215589
 CharacterController:
   m_ObjectHideFlags: 0
@@ -762,7 +795,7 @@ Transform:
   m_GameObject: {fileID: 6949846103159818603}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.83, z: 0.99}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

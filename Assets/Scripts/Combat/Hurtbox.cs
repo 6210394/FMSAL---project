@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class Hurtbox : MonoBehaviour
 {
@@ -9,13 +8,21 @@ public class Hurtbox : MonoBehaviour
     public bool takesKnockback = true;
     public float entityWeight = 1f;
 
+
+    public bool isPlayer = false;
+    public RecieveImpact recieveImpact;
+
     void Awake()
     {
+        combatEntity = GetComponent<CombatEntity>();
+        if(isPlayer)
+        {
+            recieveImpact = GetComponent<RecieveImpact>();
+        }
         if (GetComponent<Rigidbody>() == null)
         {
             takesKnockback = false;
         }
-        combatEntity = GetComponent<CombatEntity>();
     }
 
     public void OnHit(float damage, float knockbackForce, Vector3 incomingHitDirection)
@@ -28,7 +35,14 @@ public class Hurtbox : MonoBehaviour
     {
         if (takesKnockback)
         {
-            GetComponent<Rigidbody>().AddForce(knockbackDirection * (knockbackForce / entityWeight), ForceMode.Impulse);
+            if (isPlayer)
+            {
+                recieveImpact.AddImpact(knockbackDirection, knockbackForce);
+            }
+            else
+            {
+                GetComponent<Rigidbody>().AddForce(knockbackForce * knockbackDirection, ForceMode.Impulse);
+            }
         }
 
     }

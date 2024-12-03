@@ -29,6 +29,10 @@ public class GameManager : MonoBehaviour
     int defaultWeek = 1;
     int defaultDay = 1;
 
+    int hungerPoints = 0;
+    public HUNGER hungerState = HUNGER.FED;
+    public enum HUNGER {STARVED, HUNGRY, FED}
+
     public int money;
     public int weekQuota;
     public float quotaMultiplier;
