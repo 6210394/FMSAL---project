@@ -47,6 +47,7 @@ public class DisplayMessageScript : MonoBehaviour
 
     public void ChangeDisplayMessage(string message, float speed, float length)
     {
+        Debug.Log("ChangeDisplayMessage");
         if(messageList.Count >= 1)
         {
             foreach (Message msg in messageList)
@@ -60,35 +61,36 @@ public class DisplayMessageScript : MonoBehaviour
 
         if (!isDisplayingMessage)
         {
-            StartCoroutine(DisplayNextMessage());
+            StartCoroutine(IDisplayNextMessage());
         }
     }
 
-    public IEnumerator DisplayNextMessage()
+    public IEnumerator IDisplayNextMessage()
     {
         if (messageList.Count > 0)
         {
             Message message = messageList[0];
             messageList.RemoveAt(0);
             displayMessageText.text = message.message;
-            yield return StartCoroutine(FadeInText(message.speed, message.length));
+            yield return StartCoroutine(IFadeInText(message.speed, message.length));
         }
     }
 
     public void DisplayMessage(float speed, float length)
     {
-        StartCoroutine(FadeInText(speed, length));
+        StartCoroutine(IFadeInText(speed, length));
     }
 
     public void HideMessage(float speed)
     {
-        StartCoroutine(FadeOutText(speed));
+        StartCoroutine(IFadeOutText(speed));
     }
 
     #region Immidiate Display and Hide
     public void ImmidiatelyDisplayMessage() //unfinised
     {
         StopAllCoroutines();
+        isDisplayingMessage = false;
         messageList.Clear();
         displayMessageText.color = new Color(displayMessageText.color.r, displayMessageText.color.g, displayMessageText.color.b, 1);
         displayBackground.color = new Color(displayBackground.color.r, displayBackground.color.g, displayBackground.color.b, 1);
@@ -106,7 +108,7 @@ public class DisplayMessageScript : MonoBehaviour
     #endregion
 
 
-    private IEnumerator FadeInText(float speed, float length)
+    private IEnumerator IFadeInText(float speed, float length)
     {
         if(!isDisplayingMessage)
         {
@@ -133,12 +135,12 @@ public class DisplayMessageScript : MonoBehaviour
             }
 
             yield return new WaitForSeconds(length);
-            StartCoroutine(FadeOutText(speed));
+            StartCoroutine(IFadeOutText(speed));
         }
     }
 
 
-    private IEnumerator FadeOutText(float speed)
+    private IEnumerator IFadeOutText(float speed)
     {
         Color textTransparency = displayMessageText.color;
         Color bgTransparency = displayBackground.color;
@@ -161,7 +163,7 @@ public class DisplayMessageScript : MonoBehaviour
         }
         
         isDisplayingMessage = false;
-        StartCoroutine(DisplayNextMessage());
+        StartCoroutine(IDisplayNextMessage());
     }
 
 }

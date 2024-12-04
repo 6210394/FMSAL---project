@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class BedScript : Interactable
 {
 
-    static BedScript instance;
+    public static BedScript instance;
     void Awake()
     {
         if (instance == null)
@@ -19,7 +20,7 @@ public class BedScript : Interactable
     }
 
     public bool confirmSleep = false;
-    public FadeInOutScript fadeScript;
+    public FadeInOutScript fadeScript = FadeInOutScript.instance;
 
 
     public override void Interact()
@@ -43,20 +44,15 @@ public class BedScript : Interactable
 
     public void Sleep()
     {
-        float fadeSpeed = 2;
-        float fadeLength = 1;
-
-        GameManager.instance.GoToNextDay();
-
         foreach (PlayerMovement player in GameManager.instance.players)
         {
             player.isControlled = false;
         }
         GameManager.instance.interactEnabled = false;
 
+        StartCoroutine(FadeInOutScript.instance.IFadeOut(3));
         DisplayMessageScript.instance.ImmidiatelyHideMessage();
-        StartCoroutine(fadeScript.FadeOutInCycle(fadeSpeed, fadeLength));
-        StartCoroutine(WakeUp(fadeSpeed + fadeLength, 0.5f));
+        GameManager.instance.GoToNextDay();
     }
 
     public override void OnTriggerExit(Collider other)
@@ -65,8 +61,12 @@ public class BedScript : Interactable
         confirmSleep = false;
     }
 
-    public IEnumerator WakeUp(float animationLength, float waitLength)
+    public IEnumerator IWakeUp(float animationLength, float waitLength)
     {
+        yield return new WaitForSeconds(waitLength);
+
+        StartCoroutine(FadeInOutScript.instance.IFadeIn(waitLength));
+
         yield return new WaitForSeconds(animationLength + waitLength);
         foreach (PlayerMovement player in GameManager.instance.players)
         {
@@ -83,28 +83,43 @@ public class BedScript : Interactable
         string message;
         int random = Random.Range(0, 4);
 
-        switch (random)
+        switch(GameManager.instance.hungerState)
         {
-            case 0:
-                message = "I need to get up..";
-                break;
-            case 1:
-                message = "My back hurts..";
-                break;
-            case 2:
-                message = "I feel pretty good today..";
-                break;
-            case 3:
-                message = "This bed sucks..";
-                break;
-            case 4:
-                message = "I'm thirsty..";
-                break;
+            case GameManager.HUNGER.STARVED:
+                message = "... My stomach..";
+                return message;
+            
             default:
-                message = "I need to get up..";
-                break;
+            {
+                switch (random)
+                {
+                case 0:
+                    message = "I need to get up..";
+                    break;
+                case 1:
+                    message = "My back hurts..";
+                    break;
+                case 2:
+                    message = "I feel pretty good today..";
+                    break;
+                case 3:
+                    message = "This bed sucks..";
+                    break;
+                case 4:
+                    message = "I'm thirsty..";
+                    break;
+                default:
+                    message = "I need to get up..";
+                    break;
+                }
+                return message;
+            }
+                
         }
-        return message;
+
+
+        
+        
     }
     
 }

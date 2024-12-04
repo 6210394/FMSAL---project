@@ -4,6 +4,19 @@ using UnityEngine.UI;
 
 public class FadeInOutScript : MonoBehaviour
 {
+    public static FadeInOutScript instance;
+    void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
     public Image sprite;
     public Color initialColor;
 
@@ -20,7 +33,7 @@ public class FadeInOutScript : MonoBehaviour
         
     }
 
-    public IEnumerator FadeOutInCycle(float speed, float length)
+    public IEnumerator IFadeOutInCycle(float speed, float length)
     {
         Debug.Log("Fading Out");
         sprite.color = new Color(initialColor.r, initialColor.g, initialColor.b, 0);
@@ -31,10 +44,10 @@ public class FadeInOutScript : MonoBehaviour
             yield return null;
         }
         yield return new WaitForSeconds(length);
-        StartCoroutine(FadeIn(speed));
+        StartCoroutine(IFadeIn(speed));
     }
 
-    public IEnumerator FadeOut(float speed)
+    public IEnumerator IFadeOut(float speed)
     {
         Debug.Log("Fading Out");
         sprite.color = new Color(initialColor.r, initialColor.g, initialColor.b, 0);
@@ -46,7 +59,7 @@ public class FadeInOutScript : MonoBehaviour
         }
     }
 
-    public IEnumerator FadeIn(float speed)
+    public IEnumerator IFadeIn(float speed)
     {
         Debug.Log("Fading In");
         sprite.color = new Color(initialColor.r, initialColor.g, initialColor.b, 1);

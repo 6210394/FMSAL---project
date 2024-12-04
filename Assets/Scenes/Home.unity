@@ -4655,7 +4655,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2031340142200022059, guid: e94acf4a51c8f4e47a225b91920adfa6, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 17
+      value: 75
       objectReference: {fileID: 0}
     - target: {fileID: 2031340142200022059, guid: e94acf4a51c8f4e47a225b91920adfa6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -4745,6 +4745,10 @@ PrefabInstance:
     - target: {fileID: 3231737527772141958, guid: 48883e5eb6eb0254ca4ee89842a4f8db, type: 3}
       propertyPath: m_Name
       value: GameManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 5484252116388900434, guid: 48883e5eb6eb0254ca4ee89842a4f8db, type: 3}
+      propertyPath: hungerPoints
+      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

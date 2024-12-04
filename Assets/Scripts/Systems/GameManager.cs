@@ -23,22 +23,23 @@ public class GameManager : MonoBehaviour
     }
 #endregion
 
+    public string gameOverScene = "MainMenu";
+
     int defaultPlayerMoney = 0;
     int defaultWeekQuota = 150;
     float defaultQuotaMultiplier = 1.1f;
     int defaultWeek = 1;
     int defaultDay = 1;
 
-    int hungerPoints = 0;
+    public int hungerPoints = 0;
     public HUNGER hungerState = HUNGER.FED;
-    public enum HUNGER {STARVED, HUNGRY, FED}
+    public enum HUNGER {DYING, STARVED, HUNGRY, FED, FULL}
 
     public int money;
     public int weekQuota;
     public float quotaMultiplier;
     public int week;
     public int day;
-
     
     public bool hasCompletedDailyMission = false; //this is used in the BedScript
     public bool interactEnabled = true;
@@ -55,14 +56,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.K))
-        {
-            DisplayMessageScript.instance.ChangeDisplayMessage("This is a test message", 1, 2);
-        }
-        if(Input.GetKeyDown(KeyCode.H))
-        {
-            DisplayMessageScript.instance.ImmidiatelyHideMessage();
-        }
+        
     }
 
     public void LoadMission(string missionName)
@@ -101,5 +95,48 @@ public class GameManager : MonoBehaviour
             IncreaseWeek();
         }
         hasCompletedDailyMission = false;
+        hungerPoints -= 2;
+        HungerManagement();
     }   
+
+    public void HungerManagement()
+    {
+        float waitTime = 2;
+        float animationLength = 1;
+
+        switch(hungerPoints)
+        {
+            case 2:
+                hungerState = HUNGER.STARVED;
+                break;
+            case 4:
+                hungerState = HUNGER.DYING;
+                break;
+            case 6:
+                hungerState = HUNGER.HUNGRY;
+                break;
+            case 8:
+                hungerState = HUNGER.FED;
+                break;
+            case 10:
+                hungerState = HUNGER.FULL;
+                break;
+        }
+
+        if(hungerPoints == 0)
+        {
+            StartCoroutine(IGameOver("You never woke up."));
+            return;
+        }
+
+        StartCoroutine(BedScript.instance.IWakeUp(animationLength, waitTime));
+    }
+
+    public IEnumerator IGameOver(string gameOverMessage)
+    {
+        yield return new WaitForSeconds(3);
+        DisplayMessageScript.instance.ChangeDisplayMessage(gameOverMessage, 3, 6);
+        yield return new WaitForSeconds(6);
+        SceneManager.LoadScene(gameOverScene);
+    }
 }
