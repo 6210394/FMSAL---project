@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameManager : MonoBehaviour
+public class GameManager : MonoBehaviour, IDataPersistence
 {
 
 #region Singleton
@@ -25,21 +25,17 @@ public class GameManager : MonoBehaviour
 
     public string gameOverScene = "MainMenu";
 
-    int defaultPlayerMoney = 0;
-    int defaultWeekQuota = 150;
-    float defaultQuotaMultiplier = 1.1f;
-    int defaultWeek = 1;
-    int defaultDay = 1;
-
     public int hungerPoints = 0;
     public HUNGER hungerState = HUNGER.FED;
     public enum HUNGER {DYING, STARVED, HUNGRY, FED, FULL}
 
     public int money;
     public int weekQuota;
-    public float quotaMultiplier;
     public int week;
     public int day;
+
+    public float quotaMultiplier = 1.2f;
+
     
     public bool hasCompletedDailyMission = false; //this is used in the BedScript
     public bool interactEnabled = true;
@@ -66,12 +62,6 @@ public class GameManager : MonoBehaviour
 
     void InitializeGameData()
     {
-        money = defaultPlayerMoney;
-        weekQuota = defaultWeekQuota;
-        quotaMultiplier = defaultQuotaMultiplier;
-        week = defaultWeek;
-        day = defaultDay;
-
         hasCompletedDailyMission = false;
 
         foreach (PlayerMovement player in GameObject.FindObjectsOfType<PlayerMovement>())
@@ -138,5 +128,21 @@ public class GameManager : MonoBehaviour
         DisplayMessageScript.instance.ChangeDisplayMessage(gameOverMessage, 3, 6);
         yield return new WaitForSeconds(6);
         SceneManager.LoadScene(gameOverScene);
+    }
+
+    public void SaveData(ref GameData gameData)
+    {
+        gameData.week = week;
+        gameData.day = day;
+        gameData.money = money;
+        gameData.weekQuota = weekQuota;
+    }
+
+    public void LoadData(GameData gameData)
+    {
+        week = gameData.week;
+        day = gameData.day;
+        money = gameData.money;
+        weekQuota = gameData.weekQuota;
     }
 }
