@@ -53,6 +53,7 @@ public class SaveManager : MonoBehaviour
         
         foreach (IDataPersistence dataPersistenceObject in dataPersistenceObjects)
         {
+            Debug.Log("Loading data into " + dataPersistenceObject.GetType().Name);
             dataPersistenceObject.LoadData(gameData);
         }
     }

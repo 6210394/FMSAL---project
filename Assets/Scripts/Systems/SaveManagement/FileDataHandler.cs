@@ -23,6 +23,7 @@ public class FileDataHandler
         {
             try
             {
+                Debug.Log("Found save data!! Loading...");
                 string dataToLoad = "";
                 using (FileStream stream = new FileStream(fullPath, FileMode.Open))
                 {
@@ -33,13 +34,13 @@ public class FileDataHandler
                 }
 
                 loadedData = JsonUtility.FromJson<GameData>(dataToLoad);
+                return loadedData;
             }
             catch (Exception e)
             {
                 Debug.LogError("Error loading file: " + e.Message);
             }
         }
-
         return null;
     }
 
