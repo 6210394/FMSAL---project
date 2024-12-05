@@ -13,10 +13,6 @@ public class DisplayMessageScript : MonoBehaviour
         {
             instance = this;
         }
-        else
-        {
-            Destroy(gameObject);
-        }
     }
 
     public TextMeshProUGUI displayMessageText;

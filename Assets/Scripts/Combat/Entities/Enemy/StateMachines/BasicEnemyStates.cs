@@ -56,7 +56,7 @@ public class BasicEnemyStates : EnemyStateMachine
 
     void CheckForPlayersInDetectionRange()
     {
-        foreach (PlayerMovement player in GameManager.instance.players)
+        foreach (GameObject player in GameManager.instance.players)
         {
             Vector3 directionToPlayer = player.transform.position - transform.position;
             float distanceToPlayer = directionToPlayer.magnitude;

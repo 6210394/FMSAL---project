@@ -10,7 +10,7 @@ public class EnemyEntityScript : CombatEntity
     public AutomaticMovementScript autoMove;
 
     public bool moveDebugBool = false;
-    public List<PlayerMovement> players = new List<PlayerMovement>();
+    public List<GameObject> players = new List<GameObject>();
 
 
     [Tooltip ("If true, the enemy will patrol around its spawn point. Otherwise, it will wander freely.")]
@@ -43,7 +43,7 @@ public class EnemyEntityScript : CombatEntity
         if(!hasTarget)
         {
             Debug.Log("No target");
-            foreach (PlayerMovement player in players)
+            foreach (GameObject player in players)
             {
                 if (IsPlayerInDetectionRange(player.transform) && IsPlayerInFront(player.transform))
                 {

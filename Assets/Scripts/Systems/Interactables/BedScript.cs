@@ -47,9 +47,9 @@ public class BedScript : Interactable
         float waitTime = 2;
         float animationLength = 1;
 
-        foreach (PlayerMovement player in GameManager.instance.players)
+        foreach (GameObject player in GameManager.instance.players)
         {
-            player.isControlled = false;
+            player.GetComponent<PlayerMovement>().isControlled = false;
         }
         GameManager.instance.interactEnabled = false;
 
@@ -80,9 +80,9 @@ public class BedScript : Interactable
         StartCoroutine(FadeInOutScript.instance.IFadeIn(waitLength));
 
         yield return new WaitForSeconds(animationLength + waitLength);
-        foreach (PlayerMovement player in GameManager.instance.players)
+        foreach (GameObject player in GameManager.instance.players)
         {
-            player.isControlled = true;
+            player.GetComponent<PlayerMovement>().isControlled = true;
         }
 
         GameManager.instance.interactEnabled = true;

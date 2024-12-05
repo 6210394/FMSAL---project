@@ -39,7 +39,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
     public bool hasCompletedDailyMission = false; //this is used in the BedScript
     public bool interactEnabled = true;
 
-    public List<PlayerMovement> players = new List<PlayerMovement>(); // change this to the actual player script later
+    public List<GameObject> players = new List<GameObject>();
 
 
     // Start is called before the first frame update
@@ -47,7 +47,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
     {
         RegisterPlayers();
         SceneManager.sceneLoaded += OnSceneLoaded;
-
+        LevelManager.onMissionInitialize.AddListener(RegisterPlayers);
         Debug.Log(players.Count);
     }
 
@@ -69,7 +69,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
     public void RegisterPlayers()
     {
-        players.Add(FindObjectOfType<PlayerMovement>());
+        players.Add(FindObjectOfType<PlayerMovement>().gameObject);
     }
 
     public void IncreaseWeek()
