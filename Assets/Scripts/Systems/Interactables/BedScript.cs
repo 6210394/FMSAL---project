@@ -44,6 +44,9 @@ public class BedScript : Interactable
 
     public void Sleep()
     {
+        float waitTime = 2;
+        float animationLength = 1;
+
         foreach (PlayerMovement player in GameManager.instance.players)
         {
             player.isControlled = false;
@@ -53,6 +56,15 @@ public class BedScript : Interactable
         StartCoroutine(FadeInOutScript.instance.IFadeOut(3));
         DisplayMessageScript.instance.ImmidiatelyHideMessage();
         GameManager.instance.GoToNextDay();
+        if(GameManager.instance.hungerState == GameManager.HUNGER.DEAD)
+        {
+            StartCoroutine(GameManager.instance.IGameOver("You never woke up."));
+        }
+
+        else
+        {
+            StartCoroutine(IWakeUp(animationLength, waitTime));
+        }
     }
 
     public override void OnTriggerExit(Collider other)

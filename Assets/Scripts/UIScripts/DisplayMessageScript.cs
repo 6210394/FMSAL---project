@@ -45,7 +45,7 @@ public class DisplayMessageScript : MonoBehaviour
     }
 
 
-    public void ChangeDisplayMessage(string message, float speed, float length)
+    public void ChangeDisplayMessage(string message, float fadeInTime, float duration)
     {
         Debug.Log("ChangeDisplayMessage");
         if(messageList.Count >= 1)
@@ -57,7 +57,7 @@ public class DisplayMessageScript : MonoBehaviour
             return;
         }
 
-        messageList.Add(new Message { message = message, speed = speed, length = length });
+        messageList.Add(new Message { message = message, speed = fadeInTime, length = duration });
 
         if (!isDisplayingMessage)
         {

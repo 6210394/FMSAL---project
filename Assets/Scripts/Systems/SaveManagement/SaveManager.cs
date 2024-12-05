@@ -27,7 +27,7 @@ public class SaveManager : MonoBehaviour
     
     private GameData gameData;
     private List<IDataPersistence> dataPersistenceObjects;
-    private FileDataHandler fileDataHandler;
+    public FileDataHandler fileDataHandler;
 
     void Start()
     {
@@ -47,13 +47,11 @@ public class SaveManager : MonoBehaviour
 
         if(gameData == null)
         {
-            Debug.Log("Game data is null. Creating new game data.");
             NewGame();
         }
         
         foreach (IDataPersistence dataPersistenceObject in dataPersistenceObjects)
         {
-            Debug.Log("Loading data into " + dataPersistenceObject.GetType().Name);
             dataPersistenceObject.LoadData(gameData);
         }
     }
@@ -78,7 +76,6 @@ public class SaveManager : MonoBehaviour
         IEnumerable<IDataPersistence> dataPersistenceObjects = FindObjectsOfType<MonoBehaviour>().OfType<IDataPersistence>();
         if(dataPersistenceObjects == null)
         {
-            Debug.Log("No data persistence objects found.");
             return new List<IDataPersistence>();
         }
 

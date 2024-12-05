@@ -5,10 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class GameData
 {
-    int defaultPlayerMoney = 0;
-    int defaultWeekQuota = 150;
-    int defaultWeek = 1;
-    int defaultDay = 1;
+    public int hungerPoints;
 
     public int week;
     public int day;
@@ -17,9 +14,9 @@ public class GameData
 
     public GameData()
     {
-        this.week = defaultWeek;
-        this.day = defaultDay;
-        this.money = defaultPlayerMoney;
-        this.weekQuota = defaultWeekQuota;
+        this.week = 1;
+        this.day = 1;
+        this.money = 10;
+        this.weekQuota = 150;
     }
 }

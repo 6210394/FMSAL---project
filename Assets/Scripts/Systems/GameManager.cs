@@ -13,7 +13,6 @@ public class GameManager : MonoBehaviour, IDataPersistence
         if (instance == null)
         {
             instance = this;
-            InitializeGameData();
             DontDestroyOnLoad(gameObject);
         }
         else
@@ -25,9 +24,9 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
     public string gameOverScene = "MainMenu";
 
-    public int hungerPoints = 0;
-    public HUNGER hungerState = HUNGER.FED;
-    public enum HUNGER {DYING, STARVED, HUNGRY, FED, FULL}
+    public int hungerPoints = 10;
+    public HUNGER hungerState = HUNGER.FULL;
+    public enum HUNGER {DEAD, DYING, STARVED, HUNGRY, FED, FULL}
 
     public int money;
     public int weekQuota;
@@ -46,7 +45,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
     // Start is called before the first frame update
     void Start()
     {
-        InitializeGameData();
+        
     }
 
     // Update is called once per frame
@@ -60,11 +59,9 @@ public class GameManager : MonoBehaviour, IDataPersistence
         SceneManager.LoadScene(missionName);
     }
 
-    void InitializeGameData()
+    public void RegisterPlayers()
     {
-        hasCompletedDailyMission = false;
-
-        foreach (PlayerMovement player in GameObject.FindObjectsOfType<PlayerMovement>())
+        foreach (PlayerMovement player in FindObjectsOfType<PlayerMovement>())
         {
             players.Add(player);
         }
@@ -91,11 +88,11 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
     public void HungerManagement()
     {
-        float waitTime = 2;
-        float animationLength = 1;
-
         switch(hungerPoints)
         {
+            case 0:
+                hungerState = HUNGER.DEAD;
+                break;
             case 2:
                 hungerState = HUNGER.STARVED;
                 break;
@@ -111,15 +108,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
             case 10:
                 hungerState = HUNGER.FULL;
                 break;
-        }
-
-        if(hungerPoints == 0)
-        {
-            StartCoroutine(IGameOver("You never woke up."));
-            return;
-        }
-
-        StartCoroutine(BedScript.instance.IWakeUp(animationLength, waitTime));
+        }        
     }
 
     public IEnumerator IGameOver(string gameOverMessage)
@@ -144,5 +133,8 @@ public class GameManager : MonoBehaviour, IDataPersistence
         day = gameData.day;
         money = gameData.money;
         weekQuota = gameData.weekQuota;
+
+        HungerManagement();
+        hasCompletedDailyMission = false;
     }
 }

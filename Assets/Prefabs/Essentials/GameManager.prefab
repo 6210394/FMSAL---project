@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3034495443051779922}
   - component: {fileID: 5484252116388900434}
+  - component: {fileID: 2360258811598285117}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: GameManager
@@ -44,8 +45,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91e1173bc1b69994883c29e068ea5893, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameOverScene: MainMenu
+  hungerPoints: 4
+  hungerState: 3
   money: 0
   weekQuota: 0
-  quotaMultiplier: 0
   week: 0
   day: 0
+  quotaMultiplier: 0
+  hasCompletedDailyMission: 0
+  interactEnabled: 1
+  players: []
+--- !u!114 &2360258811598285117
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3231737527772141958}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4f75d097a8c1c94883be11fa08f45c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fileName: saveData.json

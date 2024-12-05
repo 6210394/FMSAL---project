@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -33,7 +34,7 @@ public class PlayerMovement : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        Intizialize();
+        Initizialize();
     }
     
     void Start()
@@ -77,7 +78,7 @@ public class PlayerMovement : MonoBehaviour
         ApplyGravity();
     }
 
-        void Intizialize()
+    void Initizialize()
     {
         rb = GetComponent<Rigidbody>();
         animator = GetComponentInChildren<Animator>();
@@ -149,6 +150,7 @@ public class PlayerMovement : MonoBehaviour
         right.y = 0;
         right.Normalize();
         
+
         Vector3 dashDirection = forward * Input.GetAxis("Vertical") + right * Input.GetAxis("Horizontal");
         dashDirection = dashDirection.normalized;
 
@@ -169,7 +171,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
 
-        if (!isDashing)
+        if (!isDashing && dashDirection != Vector3.zero)
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
@@ -187,7 +189,7 @@ public class PlayerMovement : MonoBehaviour
     void ApplyGravity()
     {
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, Vector3.down, out hit, 0.1f))
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, 0.2f))
         {
             isGrounded = true;
         }

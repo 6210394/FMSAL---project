@@ -123,6 +123,11 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!224 &120851439 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 2031340142200022059, guid: e94acf4a51c8f4e47a225b91920adfa6, type: 3}
+  m_PrefabInstance: {fileID: 1717450986}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &266767217
 GameObject:
   m_ObjectHideFlags: 0
@@ -289,6 +294,7 @@ RectTransform:
   - {fileID: 1347893746}
   - {fileID: 1270671339}
   - {fileID: 820973233}
+  - {fileID: 120851439}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -477,6 +483,7 @@ GameObject:
   - component: {fileID: 820973236}
   - component: {fileID: 820973235}
   - component: {fileID: 820973234}
+  - component: {fileID: 820973237}
   m_Layer: 5
   m_Name: ContinueButton
   m_TagString: Untagged
@@ -547,7 +554,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 820973235}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 820973237}
+        m_TargetAssemblyTypeName: StartScript, Assembly-CSharp
+        m_MethodName: Continue
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &820973235
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -586,6 +605,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 820973232}
   m_CullTransparentMesh: 1
+--- !u!114 &820973237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 820973232}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52bd55b69c01f2f4393541629cd99fbc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneName: Home
+  gameManagerObject: {fileID: 1012001260}
 --- !u!1 &837547735
 GameObject:
   m_ObjectHideFlags: 0
@@ -871,6 +904,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameManager
       objectReference: {fileID: 0}
+    - target: {fileID: 5484252116388900434, guid: 48883e5eb6eb0254ca4ee89842a4f8db, type: 3}
+      propertyPath: hungerState
+      value: 4
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -962,7 +999,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1270671343}
         m_TargetAssemblyTypeName: StartScript, Assembly-CSharp
-        m_MethodName: LoadScene
+        m_MethodName: StartNewGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1166,8 +1203,24 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 283302362}
     m_Modifications:
+    - target: {fileID: 288726679251522135, guid: e94acf4a51c8f4e47a225b91920adfa6, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 1521.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 288726679251522135, guid: e94acf4a51c8f4e47a225b91920adfa6, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 291.7924
+      objectReference: {fileID: 0}
+    - target: {fileID: 288726679251522135, guid: e94acf4a51c8f4e47a225b91920adfa6, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0.011272
+      objectReference: {fileID: 0}
+    - target: {fileID: 288726679251522135, guid: e94acf4a51c8f4e47a225b91920adfa6, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -9.3788
+      objectReference: {fileID: 0}
     - target: {fileID: 2031340142200022059, guid: e94acf4a51c8f4e47a225b91920adfa6, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1182,7 +1235,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2031340142200022059, guid: e94acf4a51c8f4e47a225b91920adfa6, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2031340142200022059, guid: e94acf4a51c8f4e47a225b91920adfa6, type: 3}
       propertyPath: m_AnchorMin.x
@@ -1190,15 +1243,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2031340142200022059, guid: e94acf4a51c8f4e47a225b91920adfa6, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2031340142200022059, guid: e94acf4a51c8f4e47a225b91920adfa6, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 2066.5186
+      value: 1521.2949
       objectReference: {fileID: 0}
     - target: {fileID: 2031340142200022059, guid: e94acf4a51c8f4e47a225b91920adfa6, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 421.85
+      value: 310.55
+      objectReference: {fileID: 0}
+    - target: {fileID: 2031340142200022059, guid: e94acf4a51c8f4e47a225b91920adfa6, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.41666666
+      objectReference: {fileID: 0}
+    - target: {fileID: 2031340142200022059, guid: e94acf4a51c8f4e47a225b91920adfa6, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.41666666
+      objectReference: {fileID: 0}
+    - target: {fileID: 2031340142200022059, guid: e94acf4a51c8f4e47a225b91920adfa6, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.41666666
       objectReference: {fileID: 0}
     - target: {fileID: 2031340142200022059, guid: e94acf4a51c8f4e47a225b91920adfa6, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1218,15 +1283,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2031340142200022059, guid: e94acf4a51c8f4e47a225b91920adfa6, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 2031340142200022059, guid: e94acf4a51c8f4e47a225b91920adfa6, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 2031340142200022059, guid: e94acf4a51c8f4e47a225b91920adfa6, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 2031340142200022059, guid: e94acf4a51c8f4e47a225b91920adfa6, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -1234,7 +1299,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2031340142200022059, guid: e94acf4a51c8f4e47a225b91920adfa6, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -708
+      value: 347
       objectReference: {fileID: 0}
     - target: {fileID: 2031340142200022059, guid: e94acf4a51c8f4e47a225b91920adfa6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1251,6 +1316,14 @@ PrefabInstance:
     - target: {fileID: 2844208255447089655, guid: e94acf4a51c8f4e47a225b91920adfa6, type: 3}
       propertyPath: m_Name
       value: DisplayMessage
+      objectReference: {fileID: 0}
+    - target: {fileID: 6100209062700682938, guid: e94acf4a51c8f4e47a225b91920adfa6, type: 3}
+      propertyPath: m_fontSize
+      value: 103.29
+      objectReference: {fileID: 0}
+    - target: {fileID: 6100209062700682938, guid: e94acf4a51c8f4e47a225b91920adfa6, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 103.29
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1400,4 +1473,3 @@ SceneRoots:
   - {fileID: 283302362}
   - {fileID: 266767220}
   - {fileID: 1225407416}
-  - {fileID: 1717450986}

@@ -23,7 +23,6 @@ public class FileDataHandler
         {
             try
             {
-                Debug.Log("Found save data!! Loading...");
                 string dataToLoad = "";
                 using (FileStream stream = new FileStream(fullPath, FileMode.Open))
                 {

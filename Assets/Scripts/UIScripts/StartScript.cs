@@ -8,6 +8,8 @@ public class StartScript : MonoBehaviour
     [SerializeField]
     GameObject gameManagerObject;
 
+    bool overwrite = false;
+
     void Start()
     {
         CreateGameManager();
@@ -19,6 +21,32 @@ public class StartScript : MonoBehaviour
         Debug.Log("Loading Scene: " + sceneName);
 
         SceneManager.LoadScene(sceneName);
+    }
+
+    public void StartNewGame()
+    {
+        if(SaveManager.instance.fileDataHandler.Load() != null && !overwrite)
+        {
+            DisplayMessageScript.instance.ChangeDisplayMessage("Save found. Give up on them?", 1, 2);
+            overwrite = true;
+            return;
+        }
+        SaveManager.instance.NewGame();
+        LoadScene();
+    }
+
+    public void Continue()
+    {
+        if(SaveManager.instance.fileDataHandler.Load() != null)
+        {
+            Debug.Log("Loading in game");
+            SaveManager.instance.LoadGame();
+            LoadScene();
+        }
+        else
+        {
+            DisplayMessageScript.instance.ChangeDisplayMessage("No save file available.", 1, 3);
+        }
     }
 
     public void QuitGame()

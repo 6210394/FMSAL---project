@@ -11,13 +11,21 @@ public class DoorScript : Interactable
     public override void Interact()
     {
         base.Interact();
-        if (isMissionSelected)
+        if (!GameManager.instance.hasCompletedDailyMission)
         {
-            GameManager.instance.LoadMission(missionName);
+            if (isMissionSelected)
+            {
+                GameManager.instance.LoadMission(missionName);
+            }
+            else
+            {
+
+            }
         }
         else
         {
-            
+            DisplayMessageScript.instance.ChangeDisplayMessage("I'm way too tired..", 0.6f, 1f );
         }
+        
     }
 }
