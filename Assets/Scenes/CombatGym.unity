@@ -246,6 +246,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4170848390567775362, guid: 40c565ee377da1b40beae600764c177d, type: 3}
   m_PrefabInstance: {fileID: 1713324778}
   m_PrefabAsset: {fileID: 0}
+--- !u!195 &1224659755 stripped
+NavMeshAgent:
+  m_CorrespondingSourceObject: {fileID: 5868093822486605313, guid: 257fe48e4379fa447a8f728f258038b9, type: 3}
+  m_PrefabInstance: {fileID: 2023052283}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1423024355
 GameObject:
   m_ObjectHideFlags: 0
@@ -1169,8 +1174,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5868093822486605313, guid: 257fe48e4379fa447a8f728f258038b9, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8492459025927344049, guid: 257fe48e4379fa447a8f728f258038b9, type: 3}
+      propertyPath: navMeshAgent
+      value: 
+      objectReference: {fileID: 1224659755}
     - target: {fileID: 8661229243928107996, guid: 257fe48e4379fa447a8f728f258038b9, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.7642235

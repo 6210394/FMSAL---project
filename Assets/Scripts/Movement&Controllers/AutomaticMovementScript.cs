@@ -10,7 +10,6 @@ public class AutomaticMovementScript : MonoBehaviour
     public GameObject targetObject;
     public float speed;
 
-    public float movementRemaining;
     public NavMeshAgent navMeshAgent;
     public bool hasReachedTarget = true;
 
@@ -36,27 +35,7 @@ public class AutomaticMovementScript : MonoBehaviour
 
     public void MoveWithNavMesh(Vector3 target)
     {
-        if (movementRemaining <= 0)
-        {
-            navMeshAgent.isStopped = true;
-            return;
-        }
-
         navMeshAgent.SetDestination(target);
-
-        Vector3 movement = navMeshAgent.velocity.normalized;
-        movementRemaining -= movement.magnitude * navMeshAgent.acceleration * Time.deltaTime;   
-
-        if (movementRemaining <= 0)
-        {
-            navMeshAgent.isStopped = true;
-            return;
-        }
-
-        if (navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance)
-        {
-            hasReachedTarget = true;
-        }
     }
 
     public void Init()
@@ -69,6 +48,7 @@ public class AutomaticMovementScript : MonoBehaviour
         navMeshAgent.speed = speed;
     }
 
+/*
     public void MoveRandomly()
     {
         if(hasReachedTarget)
@@ -85,4 +65,5 @@ public class AutomaticMovementScript : MonoBehaviour
         MoveToTarget();
         //MoveWithNavMesh(target);
     }
+    */
 }

@@ -45,7 +45,10 @@ public class GameManager : MonoBehaviour, IDataPersistence
     // Start is called before the first frame update
     void Start()
     {
-        
+        RegisterPlayers();
+        SceneManager.sceneLoaded += OnSceneLoaded;
+
+        Debug.Log(players.Count);
     }
 
     // Update is called once per frame
@@ -59,12 +62,14 @@ public class GameManager : MonoBehaviour, IDataPersistence
         SceneManager.LoadScene(missionName);
     }
 
+    public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        RegisterPlayers();
+    }
+
     public void RegisterPlayers()
     {
-        foreach (PlayerMovement player in FindObjectsOfType<PlayerMovement>())
-        {
-            players.Add(player);
-        }
+        players.Add(FindObjectOfType<PlayerMovement>());
     }
 
     public void IncreaseWeek()
