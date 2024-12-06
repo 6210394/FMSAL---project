@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Events;
 
 public class GameManager : MonoBehaviour, IDataPersistence
 {
@@ -35,11 +36,15 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
     public float quotaMultiplier = 1.2f;
 
-    
+    public bool hasFailedQuota = false;
+
+
     public bool hasCompletedDailyMission = false; //this is used in the BedScript
     public bool interactEnabled = true;
 
     public List<GameObject> players = new List<GameObject>();
+
+    public static UnityEvent onPlayersListed = new UnityEvent();
 
 
     // Start is called before the first frame update
@@ -64,12 +69,20 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        RegisterPlayers();
+        if(scene.name == "Home")
+        {
+            interactEnabled = true;
+            hasFailedQuota = false;
+            RegisterPlayers();
+        }
     }
 
     public void RegisterPlayers()
     {
+        Debug.Log("Registering Players");
+        players.Clear();
         players.Add(FindObjectOfType<PlayerMovement>().gameObject);
+        onPlayersListed.Invoke();
     }
 
     public void IncreaseWeek()
@@ -93,6 +106,15 @@ public class GameManager : MonoBehaviour, IDataPersistence
 
     public void HungerManagement()
     {
+        if(hungerPoints > 10)
+        {
+            hungerPoints = 10;
+        }
+        else if(hungerPoints < 0)
+        {
+            hungerPoints = 0;
+        }
+
         switch(hungerPoints)
         {
             case 0:

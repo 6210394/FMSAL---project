@@ -11,24 +11,24 @@ public class PantryScript : Interactable
         {
             instance = this;
         }
-        else
-        {
-            Destroy(gameObject);
-        }
     }
 
     public bool isPantryOpen = false;
     public GameObject pantryUI;
+    public CurrentMoneyDisplayScript moneyDisplay;
+    public BuyFoodScript buyFoodScript;
 
-    void Update()
-    {
+    public override void Update()
+    {   
         if (isPantryOpen)
         {
             if (Input.GetKeyDown(KeyCode.E))
             {
                 ClosePantry();
             }
+            return;
         }
+        base.Update();
     }
 
     override public void Interact()
@@ -41,18 +41,21 @@ public class PantryScript : Interactable
     }
 
     public void OpenPantry()
-    {
+    {   
+        buyFoodScript.isPantryOpen = true;
+        moneyDisplay.UpdateMoneyText(GameManager.instance.money);
+        GameObject.FindWithTag("MainCamera").GetComponent<CameraMovement>().lockMode = true;
         pantryUI.SetActive(true);
         isPantryOpen = true;
         player.GetComponent<PlayerMovement>().isControlled = false;
-        Cursor.lockState = CursorLockMode.None;
     }
 
     public void ClosePantry()
     {
+        buyFoodScript.isPantryOpen = false;
+        GameObject.FindWithTag("MainCamera").GetComponent<CameraMovement>().lockMode = false;
         pantryUI.SetActive(false);
         isPantryOpen = false;
         player.GetComponent<PlayerMovement>().isControlled = true;
-        Cursor.lockState = CursorLockMode.Locked;
     }
 }

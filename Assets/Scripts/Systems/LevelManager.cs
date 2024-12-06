@@ -44,8 +44,7 @@ public class LevelManager : MonoBehaviour
     void Start()
     {
         InitializeLevel();
-        Instantiate(playerPrefab, playerSpawnPoint.position, playerSpawnPoint.rotation);
-        StartCoroutine(StartTimer());
+        
         TreasureScript.onPickup.AddListener(AddCarryWeight);
     }
 
@@ -68,6 +67,8 @@ public class LevelManager : MonoBehaviour
         }
         */
         playerSpawnPoint = GameObject.FindGameObjectWithTag("PlayerSpawnPoint").transform;
+        Instantiate(playerPrefab, playerSpawnPoint.position, playerSpawnPoint.rotation);
+        StartCoroutine(StartTimer());
         onMissionInitialize.Invoke(); 
     }
     

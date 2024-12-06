@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(SphereCollider))]
 public class Interactable : MonoBehaviour
@@ -15,10 +16,23 @@ public class Interactable : MonoBehaviour
 
     void Start()
     {
+        GameManager.onPlayersListed.AddListener(Initialize);
         interactCollider = GetComponent<SphereCollider>();
         interactCollider.isTrigger = true;
         interactCollider.radius = interactRadius;
+        icon = GetComponentInChildren<FloatingIcons>();
+        icon.SetIconActive(false);
+        Initialize();
     }
+
+    void Initialize()
+    {
+        if(SceneManager.GetActiveScene().name == "Home")
+        {
+            Debug.Log("Initializing");
+            player = GameManager.instance.players[0];
+        }
+    }   
 
     void OnTriggerEnter(Collider other)
     {
@@ -37,7 +51,7 @@ public class Interactable : MonoBehaviour
         }
     }
 
-    void Update()
+    public virtual void Update()
     {
         PlayerInRangeCheck();
     }

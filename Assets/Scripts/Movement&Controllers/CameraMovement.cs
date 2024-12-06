@@ -3,9 +3,8 @@ using UnityEngine;
 
 public class CameraMovement : MonoBehaviour
 {
-
     [SerializeField]
-    bool lockMode = false;
+    public bool lockMode = false;
 
     bool isAiming = false;
 

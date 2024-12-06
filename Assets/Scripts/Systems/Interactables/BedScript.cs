@@ -13,10 +13,6 @@ public class BedScript : Interactable
         {
             instance = this;
         }
-        else
-        {
-            Destroy(gameObject);
-        }
     }
 
     public bool confirmSleep = false;
@@ -60,7 +56,6 @@ public class BedScript : Interactable
         {
             StartCoroutine(GameManager.instance.IGameOver("You never woke up."));
         }
-
         else
         {
             StartCoroutine(IWakeUp(animationLength, waitTime));
