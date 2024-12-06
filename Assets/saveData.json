@@ -1,7 +1,7 @@
 {
-    "hungerPoints": 0,
+    "hungerPoints": 10,
     "week": 1,
-    "day": 6,
-    "money": 690,
+    "day": 1,
+    "money": 10,
     "weekQuota": 150
 }

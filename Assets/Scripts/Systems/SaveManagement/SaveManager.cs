@@ -39,6 +39,10 @@ public class SaveManager : MonoBehaviour
     public void NewGame()
     {
         gameData = new GameData();
+        foreach (IDataPersistence dataPersistenceObject in dataPersistenceObjects)
+        {
+            dataPersistenceObject.LoadData(gameData);
+        }
     }
 
     public void LoadGame()
