@@ -56,6 +56,10 @@ public class BedScript : Interactable
         {
             StartCoroutine(GameManager.instance.IGameOver("You never woke up."));
         }
+        else if(GameManager.instance.hasFailedQuota)
+        {
+            StartCoroutine(GameManager.instance.IGameOver("You failed to meet the quota."));
+        }
         else
         {
             StartCoroutine(IWakeUp(animationLength, waitTime));
@@ -94,6 +98,12 @@ public class BedScript : Interactable
         {
             case GameManager.HUNGER.STARVED:
                 message = "... My stomach..";
+                return message;
+            case GameManager.HUNGER.HUNGRY:
+                message = "I'm hungry..";
+                return message;
+            case GameManager.HUNGER.FED:
+                message = "Feeling good today..";
                 return message;
             
             default:

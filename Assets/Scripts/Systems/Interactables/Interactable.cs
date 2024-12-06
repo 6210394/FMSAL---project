@@ -22,7 +22,6 @@ public class Interactable : MonoBehaviour
         interactCollider.radius = interactRadius;
         icon = GetComponentInChildren<FloatingIcons>();
         icon.SetIconActive(false);
-        Initialize();
     }
 
     void Initialize()

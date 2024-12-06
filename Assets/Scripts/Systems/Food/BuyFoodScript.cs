@@ -16,7 +16,7 @@ public class BuyFoodScript : MonoBehaviour
         if (GameManager.instance.money >= price && GameManager.instance.hungerState != GameManager.HUNGER.FULL)
         {
             GameManager.instance.money -= price;
-            GameManager.instance.hungerState += foodFullness;
+            GameManager.instance.hungerPoints += foodFullness;
             GameManager.instance.HungerManagement();
 
             DisplayMessageScript.instance.ChangeDisplayMessage("Delicious", 0.5f, 1);
@@ -30,6 +30,7 @@ public class BuyFoodScript : MonoBehaviour
         {
             DisplayMessageScript.instance.ChangeDisplayMessage("Not enough money", 0.5f, 0.5f);
         }
+        UpdateUIElementScript.instance.UpdateUIElementsDebug();
     }
 
     //EMERGENCY

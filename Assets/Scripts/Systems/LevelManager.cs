@@ -21,13 +21,17 @@ public class LevelManager : MonoBehaviour
     /*
     public List<Transform> enemySpawnPoints;
     */
+
+    public List<Transform> itemSpawnPoints;
+
+    public GameObject[] itemPrefabs;
+
     public Transform playerSpawnPoint;
     
     public int rewardMoney = 0;
     public string endOfMissionDestination = "Home";
 
     public static UnityEvent onMissionInitialize = new UnityEvent();
-
 
     void Awake()
     {
@@ -66,12 +70,45 @@ public class LevelManager : MonoBehaviour
             enemySpawnPoints.Add(spawnPoint.transform);
         }
         */
+        foreach (var spawnPoint in GameObject.FindGameObjectsWithTag("ItemSpawnPoint"))
+        {
+            itemSpawnPoints.Add(spawnPoint.transform);
+        }
         playerSpawnPoint = GameObject.FindGameObjectWithTag("PlayerSpawnPoint").transform;
         Instantiate(playerPrefab, playerSpawnPoint.position, playerSpawnPoint.rotation);
+        SetUpItems();
         StartCoroutine(StartTimer());
         onMissionInitialize.Invoke(); 
     }
     
+    void SetUpItems()
+    {
+        Shuffle(itemPrefabs);
+        int randomSpawnPointSelection = Random.Range(0, itemSpawnPoints.Count);
+
+        int index = 0;
+
+        foreach (Transform spawnPoint in itemSpawnPoints)
+        {
+            if( index <= randomSpawnPointSelection)
+            {
+                int randomItem = Random.Range(0, itemPrefabs.Length);
+                Instantiate(itemPrefabs[randomItem], spawnPoint.position, spawnPoint.rotation);
+            }
+            index++;
+        }
+    }
+
+    void Shuffle(GameObject[] array)
+    {
+        for (int i = array.Length - 1; i > 0; i--)
+        {
+            int j = Random.Range(0, i + 1);
+            GameObject temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+        }
+    }
 
     public void AddMoney(int money)
     {
@@ -134,4 +171,6 @@ public class LevelManager : MonoBehaviour
         Debug.Log("Time's up!");
         FailMission();
     }
+
+
 }

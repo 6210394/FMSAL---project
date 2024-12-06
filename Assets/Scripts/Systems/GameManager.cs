@@ -59,7 +59,16 @@ public class GameManager : MonoBehaviour, IDataPersistence
     // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
+
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            hungerPoints = 10;
+            HungerManagement();
+        }
     }
 
     public void LoadMission(string missionName)
@@ -89,6 +98,11 @@ public class GameManager : MonoBehaviour, IDataPersistence
     {
         week++;
         day = 1;
+        money -= weekQuota;
+        if(money < 0)
+        {
+            hasFailedQuota = true;
+        }
         weekQuota = (int)(weekQuota * quotaMultiplier);
     }
 
@@ -102,6 +116,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         hasCompletedDailyMission = false;
         hungerPoints -= 2;
         HungerManagement();
+        UpdateUIElementScript.instance.UpdateUIElementsDebug();
     }   
 
     public void HungerManagement()
@@ -121,10 +136,10 @@ public class GameManager : MonoBehaviour, IDataPersistence
                 hungerState = HUNGER.DEAD;
                 break;
             case 2:
-                hungerState = HUNGER.STARVED;
+                hungerState = HUNGER.DYING;
                 break;
             case 4:
-                hungerState = HUNGER.DYING;
+                hungerState = HUNGER.STARVED;
                 break;
             case 6:
                 hungerState = HUNGER.HUNGRY;
@@ -135,7 +150,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
             case 10:
                 hungerState = HUNGER.FULL;
                 break;
-        }        
+        }
     }
 
     public IEnumerator IGameOver(string gameOverMessage)
