@@ -1,6 +1,14 @@
 # FMSAL---project
+Louis-Viktor Lacombe
+Kheo Chen
 
-Debug Tools:
+Controls:
 
-L -> unlock Camera
-P -> Complete Level
+WASD - Movement
+Shift - Sprint
+Space - Dash
+
+E - Interact / Exit menu
+Hold E - Deposit loot (in yellow zone)
+
+Escape - Quit game
