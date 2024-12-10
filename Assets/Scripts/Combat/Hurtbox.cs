@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Hurtbox : MonoBehaviour
 {
@@ -8,12 +9,18 @@ public class Hurtbox : MonoBehaviour
     public bool takesKnockback = true;
     public float entityWeight = 1f;
 
+    NavMeshAgent agent;
+    Rigidbody rb;
+
 
     public bool isPlayer = false;
     public RecieveImpact recieveImpact;
 
     void Awake()
     {
+        agent = GetComponent<NavMeshAgent>();
+        rb = GetComponent<Rigidbody>();
+
         combatEntity = GetComponent<CombatEntity>();
         if(isPlayer)
         {
@@ -46,4 +53,31 @@ public class Hurtbox : MonoBehaviour
         }
 
     }
+
+/*
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "HitBox")
+        {
+            StartCoroutine(Pushback((other.transform.position - transform.position).normalized, 1)); 
+        }
+    }
+
+    IEnumerator Pushback(Vector3 direction, float force)
+    {
+        float pushbackStartTime = Time.time;
+
+        agent.velocity = Vector3.zero;
+
+        while(Time.time - pushbackStartTime < 1)
+        {
+            //agent.velocity += direction * force * Time.deltaTime;
+            agent.velocity = (direction * force) / Time.deltaTime;
+
+            yield return new WaitForEndOfFrame();
+        }
+
+        agent.velocity = Vector3.zero;
+    }
+    */
 }

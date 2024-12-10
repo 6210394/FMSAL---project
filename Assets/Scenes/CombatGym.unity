@@ -184,6 +184,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0f26102b0e50e7849930cb2b9a086604, type: 3}
+--- !u!1 &179697793 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4544851032864408619, guid: 257fe48e4379fa447a8f728f258038b9, type: 3}
+  m_PrefabInstance: {fileID: 2023052283}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1048956291
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -251,6 +256,19 @@ NavMeshAgent:
   m_CorrespondingSourceObject: {fileID: 5868093822486605313, guid: 257fe48e4379fa447a8f728f258038b9, type: 3}
   m_PrefabInstance: {fileID: 2023052283}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1224659762
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 179697793}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75ba9f7a94e019c4b931399916e9175f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  characterMass: 1
 --- !u!1 &1423024355
 GameObject:
   m_ObjectHideFlags: 0
@@ -456,6 +474,10 @@ PrefabInstance:
     - target: {fileID: 4170848390567775362, guid: 40c565ee377da1b40beae600764c177d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5720523247777047060, guid: 40c565ee377da1b40beae600764c177d, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6739474880526340487, guid: 40c565ee377da1b40beae600764c177d, type: 3}
       propertyPath: m_Name
@@ -1155,7 +1177,7 @@ PrefabInstance:
     - target: {fileID: 1400487398124668942, guid: 257fe48e4379fa447a8f728f258038b9, type: 3}
       propertyPath: recieveImpact
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1224659762}
     - target: {fileID: 1862737174464239771, guid: 257fe48e4379fa447a8f728f258038b9, type: 3}
       propertyPath: m_Center.y
       value: 1
@@ -1223,7 +1245,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4544851032864408619, guid: 257fe48e4379fa447a8f728f258038b9, type: 3}
+      insertIndex: 4
+      addedObject: {fileID: 1224659762}
   m_SourcePrefab: {fileID: 100100000, guid: 257fe48e4379fa447a8f728f258038b9, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

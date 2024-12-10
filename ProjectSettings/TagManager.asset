@@ -11,6 +11,7 @@ TagManager:
   - Environment
   - Ground
   - ItemSpawnPoint
+  - HitBox
   layers:
   - Default
   - TransparentFX

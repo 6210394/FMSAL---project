@@ -18,6 +18,7 @@ public class Hitbox : MonoBehaviour
             if (hurtbox != null)
             {
                 hurtbox.OnHit(damage, knockbackForce, transform.forward);
+
             }
         }
     }
