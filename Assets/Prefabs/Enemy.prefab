@@ -358,7 +358,7 @@ Transform:
   m_GameObject: {fileID: 2843976701458660148}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -486,6 +486,7 @@ GameObject:
   - component: {fileID: 1862737174464239771}
   - component: {fileID: 1400487398124668942}
   - component: {fileID: 4345109750266240904}
+  - component: {fileID: 5033506747851327047}
   - component: {fileID: 5603946255351336252}
   - component: {fileID: 8492459025927344049}
   - component: {fileID: 5868093822486605313}
@@ -532,7 +533,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 1, y: 2, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!114 &1400487398124668942
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -548,6 +549,8 @@ MonoBehaviour:
   combatEntity: {fileID: 5603946255351336252}
   takesKnockback: 1
   entityWeight: 1
+  isPlayer: 0
+  recieveImpact: {fileID: 5033506747851327047}
 --- !u!54 &4345109750266240904
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -570,11 +573,24 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &5033506747851327047
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4544851032864408619}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75ba9f7a94e019c4b931399916e9175f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  characterMass: 1
 --- !u!114 &5603946255351336252
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -589,8 +605,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 3
   currentHealth: 0
-  animator: {fileID: 1926764855665930892}
+  anim: {fileID: 0}
   rb: {fileID: 0}
+  autoMove: {fileID: 0}
+  moveDebugBool: 0
+  players: []
+  tiedPatrol: 1
+  patrolRangeFromSpawn: 10
+  detectionRange: 15
+  fieldOfViewAngle: -135
+  hasTarget: 0
   deathTime: 1
 --- !u!114 &8492459025927344049
 MonoBehaviour:
@@ -604,11 +628,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b6298bfa559e2b40ab4590e6611616b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canMove: 1
   target: {x: 0, y: 0, z: 0}
   targetObject: {fileID: 0}
   speed: 0
-  movementRemaining: 0
-  navMeshAgent: {fileID: 0}
+  navMeshAgent: {fileID: 5868093822486605313}
   hasReachedTarget: 1
   destroyable: 0
   lifeTime: 1

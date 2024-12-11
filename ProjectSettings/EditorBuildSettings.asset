@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Mission1-2.unity
     guid: 4ddb70fca6228924688c9f959613c539
+  - enabled: 1
+    path: Assets/Scenes/MetricGym.unity
+    guid: d70d1fbaddedcd94685bb9cffb05f202
   m_configObjects: {}

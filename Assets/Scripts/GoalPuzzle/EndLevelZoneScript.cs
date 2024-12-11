@@ -5,6 +5,9 @@ using UnityEngine;
 public class EndLevelZoneScript : MonoBehaviour
 {
     public bool lose;
+    public bool win;
+    public bool display;
+    public bool fadeOut;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -12,9 +15,18 @@ public class EndLevelZoneScript : MonoBehaviour
         {
             LevelManager.instance.FailMission();
         }
-        else
+        if (win)
         {
             LevelManager.instance.CompleteMission();
+        }
+
+        if (display)
+        {
+            DisplayMessageScript.instance.ChangeDisplayMessage("Sample Text", 1, 1);
+        }
+        if(fadeOut)
+        {
+            StartCoroutine(FadeInOutScript.instance.IFadeOutInCycle(1, 2));
         }
     }
 }

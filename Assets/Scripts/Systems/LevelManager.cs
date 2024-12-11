@@ -75,7 +75,7 @@ public class LevelManager : MonoBehaviour
             itemSpawnPoints.Add(spawnPoint.transform);
         }
         playerSpawnPoint = GameObject.FindGameObjectWithTag("PlayerSpawnPoint").transform;
-        Instantiate(playerPrefab, playerSpawnPoint.position, playerSpawnPoint.rotation);
+        Instantiate(playerPrefab, playerSpawnPoint.position, playerSpawnPoint.rotation).GetComponent<MeleeCombat>().enabled = true;
         SetUpItems();
         StartCoroutine(StartTimer());
         onMissionInitialize.Invoke(); 
@@ -84,7 +84,7 @@ public class LevelManager : MonoBehaviour
     void SetUpItems()
     {
         Shuffle(itemPrefabs);
-        int randomSpawnPointSelection = Random.Range(0, itemSpawnPoints.Count);
+        int randomSpawnPointSelection = Random.Range(itemSpawnPoints.Count - 5, itemSpawnPoints.Count);
 
         int index = 0;
 

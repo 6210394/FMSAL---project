@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f8d982e0f8bcec4eb1b789fcb0de3f5, type: 3}
   m_Name: BigTreaure
   m_EditorClassIdentifier: 
-  rewardMoney: 100
+  rewardMoney: 60
   carryWeight: 3
   dropTime: 5
