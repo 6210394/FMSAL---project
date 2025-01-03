@@ -357,8 +357,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2843976701458660148}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0.00000026822087}
+  m_LocalPosition: {x: 0.084388435, y: 1, z: -0.541518}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -369,7 +369,7 @@ Transform:
   - {fileID: 7319276843232514729}
   - {fileID: 7418272510923458123}
   m_Father: {fileID: 8661229243928107996}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!95 &1926764855665930892
 Animator:
   serializedVersion: 5
@@ -608,7 +608,7 @@ MonoBehaviour:
   anim: {fileID: 0}
   rb: {fileID: 0}
   autoMove: {fileID: 0}
-  moveDebugBool: 0
+  moveDebugBool: 1
   players: []
   tiedPatrol: 1
   patrolRangeFromSpawn: 10
@@ -631,7 +631,7 @@ MonoBehaviour:
   canMove: 1
   target: {x: 0, y: 0, z: 0}
   targetObject: {fileID: 0}
-  speed: 0
+  speed: 1
   navMeshAgent: {fileID: 5868093822486605313}
   hasReachedTarget: 1
   destroyable: 0

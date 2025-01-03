@@ -9,23 +9,16 @@ public class LevelManager : MonoBehaviour
 {
     public static LevelManager instance;
 
-    public TextMeshProUGUI timerText;
-    public float timerDuration = 120f;
-    float timer;
-
     public GameObject playerPrefab;
 
     public int carryLimit = 3;
     public int currentCarry = 0;
+
+    public TextMeshProUGUI timerText;
+    public float timerDuration = 120f;
+    float timer;
     
-    /*
     public List<Transform> enemySpawnPoints;
-    */
-
-    public List<Transform> itemSpawnPoints;
-
-    public GameObject[] itemPrefabs;
-
     public Transform playerSpawnPoint;
     
     public int rewardMoney = 0;
@@ -60,54 +53,22 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    
     void InitializeLevel()
     {
         Destroy(GameObject.Find("MainCamera"));
-        /*
+        FindSpawnPoints();
+        Instantiate(playerPrefab, playerSpawnPoint.position, playerSpawnPoint.rotation).GetComponent<MeleeCombat>().enabled = true;
+        StartCoroutine(StartTimer());
+        onMissionInitialize.Invoke();
+    }    
+
+    void FindSpawnPoints()
+    {
         foreach (var spawnPoint in GameObject.FindGameObjectsWithTag("EnemySpawnPoint"))
         {
             enemySpawnPoints.Add(spawnPoint.transform);
         }
-        */
-        foreach (var spawnPoint in GameObject.FindGameObjectsWithTag("ItemSpawnPoint"))
-        {
-            itemSpawnPoints.Add(spawnPoint.transform);
-        }
         playerSpawnPoint = GameObject.FindGameObjectWithTag("PlayerSpawnPoint").transform;
-        Instantiate(playerPrefab, playerSpawnPoint.position, playerSpawnPoint.rotation).GetComponent<MeleeCombat>().enabled = true;
-        SetUpItems();
-        StartCoroutine(StartTimer());
-        onMissionInitialize.Invoke(); 
-    }
-    
-    void SetUpItems()
-    {
-        Shuffle(itemPrefabs);
-        int randomSpawnPointSelection = Random.Range(itemSpawnPoints.Count - 5, itemSpawnPoints.Count);
-
-        int index = 0;
-
-        foreach (Transform spawnPoint in itemSpawnPoints)
-        {
-            if( index <= randomSpawnPointSelection)
-            {
-                int randomItem = Random.Range(0, itemPrefabs.Length);
-                Instantiate(itemPrefabs[randomItem], spawnPoint.position, spawnPoint.rotation);
-            }
-            index++;
-        }
-    }
-
-    void Shuffle(GameObject[] array)
-    {
-        for (int i = array.Length - 1; i > 0; i--)
-        {
-            int j = Random.Range(0, i + 1);
-            GameObject temp = array[i];
-            array[i] = array[j];
-            array[j] = temp;
-        }
     }
 
     public void AddMoney(int money)
@@ -169,7 +130,6 @@ public class LevelManager : MonoBehaviour
     void TimerEnded()
     {
         Debug.Log("Time's up!");
-        FailMission();
     }
 
 

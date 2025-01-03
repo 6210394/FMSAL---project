@@ -45,7 +45,12 @@ public class AutomaticMovementScript : MonoBehaviour
         {
             navMeshAgent = GetComponent<NavMeshAgent>();
         }
+        if(speed == 0)
+        {
+            Debug.LogWarning("Speed is 0 on " + gameObject.name);
+        }
         navMeshAgent.speed = speed;
+        
     }
 
 /*

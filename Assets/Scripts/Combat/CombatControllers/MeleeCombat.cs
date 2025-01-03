@@ -24,6 +24,8 @@ public class MeleeCombat : MonoBehaviour
 
     GameObject hitBoxMemory;
 
+    Quaternion targetRotation;
+
     public void Start()
     {
         attackCooldownTimer = 0;
@@ -41,6 +43,7 @@ public class MeleeCombat : MonoBehaviour
         hitBoxMemory.GetComponent<Hitbox>().owner = gameObject;
         yield return new WaitForSeconds(animationTime);
         Destroy(hitBoxMemory);
+
         isAttacking = false;
         playerMovement.isControlled = true;
     }
@@ -50,6 +53,12 @@ public class MeleeCombat : MonoBehaviour
         if(!isAttacking && attackAvailable)
         {
             isAttacking = true;
+            
+            Transform cameraTransform = Camera.main.transform;
+            Vector3 lookDirection = cameraTransform.forward;
+            lookDirection.y = 0; // Keep the character upright
+            transform.rotation = Quaternion.LookRotation(lookDirection);
+
             StartCoroutine(AttackRoutine());
         }
     }
@@ -59,6 +68,11 @@ public class MeleeCombat : MonoBehaviour
         if (!canAttack)
         {
             return;
+        }
+        
+        if (isAttacking)
+        {
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
         }
 
         AttackCooldownCountdown();

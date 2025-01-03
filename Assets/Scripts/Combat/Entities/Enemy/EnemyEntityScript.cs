@@ -29,6 +29,7 @@ public class EnemyEntityScript : CombatEntity
         rb = GetComponent<Rigidbody>();
         autoMove = GetComponent<AutomaticMovementScript>();
         players = GameManager.instance.players;
+        
     }
 
     void Update()
