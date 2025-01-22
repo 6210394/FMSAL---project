@@ -4,9 +4,12 @@ using UnityEngine;
 
 public class EditModeScript : MonoBehaviour
 {
+    //0.1 GRID CAUSES PREVIEW TO BE SLIGHTLY ELEVATED
+
     public List<buildingObjects> objects;
     public buildingObjects currentObject;
     Vector3 currentPos;
+    Quaternion currentRot = Quaternion.identity;
 
     public Transform currentPreviewPos;
     public Transform cam;
@@ -18,6 +21,8 @@ public class EditModeScript : MonoBehaviour
     public float[] gridSizes = new float[] { 0.1f, 0.5f, 1f };
 
     public bool isBuilding = false;
+    private int currentGridSizeIndex = 0;
+
 
     void Start()
     {
@@ -33,16 +38,55 @@ public class EditModeScript : MonoBehaviour
 
     void Update()
     {
+        if(Input.GetKeyDown(KeyCode.B)) //Toggle Building Mode
+        {
+            isBuilding = !isBuilding;
+        }
+
         if(isBuilding)
         {
             startPreview();
-            if(Input.GetKeyDown(KeyCode.V))
+            if(Input.GetKeyDown(KeyCode.V)) //Cycle Through Grid Sizes
             {
-                
+                CycleGridSize();
+            }
+            if(Input.GetAxis("Mouse ScrollWheel") > 0) //Rotate Object Right
+            {
+                currentRot *= Quaternion.Euler(0, GetRotationBasedOnGridSize(), 0);
+            }
+            if(Input.GetAxis("Mouse ScrollWheel") < 0) //Rotate Object Left
+            {
+                currentRot *= Quaternion.Euler(0, -GetRotationBasedOnGridSize(), 0);
+            }
+            if(Input.GetMouseButtonDown(0)) //Place Object
+            {
+                Instantiate(currentObject.buildingObject, currentPos, currentRot);
             }
         }
+    }
 
-        
+    private void CycleGridSize()
+    {
+        currentGridSizeIndex = (currentGridSizeIndex + 1) % gridSizes.Length;
+        currentGridSize = gridSizes[currentGridSizeIndex];
+        Debug.Log("Current Grid Size: " + currentGridSize);
+    }
+    private float GetRotationBasedOnGridSize()
+    {
+        float rotationAngle = 0f;
+        switch (currentGridSize)
+        {
+            case 0.1f:
+                rotationAngle = 5f;
+                break;
+            case 0.5f:
+                rotationAngle = 15f;
+                break;
+            case 1f:
+                rotationAngle = 45f;
+                break;
+        }
+        return rotationAngle;
     }
 
     public void ChangeCurrentBuilding()
@@ -67,12 +111,13 @@ public class EditModeScript : MonoBehaviour
     {
         currentPos = hit.point;
         currentPos -= Vector3.one * offset;
+        currentPos -= currentObject.pivotPoint;
         currentPos /= currentGridSize;
         currentPos = new Vector3(Mathf.Round(currentPos.x), Mathf.Round(currentPos.y), Mathf.Round(currentPos.z));
         currentPos *= currentGridSize;
-        currentPos += Vector3.one * offset;
 
         currentPreviewPos.position = currentPos;
+        currentPreviewPos.rotation = currentRot;
     }
 }
 
@@ -80,6 +125,7 @@ public class EditModeScript : MonoBehaviour
 public class buildingObjects
 {
     public string name;
+    public Vector3 pivotPoint; //should be at the bottom middle of the model, used to spawn the model at the correct height and center
     public GameObject preview;
     public GameObject buildingObject;
 }

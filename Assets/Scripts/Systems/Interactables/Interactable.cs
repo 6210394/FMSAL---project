@@ -7,6 +7,7 @@ public class Interactable : MonoBehaviour
     //THIS SCRIPT SHOULD BE ATTACHED TO AN EMPTY OBJECT PARENTED TO THE INTERACTABLE OBJECT
     
     public float interactRadius = 3f;
+    public float interactionAngle = 360;
     public SphereCollider interactCollider;
 
     public FloatingIcons icon;
@@ -70,35 +71,35 @@ public class Interactable : MonoBehaviour
     void PlayerInRangeCheck()
     {
         if(!GameManager.instance.interactEnabled)
-    {
-        return;
-    }
-
-    if(player != null && Vector3.Distance(player.transform.position, transform.position) <= interactRadius)
-    {   
-        PlayerMovement playerMovement = player.GetComponent<PlayerMovement>();
-
-        Vector3 directionToInteractable = (transform.position - player.transform.position).normalized;
-        directionToInteractable.y = 0; // Ignore vertical component
-
-        Vector3 playerForward = playerMovement.cameraTransform.forward;
-        playerForward.y = 0; // Ignore vertical component
-
-        float angle = Vector3.Angle(playerForward, directionToInteractable);
-
-        if (angle <= 45f)
         {
-            Debug.Log("Player is looking");
-            icon.SetIconActive(true);
-            if(Input.GetKeyDown(interactKey))
+            return;
+        }
+
+        if(player != null && Vector3.Distance(player.transform.position, transform.position) <= interactRadius)
+        {   
+            PlayerMovement playerMovement = player.GetComponent<PlayerMovement>();
+
+            Vector3 directionToInteractable = (transform.position - player.transform.position).normalized;
+            directionToInteractable.y = 0; // Ignore vertical component
+
+            Vector3 playerForward = playerMovement.cameraTransform.forward;
+            playerForward.y = 0; // Ignore vertical component
+
+            float angle = Vector3.Angle(playerForward, directionToInteractable);
+
+            if (angle <= 45f)
             {
-                Interact();
+                Debug.Log("Player is looking");
+                icon.SetIconActive(true);
+                if(Input.GetKeyDown(interactKey))
+                {
+                    Interact();
+                }
+            }
+            else
+            {
+                icon.SetIconActive(false);
             }
         }
-        else
-        {
-            icon.SetIconActive(false);
-        }
-    }
     }
 }

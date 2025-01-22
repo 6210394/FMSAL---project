@@ -124,7 +124,7 @@ public class LevelManager : MonoBehaviour
 
     void UpdateTimerUI()
     {
-        timerText.text = "Time: " + Mathf.Floor(timerDuration / 60).ToString("00") + ":" + (timerDuration % 60).ToString("00");
+        timerText.text = "Cops Arrive In: " + Mathf.Floor(timerDuration / 60).ToString("00") + ":" + (timerDuration % 60).ToString("00");
     }
 
     void TimerEnded()
