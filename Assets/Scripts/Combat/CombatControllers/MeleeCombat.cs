@@ -6,7 +6,7 @@ public class MeleeCombat : MonoBehaviour
 {
     public bool canAttack = false;
 
-    PlayerMovement playerMovement;
+    PlayerController playerMovement;
     public float nudgeForce = 30f;
     RecieveImpact impact;
 
@@ -29,7 +29,7 @@ public class MeleeCombat : MonoBehaviour
     public void Start()
     {
         attackCooldownTimer = 0;
-        playerMovement = GetComponent<PlayerMovement>();
+        playerMovement = GetComponent<PlayerController>();
         impact = GetComponent<RecieveImpact>();
     }
 

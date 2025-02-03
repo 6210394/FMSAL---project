@@ -2,19 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
-    public bool isControlled = true;
-    public bool isGrounded;
-    public float gravityScale = 9.8f;
+    public MovementScript movementScript;
 
+    public bool isControlled = true;
+    
 
     public float movementSpeed =5f;
-    public float normalSpeed = 5f;
-    public float sprintSpeed = 9f;
-    public bool isMoving;
-    public bool isSprinting;
+    
 
     public float dashForce = 40f;
     
@@ -26,8 +24,6 @@ public class PlayerMovement : MonoBehaviour
     public Transform cameraTransform; 
     public Rigidbody rb;
     public Animator animator;
-
-    public CharacterController characterController;
 
     public RecieveImpact recieveImpact;
 
@@ -61,7 +57,7 @@ public class PlayerMovement : MonoBehaviour
         {   
             if(!isDashing)
             {
-                Move();
+                MovePlayer();
                 if(Input.GetMouseButton(1))
                 {
                     Vector3 direction = new Vector3(cameraTransform.forward.x, 0, cameraTransform.forward.z);
@@ -71,11 +67,6 @@ public class PlayerMovement : MonoBehaviour
             Dash();
         }
         UpdateAnimator();
-    }
-
-    void FixedUpdate()
-    {
-        ApplyGravity();
     }
 
     void Initizialize()
@@ -88,14 +79,12 @@ public class PlayerMovement : MonoBehaviour
     void UpdateAnimator()
     {
         animator.SetFloat("Speed", movementSpeed);
-        animator.SetBool("Sprinting", isSprinting);
+        animator.SetBool("Sprinting", movementScript.isSprinting);
         animator.SetBool("Dashing", isDashing);
     }
 
-    void Move()
+    void MovePlayer()
     {
-        Sprinting();
-
         Vector3 forward = cameraTransform.forward;
         forward.y = 0;
         forward.Normalize();
@@ -106,39 +95,35 @@ public class PlayerMovement : MonoBehaviour
 
         if(Input.GetAxis("Vertical") != 0 || Input.GetAxis("Horizontal") != 0)
         {
-            isMoving = true;
+            movementScript.isMoving = true;
         }
         else
         {
-            isMoving = false;
+            movementScript.isMoving = false;
             movementSpeed = 0;
         }
-        
+
+        if(Input.GetKey(KeyCode.LeftShift) && !Input.GetMouseButton(1))
+        {
+            movementScript.isSprinting = true;
+        }
+        else
+        {
+            movementScript.isSprinting = false;
+        }
+
         Vector3 moveDirection = forward * Input.GetAxis("Vertical") + right * Input.GetAxis("Horizontal");
         moveDirection = moveDirection.normalized;
-        
+
         if (moveDirection != Vector3.zero && !Input.GetMouseButton(1))
         {
             FaceTowards(moveDirection);
         }
-        
-        //transform.position += moveDirection * movementSpeed * Time.deltaTime;
-        characterController.Move(moveDirection * movementSpeed * Time.deltaTime);
+
+        movementScript.Move(moveDirection);
     }
 
-    void Sprinting()
-    {
-        if (Input.GetKey(KeyCode.LeftShift) && !Input.GetMouseButton(1)) // cant run while aiming
-        {
-            movementSpeed = sprintSpeed;
-            isSprinting = true;
-        }
-        else
-        {
-            movementSpeed = normalSpeed;
-            isSprinting = false;
-        }
-    }
+    
 
     void Dash()
     {   
@@ -149,7 +134,7 @@ public class PlayerMovement : MonoBehaviour
         Vector3 right = cameraTransform.right;
         right.y = 0;
         right.Normalize();
-        
+
 
         Vector3 dashDirection = forward * Input.GetAxis("Vertical") + right * Input.GetAxis("Horizontal");
         dashDirection = dashDirection.normalized;
@@ -186,22 +171,7 @@ public class PlayerMovement : MonoBehaviour
 
 
 
-    void ApplyGravity()
-    {
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position, Vector3.down, out hit, 0.2f))
-        {
-            isGrounded = true;
-        }
-        else
-        {
-            isGrounded = false;
-        }
-        if(!isGrounded)
-        {
-            transform.position += Vector3.down * gravityScale * Time.deltaTime;
-        }
-    }
+    
 
     void FaceTowards(Vector3 orientation)
     {

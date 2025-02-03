@@ -77,7 +77,7 @@ public class Interactable : MonoBehaviour
 
         if(player != null && Vector3.Distance(player.transform.position, transform.position) <= interactRadius)
         {   
-            PlayerMovement playerMovement = player.GetComponent<PlayerMovement>();
+            PlayerController playerMovement = player.GetComponent<PlayerController>();
 
             Vector3 directionToInteractable = (transform.position - player.transform.position).normalized;
             directionToInteractable.y = 0; // Ignore vertical component
