@@ -3,28 +3,36 @@ using UnityEngine;
 public class MovementScript : MonoBehaviour
 {
     public CharacterController characterController;
-    public float movementSpeed =5f;
+    public RecieveImpact recieveImpact;
 
+
+    //Movement variables
+    public float movementSpeed =5f;
     public bool isSprinting;
 
     public float normalSpeed = 5f;
     public float sprintSpeed = 9f;
     public bool isMoving;
 
+    //Gravity
     public bool isGrounded;
     public float gravityScale = 9.8f;
 
+    //Dashing Varaibles
+    public float dashForce = 40f;
+    
+    public float maxDashTime = 0.5f;
+    public float currentDashTime;
+    public bool isDashing;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        Initizialize();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
+        DashTimer();
     }
 
      void FixedUpdate()
@@ -32,23 +40,36 @@ public class MovementScript : MonoBehaviour
         ApplyGravity();
     }
 
-    public void Move(Vector3 moveDirection)
+    void Initizialize()
     {
-        Sprinting();
-        characterController.Move(moveDirection * movementSpeed * Time.deltaTime);
+        movementSpeed = normalSpeed;
+        characterController = GetComponent<CharacterController>();
+        recieveImpact = GetComponent<RecieveImpact>();
     }
 
-    void Sprinting()
+    public void Move(Vector3 moveDirection, bool isSprinting)
+    {
+        SprintCheckAndSpeedSetup(isSprinting);
+        if(moveDirection != Vector3.zero)
+        {
+            characterController.Move(moveDirection * movementSpeed * Time.deltaTime);
+        }
+        else
+        {
+            isMoving = false;
+            movementSpeed = 0;
+        }
+    }
+
+    void SprintCheckAndSpeedSetup(bool isSprinting)
     {
         if (isSprinting)
         {
             movementSpeed = sprintSpeed;
-            isSprinting = true;
         }
         else
         {
             movementSpeed = normalSpeed;
-            isSprinting = false;
         }
     }
 
@@ -66,6 +87,34 @@ public class MovementScript : MonoBehaviour
         if(!isGrounded)
         {
             transform.position += Vector3.down * gravityScale * Time.deltaTime;
+        }
+    }
+
+    public void Dash(Vector3 dashDirection)
+    {   
+        if (!isDashing && dashDirection != Vector3.zero)
+        {
+            isDashing = true;
+            recieveImpact.AddImpact(dashDirection, dashForce);
+        }
+    }
+
+    void DashTimer()
+    {
+        if (isDashing && currentDashTime <= 0)
+        {
+            currentDashTime = maxDashTime;
+        }
+
+        if (currentDashTime >= 0)
+        {
+            currentDashTime -= Time.deltaTime;
+            
+            if (currentDashTime <= 0)
+            {
+                currentDashTime = 0;
+                isDashing = false;
+            }
         }
     }
 }

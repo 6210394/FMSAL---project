@@ -9,25 +9,15 @@ public class PlayerController : MonoBehaviour
     public MovementScript movementScript;
 
     public bool isControlled = true;
-    
+    bool isSprintingAnim;
 
-    public float movementSpeed =5f;
-    
-
-    public float dashForce = 40f;
-    
-    public float maxDashTime = 0.5f;
-    public float currentDashTime;
-    public bool isDashing;
 
     public GameObject backupCamera;
     public Transform cameraTransform; 
     public Rigidbody rb;
     public Animator animator;
 
-    public RecieveImpact recieveImpact;
 
-    // Start is called before the first frame update
     void Awake()
     {
         Initizialize();
@@ -55,7 +45,7 @@ public class PlayerController : MonoBehaviour
     {
         if(isControlled)
         {   
-            if(!isDashing)
+            if(!movementScript.isDashing)
             {
                 MovePlayer();
                 if(Input.GetMouseButton(1))
@@ -63,8 +53,8 @@ public class PlayerController : MonoBehaviour
                     Vector3 direction = new Vector3(cameraTransform.forward.x, 0, cameraTransform.forward.z);
                     FaceTowards(direction);
                 }
+                Dash();
             }
-            Dash();
         }
         UpdateAnimator();
     }
@@ -73,18 +63,26 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         animator = GetComponentInChildren<Animator>();
-        recieveImpact = GetComponent<RecieveImpact>();
     }
 
     void UpdateAnimator()
     {
-        animator.SetFloat("Speed", movementSpeed);
-        animator.SetBool("Sprinting", movementScript.isSprinting);
-        animator.SetBool("Dashing", isDashing);
+        animator.SetFloat("Speed", movementScript.movementSpeed);
+        animator.SetBool("Sprinting", isSprintingAnim);
+        animator.SetBool("Dashing", movementScript.isDashing);
     }
 
     void MovePlayer()
     {
+        if(Input.GetKey(KeyCode.LeftShift) && !Input.GetMouseButton(1))
+        {
+            isSprintingAnim = true;
+        }
+        else
+        {
+            isSprintingAnim = false;
+        }
+
         Vector3 forward = cameraTransform.forward;
         forward.y = 0;
         forward.Normalize();
@@ -92,25 +90,7 @@ public class PlayerController : MonoBehaviour
         Vector3 right = cameraTransform.right;
         right.y = 0;
         right.Normalize();
-
-        if(Input.GetAxis("Vertical") != 0 || Input.GetAxis("Horizontal") != 0)
-        {
-            movementScript.isMoving = true;
-        }
-        else
-        {
-            movementScript.isMoving = false;
-            movementSpeed = 0;
-        }
-
-        if(Input.GetKey(KeyCode.LeftShift) && !Input.GetMouseButton(1))
-        {
-            movementScript.isSprinting = true;
-        }
-        else
-        {
-            movementScript.isSprinting = false;
-        }
+     
 
         Vector3 moveDirection = forward * Input.GetAxis("Vertical") + right * Input.GetAxis("Horizontal");
         moveDirection = moveDirection.normalized;
@@ -120,10 +100,8 @@ public class PlayerController : MonoBehaviour
             FaceTowards(moveDirection);
         }
 
-        movementScript.Move(moveDirection);
-    }
-
-    
+        movementScript.Move(moveDirection, isSprintingAnim);
+    }    
 
     void Dash()
     {   
@@ -139,39 +117,12 @@ public class PlayerController : MonoBehaviour
         Vector3 dashDirection = forward * Input.GetAxis("Vertical") + right * Input.GetAxis("Horizontal");
         dashDirection = dashDirection.normalized;
 
-        if (isDashing && currentDashTime <= 0)
+        if (Input.GetKeyDown(KeyCode.Space) && dashDirection != Vector3.zero)
         {
-            currentDashTime = maxDashTime;
-        }
-
-        if (currentDashTime >= 0)
-        {
-            currentDashTime -= Time.deltaTime;
-            
-            if (currentDashTime <= 0)
-            {
-                currentDashTime = 0;
-                isDashing = false;
-            }
-        }
-
-
-        if (!isDashing && dashDirection != Vector3.zero)
-        {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                animator.SetTrigger("DashingTrigger");
-
-                isDashing = true;
-                recieveImpact.AddImpact(dashDirection, dashForce);
-                
-            }
+            animator.SetTrigger("DashingTrigger");
+            movementScript.Dash(dashDirection);
         }
     }
-
-
-
-    
 
     void FaceTowards(Vector3 orientation)
     {
@@ -186,7 +137,4 @@ public class PlayerController : MonoBehaviour
             Debug.LogWarning("No GameManager found!!!!");
         }
     }
-
-    
-
 }
