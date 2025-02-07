@@ -57,7 +57,7 @@ public class LevelManager : MonoBehaviour
     {
         Destroy(GameObject.Find("MainCamera"));
         FindSpawnPoints();
-        Instantiate(playerPrefab, playerSpawnPoint.position, playerSpawnPoint.rotation).GetComponent<MeleeCombat>().enabled = true;
+        Instantiate(playerPrefab, playerSpawnPoint.position, playerSpawnPoint.rotation).GetComponent<CombatScript>().enabled = true;
         StartCoroutine(StartTimer());
         onMissionInitialize.Invoke();
     }    

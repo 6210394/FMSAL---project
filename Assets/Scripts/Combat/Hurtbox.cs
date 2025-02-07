@@ -5,7 +5,7 @@ using UnityEngine.AI;
 
 public class Hurtbox : MonoBehaviour
 {
-    public CombatEntity combatEntity;
+    public EnemyCombatController combatEntity;
     public bool takesKnockback = true;
     public float entityWeight = 1f;
 
@@ -21,7 +21,7 @@ public class Hurtbox : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         rb = GetComponent<Rigidbody>();
 
-        combatEntity = GetComponent<CombatEntity>();
+        combatEntity = GetComponent<EnemyCombatController>();
         if(isPlayer)
         {
             recieveImpact = GetComponent<RecieveImpact>();
@@ -35,7 +35,7 @@ public class Hurtbox : MonoBehaviour
     public void OnHit(float damage, float knockbackForce, Vector3 incomingHitDirection)
     {
         Knockback(knockbackForce, incomingHitDirection);
-        combatEntity.LoseHealth(damage);
+        //combatEntity.LoseHealth(damage);
     }
 
     void Knockback(float knockbackForce, Vector3 knockbackDirection)

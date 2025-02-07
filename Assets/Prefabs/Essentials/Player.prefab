@@ -594,13 +594,12 @@ GameObject:
   m_Component:
   - component: {fileID: 4170848390567775362}
   - component: {fileID: 4416159547452902258}
+  - component: {fileID: 6779007132249043213}
   - component: {fileID: 2716140090493698256}
-  - component: {fileID: 5751620535288312741}
   - component: {fileID: 5720523247777047060}
+  - component: {fileID: 161812321840275169}
   - component: {fileID: 1678084322987576834}
   - component: {fileID: 843584278684860}
-  - component: {fileID: 161812321840275169}
-  - component: {fileID: 6779007132249043213}
   - component: {fileID: 8507021317883215589}
   m_Layer: 0
   m_Name: Player
@@ -655,6 +654,34 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 2
+--- !u!114 &6779007132249043213
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6739474880526340487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab3ccdd6d5ed6b149958122680c79883, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movementScript: {fileID: 161812321840275169}
+  isControlled: 1
+  isInCombat: 0
+  lockOnMode: 0
+  softLockTarget: {fileID: 0}
+  softLockOnLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  softLockDistance: 10
+  softLockAngle: 80
+  playerRotationSpeed: 5
+  backupCamera: {fileID: 2576606312467759291, guid: 482ebfd14f899b1498c9b150b938468f, type: 3}
+  playerCamera: {fileID: 0}
+  cameraTransform: {fileID: 0}
+  rb: {fileID: 4416159547452902258}
+  animator: {fileID: 0}
 --- !u!114 &2716140090493698256
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -667,23 +694,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d30f809d721c03946af54a024340f58f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &5751620535288312741
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6739474880526340487}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 04094a68ccc689d4790d7fd81727a969, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  canShoot: 0
-  heldGunDamage: 1
-  reticleOffset: {x: 0, y: 0, z: 0}
-  bulletVisualsPrefab: {fileID: 784678390884737661, guid: 979cf8a7666ee2646b6697967d46dbad, type: 3}
-  spawnOriginOffset: {fileID: 4578630470139458280}
 --- !u!114 &5720523247777047060
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -701,8 +711,36 @@ MonoBehaviour:
   animationTime: 0.1
   attackDamage: 1
   attackCooldown: 0.3
-  attackPoint: {x: 0, y: 1, z: 2}
   hitBoxPrefab: {fileID: 7299048808960947322, guid: a07f8d821ee19774aae0e4d3c21646cf, type: 3}
+  canShoot: 0
+  reticleOffset: {x: 0, y: 0, z: 0}
+  bulletVisualsPrefab: {fileID: 0}
+  spawnOriginOffset: {fileID: 0}
+--- !u!114 &161812321840275169
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6739474880526340487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb8c1ecde760f724d84c6cc327db1ae2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  characterController: {fileID: 8507021317883215589}
+  recieveImpact: {fileID: 0}
+  movementSpeed: 5
+  isSprinting: 0
+  normalSpeed: 5
+  sprintSpeed: 9
+  isMoving: 0
+  isGrounded: 0
+  gravityScale: 9.8
+  dashForce: 40
+  maxDashTime: 0.5
+  currentDashTime: 0
+  isDashing: 0
 --- !u!114 &1678084322987576834
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -733,49 +771,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterMass: 1
---- !u!114 &161812321840275169
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6739474880526340487}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fb8c1ecde760f724d84c6cc327db1ae2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  characterController: {fileID: 8507021317883215589}
-  movementSpeed: 5
-  isSprinting: 0
-  normalSpeed: 5
-  sprintSpeed: 9
-  isMoving: 0
-  isGrounded: 0
-  gravityScale: 9.8
-  dashForce: 40
-  maxDashTime: 0.5
-  currentDashTime: 0
-  isDashing: 0
---- !u!114 &6779007132249043213
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6739474880526340487}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ab3ccdd6d5ed6b149958122680c79883, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  movementScript: {fileID: 161812321840275169}
-  isControlled: 1
-  backupCamera: {fileID: 8521953825973289847, guid: 0f26102b0e50e7849930cb2b9a086604, type: 3}
-  cameraTransform: {fileID: 0}
-  rb: {fileID: 4416159547452902258}
-  animator: {fileID: 0}
-  recieveImpact: {fileID: 0}
 --- !u!143 &8507021317883215589
 CharacterController:
   m_ObjectHideFlags: 0
