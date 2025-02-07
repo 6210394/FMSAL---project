@@ -714,6 +714,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 161812321840275169, guid: 40c565ee377da1b40beae600764c177d, type: 3}
+      propertyPath: dashTime
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 161812321840275169, guid: 40c565ee377da1b40beae600764c177d, type: 3}
+      propertyPath: offsetDistance
+      value: 0.85
+      objectReference: {fileID: 0}
     - target: {fileID: 4170848390567775362, guid: 40c565ee377da1b40beae600764c177d, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.04
@@ -846,7 +854,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97be122e5f6df464d8c8ef27e1cd7a73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementScript: {fileID: 0}
+  movementScript: {fileID: 1713324793}
   combatScript: {fileID: 1713324785}
   lockedTarget: {fileID: 0}
   OnPunch:
@@ -857,6 +865,17 @@ MonoBehaviour:
       m_Calls: []
   punchRange: 6
   punchDuration: 0.5
+--- !u!114 &1713324793 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 161812321840275169, guid: 40c565ee377da1b40beae600764c177d, type: 3}
+  m_PrefabInstance: {fileID: 1713324778}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1713324779}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb8c1ecde760f724d84c6cc327db1ae2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1792384523
 PrefabInstance:
   m_ObjectHideFlags: 0

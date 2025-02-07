@@ -11,20 +11,22 @@ public class MovementScript : MonoBehaviour
     public float movementSpeed =5f;
     public bool isSprinting;
 
-    public float normalSpeed = 5f;
-    public float sprintSpeed = 9f;
+    float normalSpeed = 5f;
+    float sprintSpeed = 9f;
     public bool isMoving;
 
     //Gravity
     public bool isGrounded;
-    public float gravityScale = 9.8f;
+    float gravityScale = 9.8f;
 
     //Dashing Varaibles
-    public float dashForce = 40f;
+    public float dashTime = 40f;
     
     public float maxDashTime = 0.5f;
-    public float currentDashTime;
+    float currentDashTime;
     public bool isDashing;
+
+    public float offsetDistance = 2f;
 
     void Start()
     {
@@ -45,7 +47,6 @@ public class MovementScript : MonoBehaviour
     {
         movementSpeed = normalSpeed;
         characterController = GetComponent<CharacterController>();
-        recieveImpact = GetComponent<RecieveImpact>();
     }
 
     public void Move(Vector3 moveDirection, bool isSprinting)
@@ -69,9 +70,10 @@ public class MovementScript : MonoBehaviour
     }
     Vector3 TargetOffset(Transform target)
     {
+        Debug.Log("Target Offset");
         Vector3 position;
         position = target.position;
-        return Vector3.MoveTowards(position, transform.position, .95f);
+        return Vector3.MoveTowards(position, transform.position, offsetDistance);
     }
 
     void SprintCheckAndSpeedSetup(bool isSprinting)
@@ -107,8 +109,9 @@ public class MovementScript : MonoBehaviour
     {   
         if (!isDashing && dashDirection != Vector3.zero)
         {
+            dashDirection.y = 0;
             isDashing = true;
-            recieveImpact.AddImpact(dashDirection, dashForce);
+            transform.DOMove(dashDirection, dashTime);
         }
     }
 

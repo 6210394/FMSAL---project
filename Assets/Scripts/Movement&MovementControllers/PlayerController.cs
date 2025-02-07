@@ -51,6 +51,8 @@ public class PlayerController : MonoBehaviour
             playerCamera = Instantiate(backupCamera, transform.position, Quaternion.identity).GetComponent<CinemachineCamera>();
             cameraTransform = playerCamera.transform;
         }
+
+        movementScript = GetComponent<MovementScript>();
     }
 
     // Update is called once per frame
@@ -133,7 +135,7 @@ public class PlayerController : MonoBehaviour
         Vector3 dashDirection = forward * Input.GetAxis("Vertical") + right * Input.GetAxis("Horizontal");
         dashDirection = dashDirection.normalized;
 
-        if (Input.GetKeyDown(KeyCode.Space) && dashDirection != Vector3.zero)
+        if (Input.GetKeyDown(KeyCode.LeftAlt) && dashDirection != Vector3.zero)
         {
             animator.SetTrigger("DashingTrigger");
             movementScript.Dash(dashDirection);

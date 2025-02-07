@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class CombatScript : MonoBehaviour
 {
+    public PlayerController playerController;
     public Animator animator;
 
     public enum AttackType
@@ -50,6 +51,10 @@ public class CombatScript : MonoBehaviour
 
     public IEnumerator IPunch()
     {
+        if(playerController != null)
+        {
+            playerController.isControlled = false;
+        }
         isAttacking = true;
 
         //take control away from the player/enemy that is trying to move
@@ -57,17 +62,16 @@ public class CombatScript : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
 
         isAttacking = false;
+        if(playerController != null)
+        {
+            playerController.isControlled = true;
+        }
         //give control back to the player/enemy that is trying to move
     }
 
     void Update()
     {
-        AttackCooldownCountdown();
-
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            AttackCancel();
-        }
+        AttackCooldownCountdown();      
     }
 
     public void AttackCancel()
@@ -99,7 +103,7 @@ public class CombatScript : MonoBehaviour
 
     public void NudgeEntity()
     {
-         impact.AddImpact(transform.forward, nudgeForce);
+        transform.DOMove(transform.forward, nudgeForce);
     }
 
     public void Shoot()

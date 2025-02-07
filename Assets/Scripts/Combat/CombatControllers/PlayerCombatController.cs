@@ -33,14 +33,19 @@ public class PlayerCombatController : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Mouse0))
         {
-            Punch(punchRange);
+            PlayerPunch(punchRange);
+        }
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            combatScript.AttackCancel();
         }
     }
 
-    void Punch(float range)
+    void PlayerPunch(float range)
     {
         if(!combatScript.canAttack || combatScript.isAttacking || combatScript.isAttacking)
         {
+            Debug.Log("Can't attack");
             return;
         }
         combatScript.Attack(CombatScript.AttackType.Punch);
@@ -51,7 +56,7 @@ public class PlayerCombatController : MonoBehaviour
             transform.DOLookAt(lockedTarget.transform.position, punchDuration);
             if(TargetDistance(lockedTarget) < range)
             {
-                transform.DOMove(lockedTarget.transform.position, punchDuration);
+                movementScript.MoveTowardsTarget(lockedTarget, punchDuration);
                 OnPunch.Invoke(lockedTarget);
             }
         }
