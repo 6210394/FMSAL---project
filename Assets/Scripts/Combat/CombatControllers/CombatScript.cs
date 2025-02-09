@@ -44,8 +44,15 @@ public class CombatScript : MonoBehaviour
         switch(attackType)
         {
             case AttackType.Punch:
-            StartCoroutine(IPunch());
-            break;
+            {
+                StartCoroutine(IPunch());
+                break;
+            }
+            case AttackType.Shoot:
+            {
+                StartCoroutine(IShoot());
+                break;
+            }
         }
     }
 
@@ -57,8 +64,26 @@ public class CombatScript : MonoBehaviour
         }
         isAttacking = true;
 
-        //take control away from the player/enemy that is trying to move
         animator.SetTrigger("Punch");
+        yield return new WaitForSeconds(0.5f);
+        
+        isAttacking = false;
+
+        if(playerController != null)
+        {
+            playerController.isControlled = true;
+        }
+    }
+
+    public IEnumerator IShoot()
+    {
+        if(playerController != null)
+        {
+            playerController.isControlled = false;
+        }
+        isAttacking = true;
+
+        animator.SetTrigger("Shoot");
         yield return new WaitForSeconds(0.5f);
 
         isAttacking = false;
@@ -66,7 +91,6 @@ public class CombatScript : MonoBehaviour
         {
             playerController.isControlled = true;
         }
-        //give control back to the player/enemy that is trying to move
     }
 
     void Update()

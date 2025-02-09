@@ -49,8 +49,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Priority:
-    Enabled: 0
-    m_Value: 0
+    Enabled: 1
+    m_Value: 1
   OutputChannel: 1
   StandbyUpdate: 2
   m_StreamingVersion: 20241001
@@ -91,11 +91,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b5d7c088409d9a40b7b09aa707777f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TargetOffset: {x: 0.5, y: 0.78, z: 0.29}
+  TargetOffset: {x: 0.5, y: 0.35, z: 0}
   TrackerSettings:
-    BindingMode: 4
+    BindingMode: 0
     PositionDamping: {x: 0, y: 0, z: 0}
-    AngularDampingMode: 0
+    AngularDampingMode: 1
     RotationDamping: {x: 1, y: 1, z: 1}
     QuaternionDamping: 1
   OrbitStyle: 0
@@ -111,7 +111,7 @@ MonoBehaviour:
       Radius: 2.5
       Height: 0.1
     SplineCurvature: 0.5
-  RecenteringTarget: 2
+  RecenteringTarget: 0
   HorizontalAxis:
     Value: 0
     Center: 0
@@ -119,17 +119,17 @@ MonoBehaviour:
     Wrap: 1
     Recentering:
       Enabled: 0
-      Wait: 1
+      Wait: 2
       Time: 2
     Restrictions: 0
   VerticalAxis:
-    Value: 33.3
+    Value: 24.4
     Center: 24.4
     Range: {x: -10, y: 45}
     Wrap: 0
     Recentering:
       Enabled: 0
-      Wait: 1
+      Wait: 2
       Time: 2
     Restrictions: 0
   RadialAxis:
@@ -139,7 +139,7 @@ MonoBehaviour:
     Wrap: 0
     Recentering:
       Enabled: 0
-      Wait: 1
+      Wait: 2
       Time: 2
     Restrictions: 0
 --- !u!114 &1052056316630332212
@@ -155,17 +155,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Composition:
-    ScreenPosition: {x: 0, y: 0}
+    ScreenPosition: {x: -0.00017416477, y: 0.000000059604645}
     DeadZone:
-      Enabled: 0
-      Size: {x: 0.2, y: 0.2}
+      Enabled: 1
+      Size: {x: 0, y: 0}
     HardLimits:
-      Enabled: 0
-      Size: {x: 0.8, y: 0.8}
+      Enabled: 1
+      Size: {x: 0.09374731, y: 0.16049427}
       Offset: {x: 0, y: 0}
   CenterOnActivate: 1
   TargetOffset: {x: 0.5, y: 1.76, z: 0}
-  Damping: {x: 0, y: 0}
+  Damping: {x: 1, y: 1}
   Lookahead:
     Enabled: 0
     Time: 0
