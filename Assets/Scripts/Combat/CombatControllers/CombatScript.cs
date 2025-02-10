@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class CombatScript : MonoBehaviour
 {
-    public PlayerController playerController;
+    private PlayerController playerController;
     public Animator animator;
 
     public enum AttackType
@@ -16,7 +16,6 @@ public class CombatScript : MonoBehaviour
     public bool canAttack = false; //debug variable
 
     public float nudgeForce = 30f;
-    RecieveImpact impact;
 
     bool attackAvailable = true;
     public int attackDamage = 1;
@@ -35,6 +34,7 @@ public class CombatScript : MonoBehaviour
     public void Start()
     {
         attackCooldownTimer = 0;
+        playerController = GetComponent<PlayerController>();
         animator = GetComponentInChildren<Animator>();
     }
 
@@ -64,6 +64,7 @@ public class CombatScript : MonoBehaviour
         }
         isAttacking = true;
 
+        Debug.Log("Punch");
         animator.SetTrigger("Punch");
         yield return new WaitForSeconds(0.5f);
         
@@ -84,6 +85,7 @@ public class CombatScript : MonoBehaviour
         isAttacking = true;
 
         animator.SetTrigger("Shoot");
+        Debug.Log("Shoot");
         yield return new WaitForSeconds(0.5f);
 
         isAttacking = false;

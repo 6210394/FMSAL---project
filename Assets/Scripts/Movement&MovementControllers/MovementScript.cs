@@ -3,9 +3,7 @@ using DG.Tweening;
 
 public class MovementScript : MonoBehaviour
 {
-    public CharacterController characterController;
-    public RecieveImpact recieveImpact;
-
+    private CharacterController characterController;
 
     //Movement variables
     public float movementSpeed =5f;
@@ -26,7 +24,7 @@ public class MovementScript : MonoBehaviour
     float currentDashTime;
     public bool isDashing;
 
-    public float offsetDistance = 2f;
+    public float offsetDistanceToTarget = 2f;
 
     void Start()
     {
@@ -66,9 +64,9 @@ public class MovementScript : MonoBehaviour
     public void MoveTowardsTarget(EnemyScript target, float duration)
     {
         transform.DOLookAt(target.transform.position, .2f);
-        transform.DOMove(TargetOffset(target.transform), duration);
+        transform.DOMove(TargetOffset(target.transform, offsetDistanceToTarget), duration);
     }
-    Vector3 TargetOffset(Transform target)
+    Vector3 TargetOffset(Transform target, float offsetDistance)
     {
         Debug.Log("Target Offset");
         Vector3 position;

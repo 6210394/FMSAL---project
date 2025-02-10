@@ -22,7 +22,7 @@ public class PlayerController : MonoBehaviour
     public float playerRotationSpeed = 5f;
 
     public GameObject backupCamera;
-    public CinemachineCamera playerCamera;
+    public CinemachineBrain cinemachineBrain;
     public Transform cameraTransform; 
     public Rigidbody rb;
     public Animator animator;
@@ -37,27 +37,13 @@ public class PlayerController : MonoBehaviour
     {
         //characterController = GetComponent<CharacterController>();
         DebugTools();
-
-        if(GameObject.FindGameObjectWithTag("PlayerCamera"))
-        {
-            playerCamera = GameObject.FindGameObjectWithTag("PlayerCamera").GetComponent<CinemachineCamera>();
-            cameraTransform = playerCamera.transform;
-        }
-        else
-        {
-            Debug.LogWarning("No camera found, creating backup camera");
-            backupCamera.GetComponent<CinemachineCamera>().LookAt = transform;
-            backupCamera.GetComponent<CinemachineCamera>().Follow = transform;
-            playerCamera = Instantiate(backupCamera, transform.position, Quaternion.identity).GetComponent<CinemachineCamera>();
-            cameraTransform = playerCamera.transform;
-        }
-
         movementScript = GetComponent<MovementScript>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        cameraTransform = Camera.main.transform;
         if(isControlled)
         {   
             if(!movementScript.isDashing)
@@ -140,12 +126,6 @@ public class PlayerController : MonoBehaviour
             animator.SetTrigger("DashingTrigger");
             movementScript.Dash(dashDirection);
         }
-    }
-    
-
-    void LookAtTarget(GameObject target)
-    {
-        playerCamera.LookAt = target.transform;
     }
 
 

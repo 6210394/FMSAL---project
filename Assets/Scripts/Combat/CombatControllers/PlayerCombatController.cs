@@ -8,11 +8,12 @@ using Unity.Cinemachine;
 [RequireComponent(typeof(PlayerController))]
 public class PlayerCombatController : MonoBehaviour
 {
-    public MovementScript movementScript;
-    public CombatScript combatScript;
+    private MovementScript movementScript;
+    private PlayerController playerController;
+    private CombatScript combatScript;
 
-    public CinemachineCamera playerCamera;
-    public CinemachineCamera aimCamera;
+    private CinemachineCamera playerCamera;
+    private CinemachineCamera aimCamera;
 
     public EnemyScript lockedTarget;
 
@@ -32,6 +33,12 @@ public class PlayerCombatController : MonoBehaviour
     void Start()
     {
         enemyDetection = GetComponent<EnemyDetection>();
+        combatScript = GetComponent<CombatScript>();
+        movementScript = GetComponent<MovementScript>();
+        playerController = GetComponent<PlayerController>();
+
+        playerCamera = GameObject.Find("PlayerCamera").GetComponent<CinemachineCamera>();
+        aimCamera = GameObject.Find("ThirdPersonAimCamera").GetComponent<CinemachineCamera>();
     }
 
     // Update is called once per frame
@@ -56,6 +63,8 @@ public class PlayerCombatController : MonoBehaviour
         {
             isAiming = false;
             combatScript.animator.SetBool("isAiming", false);
+            playerCamera.enabled = true;
+            aimCamera.enabled = false;
         }
         if(Input.GetKeyDown(KeyCode.Space))
         {
@@ -70,6 +79,7 @@ public class PlayerCombatController : MonoBehaviour
             Debug.Log("Can't attack");
             return;
         }
+        
         lockedTarget = enemyDetection.CurrentTarget();
         combatScript.Attack(CombatScript.AttackType.Punch);
         if(lockedTarget != null)
@@ -102,7 +112,10 @@ public class PlayerCombatController : MonoBehaviour
     void PlayerAim()
     {
         isAiming = true;
+        combatScript.animator.SetTrigger("enterAim");
         combatScript.animator.SetBool("isAiming", true);
+        playerCamera.enabled = false;
+        aimCamera.enabled = true;
     }
 
     public void DamageEvent()
