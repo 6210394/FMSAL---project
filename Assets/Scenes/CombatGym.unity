@@ -639,6 +639,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 161812321840275169, guid: 40c565ee377da1b40beae600764c177d, type: 3}
+      propertyPath: offsetDistanceToTarget
+      value: 0.9
+      objectReference: {fileID: 0}
     - target: {fileID: 1102951906637046753, guid: 40c565ee377da1b40beae600764c177d, type: 3}
       propertyPath: aimCamera
       value: 
@@ -649,7 +653,7 @@ PrefabInstance:
       objectReference: {fileID: 313159615}
     - target: {fileID: 1102951906637046753, guid: 40c565ee377da1b40beae600764c177d, type: 3}
       propertyPath: punchDuration
-      value: 1
+      value: 0.58
       objectReference: {fileID: 0}
     - target: {fileID: 1503213206663459014, guid: 40c565ee377da1b40beae600764c177d, type: 3}
       propertyPath: cam

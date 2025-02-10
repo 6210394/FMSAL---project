@@ -10,14 +10,14 @@ public class CombatScript : MonoBehaviour
 
     public enum AttackType
     {
-        Punch, HeavyPunch, Shoot
+        Melee, HeavyMelee, Shoot
     }
 
     public bool canAttack = false; //debug variable
 
     public float nudgeForce = 30f;
 
-    bool attackAvailable = true;
+    public bool attackAvailable = true;
     public int attackDamage = 1;
     public float attackCooldown = 0.5f;
     float attackCooldownTimer = 0f;
@@ -39,13 +39,14 @@ public class CombatScript : MonoBehaviour
     }
 
     
-    public void Attack(AttackType attackType)
+    public void Attack(AttackType attackType, float specificAttackCooldown)
     {
+        attackCooldown = specificAttackCooldown;
         switch(attackType)
         {
-            case AttackType.Punch:
+            case AttackType.Melee:
             {
-                StartCoroutine(IPunch());
+                StartCoroutine(IMelee());
                 break;
             }
             case AttackType.Shoot:
@@ -56,7 +57,7 @@ public class CombatScript : MonoBehaviour
         }
     }
 
-    public IEnumerator IPunch()
+    public IEnumerator IMelee()
     {
         if(playerController != null)
         {
@@ -66,7 +67,7 @@ public class CombatScript : MonoBehaviour
 
         Debug.Log("Punch");
         animator.SetTrigger("Punch");
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(attackCooldown);
         
         isAttacking = false;
 
@@ -86,7 +87,7 @@ public class CombatScript : MonoBehaviour
 
         animator.SetTrigger("Shoot");
         Debug.Log("Shoot");
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(attackCooldown);
 
         isAttacking = false;
         if(playerController != null)
@@ -104,6 +105,11 @@ public class CombatScript : MonoBehaviour
     {
         StopAllCoroutines();
         isAttacking = false;
+        attackAvailable = true;
+        if(playerController != null)
+        {
+            playerController.isControlled = true;
+        }
         //give control back to the player/enemy that is trying to move
     }
 

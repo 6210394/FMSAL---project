@@ -13,6 +13,8 @@ public class EnemyDetection : MonoBehaviour
 
     public GameObject cam;
 
+    public bool isLockedOn = false;
+
     private void Start()
     {
         combatScript = GetComponentInParent<CombatScript>();
@@ -20,6 +22,11 @@ public class EnemyDetection : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            LockOnAndOff();
+        }
+
         var camera = Camera.main;
         var forward = camera.transform.forward;
         var right = camera.transform.right;
@@ -35,13 +42,26 @@ public class EnemyDetection : MonoBehaviour
 
         RaycastHit info;
 
-        if (Physics.SphereCast(transform.position, 3f, inputDirection, out info, 10,layerMask))
+        if (isLockedOn) 
         {
-            if(info.collider.transform.GetComponent<EnemyScript>().IsAttackable())
+            if (Physics.SphereCast(transform.position, 3f, inputDirection, out info, 10,layerMask))
+            {
+                if(info.collider.transform.GetComponent<EnemyScript>().IsAttackable())
                 currentTarget = info.collider.transform.GetComponent<EnemyScript>();
+            }
         }
+        else 
+        {
+            currentTarget = null;
+        }
+
     }
 
+
+    public void LockOnAndOff()
+    {
+        isLockedOn = !isLockedOn; 
+    }
     public EnemyScript CurrentTarget()
     {
         return currentTarget;

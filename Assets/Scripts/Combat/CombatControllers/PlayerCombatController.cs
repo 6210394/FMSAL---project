@@ -52,7 +52,7 @@ public class PlayerCombatController : MonoBehaviour
             }
             else
             {
-                PlayerPunch(punchRange);
+                PlayerMelee(punchRange);
             }
         }
         if(Input.GetKeyDown(KeyCode.Mouse1))
@@ -72,16 +72,16 @@ public class PlayerCombatController : MonoBehaviour
         }
     }
 
-    void PlayerPunch(float range)
+    void PlayerMelee(float range)
     {
-        if(!combatScript.canAttack || combatScript.isAttacking || combatScript.isAttacking)
+        if(!combatScript.attackAvailable || !combatScript.canAttack)
         {
             Debug.Log("Can't attack");
             return;
         }
         
         lockedTarget = enemyDetection.CurrentTarget();
-        combatScript.Attack(CombatScript.AttackType.Punch);
+        combatScript.Attack(CombatScript.AttackType.Melee, punchDuration); //to change later when we have more weapons
         if(lockedTarget != null)
         {
             Debug.Log("Punching");
@@ -105,7 +105,7 @@ public class PlayerCombatController : MonoBehaviour
         {
             transform.DOLookAt(lockedTarget.transform.position, punchDuration);
         }
-        combatScript.Attack(CombatScript.AttackType.Shoot);
+        combatScript.Attack(CombatScript.AttackType.Shoot, 0.2f); //change later to be a variable for different guns
 
     }
 

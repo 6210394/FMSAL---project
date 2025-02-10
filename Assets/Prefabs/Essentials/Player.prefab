@@ -600,8 +600,6 @@ GameObject:
   - component: {fileID: 5720523247777047060}
   - component: {fileID: 1503213206663459014}
   - component: {fileID: 161812321840275169}
-  - component: {fileID: 1678084322987576834}
-  - component: {fileID: 843584278684860}
   - component: {fileID: 8507021317883215589}
   m_Layer: 0
   m_Name: Player
@@ -692,10 +690,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97be122e5f6df464d8c8ef27e1cd7a73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementScript: {fileID: 161812321840275169}
-  combatScript: {fileID: 5720523247777047060}
-  playerCamera: {fileID: 0}
-  aimCamera: {fileID: 0}
   lockedTarget: {fileID: 0}
   OnPunch:
     m_PersistentCalls:
@@ -729,10 +723,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a8ef733ed8e0dc41a1a6b672435519d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerController: {fileID: 0}
   animator: {fileID: 0}
   canAttack: 1
   nudgeForce: 9.87
+  attackAvailable: 1
   attackDamage: 1
   attackCooldown: 0.3
   isAttacking: 0
@@ -771,8 +765,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb8c1ecde760f724d84c6cc327db1ae2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterController: {fileID: 8507021317883215589}
-  recieveImpact: {fileID: 0}
   movementSpeed: 5
   isSprinting: 0
   isMoving: 0
@@ -780,37 +772,7 @@ MonoBehaviour:
   dashTime: 1
   maxDashTime: 0.5
   isDashing: 0
-  offsetDistance: 0.85
---- !u!114 &1678084322987576834
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6739474880526340487}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a3bcab46d48797f4f89fb41b4c7c1963, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  combatEntity: {fileID: 0}
-  takesKnockback: 1
-  entityWeight: 1
-  isPlayer: 1
-  recieveImpact: {fileID: 843584278684860}
---- !u!114 &843584278684860
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6739474880526340487}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 75ba9f7a94e019c4b931399916e9175f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  characterMass: 1
+  offsetDistanceToTarget: 2
 --- !u!143 &8507021317883215589
 CharacterController:
   m_ObjectHideFlags: 0

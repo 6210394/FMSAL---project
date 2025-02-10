@@ -61,10 +61,12 @@ public class MovementScript : MonoBehaviour
         }
     }
 
-    public void MoveTowardsTarget(EnemyScript target, float duration)
+    public void MoveTowardsTarget(EnemyScript target, float baseDuration)
     {
         transform.DOLookAt(target.transform.position, .2f);
-        transform.DOMove(TargetOffset(target.transform, offsetDistanceToTarget), duration);
+        Vector3 targetPosition = TargetOffset(target.transform, offsetDistanceToTarget);
+        transform.DOMove(targetPosition, baseDuration); 
+        
     }
     Vector3 TargetOffset(Transform target, float offsetDistance)
     {
