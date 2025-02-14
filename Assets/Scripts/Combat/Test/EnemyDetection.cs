@@ -7,13 +7,14 @@ public class EnemyDetection : MonoBehaviour
     private CombatScript combatScript;
 
     public LayerMask layerMask;
+    public float autoLockOnRange = 10f; //THIS NEEDS TO BE CHANGED BASED ON THE WEAPON'S RANGE
 
     [SerializeField] Vector3 inputDirection;
     [SerializeField] private EnemyScript currentTarget;
 
     public GameObject cam;
 
-    public bool isLockedOn = false;
+    public bool isLockedOn = true;
 
     private void Start()
     {
@@ -44,7 +45,7 @@ public class EnemyDetection : MonoBehaviour
 
         if (isLockedOn) 
         {
-            if (Physics.SphereCast(transform.position, 3f, inputDirection, out info, 10,layerMask))
+            if (Physics.SphereCast(transform.position, 3f, inputDirection, out info, autoLockOnRange, layerMask))
             {
                 if(info.collider.transform.GetComponent<EnemyScript>().IsAttackable())
                 currentTarget = info.collider.transform.GetComponent<EnemyScript>();
@@ -54,7 +55,6 @@ public class EnemyDetection : MonoBehaviour
         {
             currentTarget = null;
         }
-
     }
 
 
@@ -62,6 +62,7 @@ public class EnemyDetection : MonoBehaviour
     {
         isLockedOn = !isLockedOn; 
     }
+
     public EnemyScript CurrentTarget()
     {
         return currentTarget;

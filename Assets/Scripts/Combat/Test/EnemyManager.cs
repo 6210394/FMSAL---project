@@ -27,6 +27,11 @@ public class EnemyManager : MonoBehaviour
         //StartAI();
     }
 
+    public void InitializeEnemies()
+    {
+        
+    }
+
     public void StartAI()
     {
         AI_Loop_Coroutine = StartCoroutine(AI_Loop(null));

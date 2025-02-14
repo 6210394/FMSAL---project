@@ -4,10 +4,13 @@ using UnityEngine;
 
 public class EnemyCombatController : MonoBehaviour
 {
-    public Animator anim;
-    public Rigidbody rb;
+    Animator anim;
+    private Rigidbody rb;
 
-    public AutomaticMovementScript autoMove;
+    private EnemyScript enemyScript;
+    private EnemyManager enemyManager;
+    private EnemyDetection enemyDetection;
+    private MovementScript movementScript;
 
     public bool moveDebugBool = false;
     public List<GameObject> players = new List<GameObject>();
@@ -15,59 +18,68 @@ public class EnemyCombatController : MonoBehaviour
 
     [Tooltip ("If true, the enemy will patrol around its spawn point. Otherwise, it will wander freely.")]
     public bool tiedPatrol = true;
+    Vector3 spawnPoint;
     public float patrolRangeFromSpawn = 10f;
 
     public float detectionRange = 15f;
     public float fieldOfViewAngle = -135f;
-    public bool hasTarget = false;
 
     public float deathTime = 1f;
 
+    [Header("Stats")]
+    public int health = 3;
+    private float moveSpeed = 1;
+    private Vector3 moveDirection;
+
+    [Header("States")]
+    [SerializeField] private bool isPreparingAttack;
+    [SerializeField] private bool isMoving;
+    [SerializeField] private bool isRetreating;
+    [SerializeField] private bool isLockedTarget;
+    [SerializeField] private bool isStunned;
+    [SerializeField] private bool isWaiting = true;
+
+    public enum BehaviorState
+    {
+        Patrol,
+        Fighting,
+        Searching
+    }
+
+    public BehaviorState currentState = BehaviorState.Patrol;
+
     void Start()
     {
-        anim = GetComponentInChildren<Animator>();
-        rb = GetComponent<Rigidbody>();
-        autoMove = GetComponent<AutomaticMovementScript>();
-        players = GameManager.instance.players;
-        
+       Initialize();
+       GameManager.onPlayersListed.AddListener(UpdatePlayerList);
     }
 
     void Update()
     {
-        if(moveDebugBool)
-        {
-            if(autoMove.canMove)
-            {
-                autoMove.MoveWithNavMesh(players[0].transform.position);
-            }
-        }
-        if(!hasTarget)
-        {
-            Debug.Log("No target");
-            foreach (GameObject player in players)
-            {
-                if (IsPlayerInDetectionRange(player.transform) && IsPlayerInFront(player.transform))
-                {
-                    LockOnToPlayer(player.transform);
-                    hasTarget = true;
-                    return;
-                }
-            }
-        }
-        else
-        {
-            if(IsPlayerInDetectionRange(autoMove.targetObject.transform) && IsPlayerInFront(autoMove.targetObject.transform))
-            {
-                LockOnToPlayer(autoMove.targetObject.transform);
-            }
-            else
-            {
-                hasTarget = false;
-            }
-        }
         
     }
-    
+
+    void Initialize()
+    {
+        anim = GetComponentInChildren<Animator>();
+        rb = GetComponent<Rigidbody>();
+
+        enemyScript = GetComponent<EnemyScript>();
+        movementScript = GetComponent<MovementScript>();
+        players = GameManager.instance.players;
+        spawnPoint = transform.position;
+    }
+
+    void UpdatePlayerList()
+    {
+        foreach(GameObject player in players)
+        {
+            PlayerCombatController playerCombat = player.GetComponent<PlayerCombatController>();
+            Debug.Log("Adding " + player + " OnHit");
+            playerCombat.OnHit.AddListener((x, y) => OnTakeHit(x, y));
+        }
+    }
+
     bool IsPlayerInDetectionRange(Transform playerPosition)
     {   
         return Vector3.Distance(transform.position, playerPosition.position) <= detectionRange;
@@ -80,26 +92,59 @@ public class EnemyCombatController : MonoBehaviour
         return angle <= fieldOfViewAngle / 2;
     }
 
-    void LockOnToPlayer(Transform player)
+    public void Patrol()
     {
-        autoMove.targetObject = player.gameObject;
-        autoMove.MoveWithNavMesh(autoMove.targetObject.transform.position);
+        
     }
 
-/*
-    public override void LoseHealth(float amount)
+    public void OnTakeHit(int damageReceived, EnemyScript target)
     {
-        base.LoseHealth(amount);
-        anim.SetTrigger("TakeDamage");
+        if(target == enemyScript)
+        {
+            Debug.Log("Took Damage");
+            StopEnemyCoroutines();
+
+            anim.SetTrigger("RecieveHit");
+            movementScript.KnockBack(0.3f, 0.1f);
+
+            health -= damageReceived;
+
+            if(health <= 0)
+            {
+                Die();
+            }
+        }
+        else
+        {
+            Debug.Log(name + ": I wasnt the target");
+        }
     }
 
-    public override void Die()
+    void StopEnemyCoroutines()
     {
-        rb.constraints = RigidbodyConstraints.None; //fun basic ragdoll
-        Destroy(gameObject, deathTime);
+        
     }
 
-*/
+    void Die()
+    {
+        
+    }
+
+
+    /*
+        public override void LoseHealth(float amount)
+        {
+            base.LoseHealth(amount);
+            anim.SetTrigger("TakeDamage");
+        }
+
+        public override void Die()
+        {
+            rb.constraints = RigidbodyConstraints.None; //fun basic ragdoll
+            Destroy(gameObject, deathTime);
+        }
+
+    */
     public void OnDrawGizmos()
     {
         Gizmos.color = Color.red;

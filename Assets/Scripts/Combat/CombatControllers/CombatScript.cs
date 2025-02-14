@@ -13,6 +13,7 @@ public class CombatScript : MonoBehaviour
         Melee, HeavyMelee, Shoot
     }
 
+    public bool isStunned = false;
     public bool canAttack = false; //debug variable
 
     public float nudgeForce = 30f;
@@ -24,7 +25,6 @@ public class CombatScript : MonoBehaviour
 
     public bool isAttacking = false;
 
-
     public bool canShoot = false;
     public Vector3 reticleOffset;
 
@@ -35,24 +35,26 @@ public class CombatScript : MonoBehaviour
     {
         attackCooldownTimer = 0;
         playerController = GetComponent<PlayerController>();
-        animator = GetComponentInChildren<Animator>();
+        //animator = GetComponent<Animator>();
     }
-
     
     public void Attack(AttackType attackType, float specificAttackCooldown)
     {
-        attackCooldown = specificAttackCooldown;
-        switch(attackType)
+        if(!isStunned)
         {
-            case AttackType.Melee:
+            attackCooldown = specificAttackCooldown;
+            switch(attackType)
             {
-                StartCoroutine(IMelee());
-                break;
-            }
-            case AttackType.Shoot:
-            {
-                StartCoroutine(IShoot());
-                break;
+                case AttackType.Melee:
+                {
+                    StartCoroutine(IMelee());
+                    break;
+                }
+                case AttackType.Shoot:
+                {
+                    StartCoroutine(IShoot());
+                    break;
+                }
             }
         }
     }
@@ -65,7 +67,6 @@ public class CombatScript : MonoBehaviour
         }
         isAttacking = true;
 
-        Debug.Log("Punch");
         animator.SetTrigger("Punch");
         yield return new WaitForSeconds(attackCooldown);
         
@@ -86,7 +87,6 @@ public class CombatScript : MonoBehaviour
         isAttacking = true;
 
         animator.SetTrigger("Shoot");
-        Debug.Log("Shoot");
         yield return new WaitForSeconds(attackCooldown);
 
         isAttacking = false;
@@ -136,6 +136,13 @@ public class CombatScript : MonoBehaviour
     public void NudgeEntity()
     {
         transform.DOMove(transform.forward, nudgeForce);
+    }
+
+    IEnumerator Stunned(float time)
+    {
+        isStunned = true;
+        yield return new WaitForSeconds(time);
+        isStunned = false;
     }
 
     public void Shoot()

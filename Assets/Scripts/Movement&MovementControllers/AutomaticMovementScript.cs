@@ -13,7 +13,6 @@ public class AutomaticMovementScript : MonoBehaviour
     public NavMeshAgent navMeshAgent;
     public bool hasReachedTarget = true;
 
-
     public bool destroyable = false;
     public float lifeTime = 1f;
 

@@ -70,7 +70,6 @@ public class MovementScript : MonoBehaviour
     }
     Vector3 TargetOffset(Transform target, float offsetDistance)
     {
-        Debug.Log("Target Offset");
         Vector3 position;
         position = target.position;
         return Vector3.MoveTowards(position, transform.position, offsetDistance);
@@ -132,6 +131,12 @@ public class MovementScript : MonoBehaviour
                 isDashing = false;
             }
         }
+    }
+
+    public void KnockBack(float knockBackTime, float knockBackDelay)
+    {
+        transform.DOMove(transform.position - (transform.forward / 2), knockBackTime).SetDelay(knockBackDelay);  
+
     }
 
     public void FaceTowards(Vector3 orientation, float rotationSpeed)

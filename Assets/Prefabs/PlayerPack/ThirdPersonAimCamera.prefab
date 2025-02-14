@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3856683153562025382}
   - component: {fileID: 5017620862120181548}
-  - component: {fileID: 7519247046123588345}
   - component: {fileID: 6787063895101243410}
   - component: {fileID: 1352617917213211575}
   m_Layer: 0
@@ -78,32 +77,6 @@ MonoBehaviour:
       BarrelClipping: 0.25
       Anamorphism: 0
   BlendHint: 0
---- !u!114 &7519247046123588345
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4224243302302906438}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 625c14eee3ad46c99df7c7c891ef668a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Damping: {x: 0, y: 0, z: 0}
-  ShoulderOffset: {x: 0.58, y: 1.35, z: 0}
-  VerticalArmLength: 0.4
-  CameraSide: 1
-  CameraDistance: 1.31
-  AvoidObstacles:
-    Enabled: 0
-    CollisionFilter:
-      serializedVersion: 2
-      m_Bits: 1
-    IgnoreTag: 
-    CameraRadius: 0.2
-    DampingIntoCollision: 0
-    DampingFromCollision: 0.5
 --- !u!114 &6787063895101243410
 MonoBehaviour:
   m_ObjectHideFlags: 0

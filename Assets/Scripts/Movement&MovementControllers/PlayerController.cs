@@ -1,9 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using TMPro;
-using UnityEngine.ProBuilder;
 using Unity.Cinemachine;
 
 public class PlayerController : MonoBehaviour
@@ -38,6 +35,7 @@ public class PlayerController : MonoBehaviour
         //characterController = GetComponent<CharacterController>();
         DebugTools();
         movementScript = GetComponent<MovementScript>();
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
