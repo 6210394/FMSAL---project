@@ -13,6 +13,8 @@ public class CombatScript : MonoBehaviour
         Melee, HeavyMelee, Shoot
     }
 
+
+
     public bool isStunned = false;
     public bool canAttack = false; //debug variable
 
@@ -25,7 +27,6 @@ public class CombatScript : MonoBehaviour
 
     public bool isAttacking = false;
 
-    public bool canShoot = false;
     public Vector3 reticleOffset;
 
     public GameObject bulletVisualsPrefab;

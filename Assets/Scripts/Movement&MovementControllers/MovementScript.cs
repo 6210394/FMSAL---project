@@ -18,11 +18,13 @@ public class MovementScript : MonoBehaviour
     float gravityScale = 9.8f;
 
     //Dashing Varaibles
-    public float dashTime = 40f;
-    
-    public float maxDashTime = 0.5f;
-    float currentDashTime;
-    public bool isDashing;
+    public float dodgeTime = 40f;
+    public float dodgeForce; // to be made private
+
+    //Dashing Timer Variables
+    public float maxDodgeTimer = 0.5f;
+    float currentDodgeTime;
+    public bool isDodging;
 
     public float offsetDistanceToTarget = 2f;
 
@@ -104,31 +106,31 @@ public class MovementScript : MonoBehaviour
         }
     }
 
-    public void Dash(Vector3 dashDirection)
+    public void Dodge(Vector3 dashDirection)
     {   
-        if (!isDashing && dashDirection != Vector3.zero)
+        if (!isDodging && dashDirection != Vector3.zero)
         {
             dashDirection.y = 0;
-            isDashing = true;
-            transform.DOMove(dashDirection, dashTime);
+            isDodging = true;
+            transform.DOMove(transform.position + (dashDirection * dodgeForce), dodgeTime);
         }
     }
 
     void DashTimer()
     {
-        if (isDashing && currentDashTime <= 0)
+        if (isDodging && currentDodgeTime <= 0)
         {
-            currentDashTime = maxDashTime;
+            currentDodgeTime = maxDodgeTimer;
         }
 
-        if (currentDashTime >= 0)
+        if (currentDodgeTime >= 0)
         {
-            currentDashTime -= Time.deltaTime;
+            currentDodgeTime -= Time.deltaTime;
             
-            if (currentDashTime <= 0)
+            if (currentDodgeTime <= 0)
             {
-                currentDashTime = 0;
-                isDashing = false;
+                currentDodgeTime = 0;
+                isDodging = false;
             }
         }
     }

@@ -8,13 +8,7 @@ public class PlayerController : MonoBehaviour
     public MovementScript movementScript;
 
     public bool isControlled = true;
-    public bool isInCombat = false;
     bool isSprintingAnim;
-
-
-    public bool lockOnMode = false;
-    public float softLockDistance = 10f;
-    public float softLockAngle = 80f;
 
     public float playerRotationSpeed = 5f;
 
@@ -44,19 +38,10 @@ public class PlayerController : MonoBehaviour
         cameraTransform = Camera.main.transform;
         if(isControlled)
         {   
-            if(!movementScript.isDashing)
+            if(!movementScript.isDodging)
             {
                 MovePlayer();
-                if(Input.GetMouseButton(1))
-                {
-                    Vector3 direction = new Vector3(cameraTransform.forward.x, 0, cameraTransform.forward.z);
-                    movementScript.FaceTowards(direction, playerRotationSpeed);
-                }
-                if(Input.GetKeyDown(KeyCode.Q))
-                {
-                    lockOnMode = !lockOnMode;        
-                }
-                Dash();
+                
             }
         }
         UpdateAnimator();
@@ -72,7 +57,7 @@ public class PlayerController : MonoBehaviour
     {
         animator.SetFloat("Speed", movementScript.movementSpeed);
         animator.SetBool("Sprinting", isSprintingAnim);
-        animator.SetBool("Dashing", movementScript.isDashing);
+        animator.SetBool("Dashing", movementScript.isDodging);
     }
 
     void MovePlayer()
@@ -105,26 +90,7 @@ public class PlayerController : MonoBehaviour
         movementScript.Move(moveDirection, isSprintingAnim);
     }    
 
-    void Dash()
-    {   
-        Vector3 forward = cameraTransform.forward;
-        forward.y = 0;
-        forward.Normalize();
-
-        Vector3 right = cameraTransform.right;
-        right.y = 0;
-        right.Normalize();
-
-
-        Vector3 dashDirection = forward * Input.GetAxis("Vertical") + right * Input.GetAxis("Horizontal");
-        dashDirection = dashDirection.normalized;
-
-        if (Input.GetKeyDown(KeyCode.LeftAlt) && dashDirection != Vector3.zero)
-        {
-            animator.SetTrigger("DashingTrigger");
-            movementScript.Dash(dashDirection);
-        }
-    }
+    
 
 
     void DebugTools()
@@ -133,23 +99,5 @@ public class PlayerController : MonoBehaviour
         {
             Debug.LogWarning("No GameManager found!!!!");
         }
-    }
-
-    void OnDrawGizmos()
-    {
-        // Draw the range sphere
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, softLockDistance);
-
-        // Draw the detection cone
-        Gizmos.color = Color.red;
-        Vector3 forward = transform.forward;
-        Quaternion leftRayRotation = Quaternion.AngleAxis(-softLockAngle / 2, Vector3.up);
-        Quaternion rightRayRotation = Quaternion.AngleAxis(softLockAngle / 2, Vector3.up);
-        Vector3 leftRayDirection = leftRayRotation * forward * softLockDistance;
-        Vector3 rightRayDirection = rightRayRotation * forward * softLockDistance;
-
-        Gizmos.DrawRay(transform.position, leftRayDirection);
-        Gizmos.DrawRay(transform.position, rightRayDirection);
     }
 }

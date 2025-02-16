@@ -22,6 +22,10 @@ public class PlayerCombatController : MonoBehaviour
     public UnityEvent<int, EnemyScript> OnHit;
     public UnityEvent<EnemyScript> OnTrajectory;
 
+    private bool meleeEquipped = false;
+    private bool gunEquipped = false;
+    private bool junkEquipped = false;
+
     private bool isAiming = false;
 
     public float punchRange = 4f;
@@ -45,29 +49,32 @@ public class PlayerCombatController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        lockedTarget = enemyDetection.CurrentTarget();
+        SwitchWeapons();
+
+        PlayerAim();
+        //or
+        PlayerFaceTarget();
+
+        PlayerDodge();
+
+
         if(Input.GetKeyDown(KeyCode.Mouse0))
         {
-            if(isAiming)
+            if(playerController.isControlled)
             {
-                PlayerShoot();
+                if(isAiming)
+                {
+                    PlayerShoot();
+                }
+                else
+                {
+                    PlayerMelee(punchRange);
+                }
             }
-            else
-            {
-                PlayerMelee(punchRange);
-            }
         }
-        if(Input.GetKeyDown(KeyCode.Mouse1))
-        {
-            PlayerAim();
-        }
-        if(Input.GetKeyUp(KeyCode.Mouse1))
-        {
-            isAiming = false;
-            combatScript.animator.SetBool("isAiming", false);
-            playerCamera.enabled = true;
-            aimCamera.enabled = false;
-        }
-        if(Input.GetKeyDown(KeyCode.Space))
+
+        if(Input.GetKeyDown(KeyCode.LeftAlt))
         {
             combatScript.AttackCancel();
         }
@@ -77,7 +84,22 @@ public class PlayerCombatController : MonoBehaviour
     {
         //PLACEHOLDER FOR WHEN THE WEAPON SWITCHING IS IMPLEMENTED
 
-        if(combatScript.canShoot)
+        if(isAiming)
+        {
+            return;
+        }
+        if(Input.GetKeyDown("1"))
+        {
+            meleeEquipped = true;
+            gunEquipped = false;
+        }
+        if(Input.GetKeyDown("2"))
+        {
+            meleeEquipped = false;
+            gunEquipped = true;
+        }
+
+        if(gunEquipped)
         {
             enemyDetection.autoLockOnRange = 10f;
         }
@@ -89,12 +111,11 @@ public class PlayerCombatController : MonoBehaviour
 
     void PlayerMelee(float range)
     {
-        if(!combatScript.attackAvailable || !combatScript.canAttack)
+        if(!meleeEquipped || !combatScript.attackAvailable || !combatScript.canAttack)
         {
             return;
         }
                
-        lockedTarget = enemyDetection.CurrentTarget();
         combatScript.Attack(CombatScript.AttackType.Melee, punchDuration); //to change later when we have more weapons
         if(lockedTarget != null)
         {
@@ -108,33 +129,89 @@ public class PlayerCombatController : MonoBehaviour
 
     void PlayerShoot()
     {
-        if(!combatScript.canShoot || !combatScript.attackAvailable || !combatScript.canAttack)
+        if(!gunEquipped || !combatScript.attackAvailable || !combatScript.canAttack)
         {
             return;
         }
-        lockedTarget = enemyDetection.CurrentTarget();
         if(lockedTarget != null && !isAiming)
         {
             transform.DOLookAt(lockedTarget.transform.position, punchDuration);
-
         }
         combatScript.Attack(CombatScript.AttackType.Shoot, 0.2f); //change later to be a variable for different guns
     }
 
     void PlayerAim()
     {
-        isAiming = true;
-        combatScript.animator.SetTrigger("enterAim");
-        combatScript.animator.SetBool("isAiming", true);
-        playerCamera.enabled = false;
-        aimCamera.enabled = true;
+        if(!gunEquipped)
+        {
+            return;
+        }
+
+        if(Input.GetKeyDown(KeyCode.Mouse1))
+        {
+            if(playerController.isControlled)
+            {
+                isAiming = true;
+                combatScript.animator.SetTrigger("enterAim");
+                combatScript.animator.SetBool("isAiming", true);
+                playerCamera.enabled = false;
+                aimCamera.enabled = true;
+            }
+        } 
+        if(Input.GetKeyUp(KeyCode.Mouse1))
+        { 
+            isAiming = false;
+            combatScript.animator.SetBool("isAiming", false);
+            playerCamera.enabled = true;
+            aimCamera.enabled = false;
+        }
+        
+        if(isAiming)
+        {
+            Vector3 direction = new Vector3(aimCamera.transform.forward.x, 0, aimCamera.transform.forward.z);
+            movementScript.FaceTowards(direction, playerController.playerRotationSpeed);
+        }
+    }
+
+    void PlayerFaceTarget()
+    {
+        if(lockedTarget != null && !isAiming)
+        {
+           transform.DOLookAt(lockedTarget.transform.position, 0.1f);
+        }
+    }
+
+    void PlayerDodge()
+    {   
+        Vector3 forward = playerCamera.transform.forward;
+        forward.y = 0;
+        forward.Normalize();
+
+        Vector3 right = playerCamera.transform.right;
+        right.y = 0;
+        right.Normalize();
+
+
+        Vector3 dodgeDirection = forward * Input.GetAxis("Vertical") + right * Input.GetAxis("Horizontal");
+        dodgeDirection = dodgeDirection.normalized;
+
+        if (lockedTarget != null)
+        {
+            Vector3 targetDirection = (lockedTarget.transform.position - transform.position).normalized;
+            dodgeDirection = Vector3.RotateTowards(dodgeDirection, targetDirection, Mathf.PI, 0.0f);
+        }
+
+        if (Input.GetKeyDown(KeyCode.LeftAlt) && dodgeDirection != Vector3.zero)
+        {
+            playerController.animator.SetTrigger("DashingTrigger");
+            movementScript.Dodge(dodgeDirection);
+        }
     }
 
     public void DamageEvent()
     {
         if (lockedTarget == null)
         {
-            Debug.Log("No target");
             return;
         }
         if(Vector3.Distance(transform.position, lockedTarget.gameObject.transform.position) > enemyDetection.autoLockOnRange)
