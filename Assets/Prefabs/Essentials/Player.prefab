@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &676170088959192611
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5536735859593780666}
+  m_Layer: 0
+  m_Name: HandAnchor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5536735859593780666
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 676170088959192611}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.0141856, y: -0.013999825, z: 0.7019091, w: 0.7119876}
+  m_LocalPosition: {x: -0.07802119, y: 0.46713847, z: 0.15035999}
+  m_LocalScale: {x: 3.2258067, y: 3.225808, z: 3.2258053}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2121509666407928676}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &996549507115668995
 GameObject:
   m_ObjectHideFlags: 0
@@ -596,7 +627,7 @@ GameObject:
   - component: {fileID: 4416159547452902258}
   - component: {fileID: 6779007132249043213}
   - component: {fileID: 1102951906637046753}
-  - component: {fileID: 2716140090493698256}
+  - component: {fileID: 4300923011328198163}
   - component: {fileID: 5720523247777047060}
   - component: {fileID: 161812321840275169}
   - component: {fileID: 7892101299078601583}
@@ -669,11 +700,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movementScript: {fileID: 161812321840275169}
   isControlled: 1
-  isInCombat: 0
-  lockOnMode: 0
-  softLockDistance: 5
-  softLockAngle: 30
   playerRotationSpeed: 20
+  sprintingFOV: 0
+  normalFOV: 60
   backupCamera: {fileID: 2576606312467759291, guid: 482ebfd14f899b1498c9b150b938468f, type: 3}
   cinemachineBrain: {fileID: 0}
   cameraTransform: {fileID: 0}
@@ -686,7 +715,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6739474880526340487}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 97be122e5f6df464d8c8ef27e1cd7a73, type: 3}
   m_Name: 
@@ -701,18 +730,20 @@ MonoBehaviour:
   punchRange: 6
   punchDuration: 0.58
   gunHipFireBulletAccuracyRange: 10
---- !u!114 &2716140090493698256
+--- !u!114 &4300923011328198163
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6739474880526340487}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d30f809d721c03946af54a024340f58f, type: 3}
+  m_Script: {fileID: 11500000, guid: bfc0a2134a68e1d45aa5eb169212c5d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  handAnchor: {fileID: 676170088959192611}
+  heldObject: {fileID: 0}
 --- !u!114 &5720523247777047060
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -733,7 +764,6 @@ MonoBehaviour:
   attackDamage: 1
   attackCooldown: 0.3
   isAttacking: 0
-  canShoot: 1
   reticleOffset: {x: 0, y: 0, z: 0}
   bulletVisualsPrefab: {fileID: 0}
   spawnOriginOffset: {fileID: 4578630470139458280}
@@ -753,8 +783,10 @@ MonoBehaviour:
   isSprinting: 0
   isMoving: 0
   isGrounded: 0
-  dashTime: 1
-  maxDashTime: 0.5
+  dodgeMoveDuration: 0
+  dodgeForce: 0
+  maxDodgeCooldown: 0.5
+  isDodging: 0
   isDashing: 0
   offsetDistanceToTarget: 0.9
 --- !u!114 &7892101299078601583
@@ -764,20 +796,21 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6739474880526340487}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6920607f2aebc2c4e86e49cdeb316504, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   enemyManager: {fileID: 0}
+  playerCombatController: {fileID: 0}
   layerMask:
     serializedVersion: 2
     m_Bits: 128
   autoLockOnRange: 10
+  sphereCastAOESize: 3
   inputDirection: {x: 0, y: 0, z: 0}
   currentTarget: {fileID: 0}
   cam: {fileID: 0}
-  isLockedOn: 1
 --- !u!143 &8507021317883215589
 CharacterController:
   m_ObjectHideFlags: 0
@@ -935,9 +968,17 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 5866666021909216657, guid: 70755b4344e974041ab4b8955c7e902f, type: 3}
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 8426254245088255733, guid: 70755b4344e974041ab4b8955c7e902f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5536735859593780666}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 70755b4344e974041ab4b8955c7e902f, type: 3}
+--- !u!4 &2121509666407928676 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8426254245088255733, guid: 70755b4344e974041ab4b8955c7e902f, type: 3}
+  m_PrefabInstance: {fileID: 7602371228213546385}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7929630748610194042 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 70755b4344e974041ab4b8955c7e902f, type: 3}
