@@ -1,5 +1,6 @@
 using UnityEngine;
 using DG.Tweening;
+using System.Collections;
 
 public class MovementScript : MonoBehaviour
 {
@@ -18,13 +19,14 @@ public class MovementScript : MonoBehaviour
     float gravityScale = 9.8f;
 
     //Dashing Varaibles
-    public float dodgeTime = 40f;
+    public float dodgeMoveDuration;
     public float dodgeForce; // to be made private
 
     //Dashing Timer Variables
-    public float maxDodgeTimer = 0.5f;
-    float currentDodgeTime;
-    public bool isDodging;
+    public float maxDodgeCooldown = 0.5f;
+    float dodgeCooldownRemaining = 0;
+    public bool isDodging = false;
+    public bool isDashing = false;
 
     public float offsetDistanceToTarget = 2f;
 
@@ -35,7 +37,7 @@ public class MovementScript : MonoBehaviour
 
     void Update()
     {
-        DashTimer();
+        DodgeTimer();
     }
 
      void FixedUpdate()
@@ -106,31 +108,71 @@ public class MovementScript : MonoBehaviour
         }
     }
 
-    public void Dodge(Vector3 dashDirection)
+    public void Dash(Vector3 dodgeDirection, float dodgeCooldownLength)
+    {
+        maxDodgeCooldown = dodgeCooldownLength;
+
+        isDashing = true;
+        
+        transform.DOMove(transform.position + (dodgeDirection * dodgeForce), dodgeMoveDuration);
+    }
+
+    public void DodgeWithTarget(Vector3 dodgeDirection, float dodgeCooldownLength, Transform lockedTarget)
     {   
-        if (!isDodging && dashDirection != Vector3.zero)
+        maxDodgeCooldown = dodgeCooldownLength;
+
+        isDodging = true;
+        
+        if(dodgeDirection.z < 0)
         {
-            dashDirection.y = 0;
-            isDodging = true;
-            transform.DOMove(transform.position + (dashDirection * dodgeForce), dodgeTime);
+            Dash(dodgeDirection, dodgeCooldownLength);
+        }
+        else
+        {
+            StartCoroutine(DodgeAround(lockedTarget, dodgeDirection, 5, dodgeMoveDuration));
         }
     }
 
-    void DashTimer()
+    IEnumerator DodgeAround(Transform axisPoint, Vector3 orbitDirection, float orbitDistance, float orbitDuration)
     {
-        if (isDodging && currentDodgeTime <= 0)
+        float elapsedTime = 0f;
+        float direction = orbitDirection.x > 0 ? -1 : 1;
+        float radius = Vector3.Distance(transform.position, axisPoint.position);
+
+        float initialDodgeAwayDistance = 0f;
+        float finalDodgeAwayDistance = 0.5f;
+
+        while (elapsedTime < orbitDuration)
         {
-            currentDodgeTime = maxDodgeTimer;
+            elapsedTime += Time.deltaTime;
+            float angle = (orbitDistance / radius) * (360f / (2 * Mathf.PI)) * Time.deltaTime * direction;
+            Vector3 offset = transform.position - axisPoint.position;
+            offset = Quaternion.Euler(0, angle, 0) * offset.normalized * radius;
+
+            float currentDodgeAwayDistance = Mathf.Lerp(initialDodgeAwayDistance, finalDodgeAwayDistance, elapsedTime / orbitDuration);
+            offset += offset.normalized * currentDodgeAwayDistance;
+
+            transform.position = axisPoint.position + offset;
+            yield return null;
+        }
+    }
+
+    void DodgeTimer()
+    {
+        if (isDodging && !isDashing && dodgeCooldownRemaining <= 0)
+        {
+            dodgeCooldownRemaining = maxDodgeCooldown;
         }
 
-        if (currentDodgeTime >= 0)
+        if (dodgeCooldownRemaining >= 0)
         {
-            currentDodgeTime -= Time.deltaTime;
+            dodgeCooldownRemaining -= Time.deltaTime;
             
-            if (currentDodgeTime <= 0)
+            if (dodgeCooldownRemaining <= 0)
             {
-                currentDodgeTime = 0;
+                dodgeCooldownRemaining = 0;
                 isDodging = false;
+                isDashing = false;
             }
         }
     }

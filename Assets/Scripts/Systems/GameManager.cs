@@ -89,8 +89,8 @@ public class GameManager : MonoBehaviour, IDataPersistence
     public void RegisterPlayers()
     {
         players.Clear();
-        PlayerController[] playerMovementList = FindObjectsByType<PlayerController>(FindObjectsSortMode.None);
-        foreach(PlayerController player in playerMovementList)
+        PlayerMovementController[] playerMovementList = FindObjectsByType<PlayerMovementController>(FindObjectsSortMode.None);
+        foreach(PlayerMovementController player in playerMovementList)
         {
             players.Add(player.gameObject);
         }

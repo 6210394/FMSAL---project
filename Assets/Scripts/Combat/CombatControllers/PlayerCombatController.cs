@@ -4,11 +4,11 @@ using DG.Tweening;
 using Unity.Cinemachine;
 
 [RequireComponent(typeof(CombatScript))]
-[RequireComponent(typeof(PlayerController))]
+[RequireComponent(typeof(PlayerMovementController))]
 public class PlayerCombatController : MonoBehaviour
 {
     private MovementScript movementScript;
-    private PlayerController playerController;
+    private PlayerMovementController playerController;
     private CombatScript combatScript;
 
     private CinemachineCamera playerCamera;
@@ -40,7 +40,7 @@ public class PlayerCombatController : MonoBehaviour
         enemyDetection = FindFirstObjectByType<EnemyDetection>();
         combatScript = GetComponent<CombatScript>();
         movementScript = GetComponent<MovementScript>();
-        playerController = GetComponent<PlayerController>();
+        playerController = GetComponent<PlayerMovementController>();
 
         playerCamera = GameObject.Find("PlayerCamera").GetComponent<CinemachineCamera>();
         aimCamera = GameObject.Find("ThirdPersonAimCamera").GetComponent<CinemachineCamera>();
@@ -49,8 +49,11 @@ public class PlayerCombatController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        lockedTarget = enemyDetection.CurrentTarget();
-        SwitchWeapons();
+        if(!combatScript.isAttacking)
+        {
+            lockedTarget = enemyDetection.CurrentTarget();
+            SwitchWeapons();
+        }
 
         PlayerAim();
         //or
@@ -61,7 +64,7 @@ public class PlayerCombatController : MonoBehaviour
 
         if(Input.GetKeyDown(KeyCode.Mouse0))
         {
-            if(playerController.isControlled)
+            if(playerController.isControlled && !movementScript.isDodging)
             {
                 if(isAiming)
                 {
@@ -99,6 +102,7 @@ public class PlayerCombatController : MonoBehaviour
             gunEquipped = true;
         }
 
+        /*
         if(gunEquipped)
         {
             enemyDetection.autoLockOnRange = 10f;
@@ -107,6 +111,7 @@ public class PlayerCombatController : MonoBehaviour
         {
             enemyDetection.autoLockOnRange = 5f;
         }
+        */
     }
 
     void PlayerMelee(float range)
@@ -175,7 +180,7 @@ public class PlayerCombatController : MonoBehaviour
 
     void PlayerFaceTarget()
     {
-        if(lockedTarget != null && !isAiming)
+        if(lockedTarget != null && !isAiming && !movementScript.isDashing)
         {
            transform.DOLookAt(lockedTarget.transform.position, 0.1f);
         }
@@ -183,28 +188,24 @@ public class PlayerCombatController : MonoBehaviour
 
     void PlayerDodge()
     {   
-        Vector3 forward = playerCamera.transform.forward;
+        Vector3 forward = Camera.main.transform.forward;
         forward.y = 0;
         forward.Normalize();
 
-        Vector3 right = playerCamera.transform.right;
-        right.y = 0;
-        right.Normalize();
-
-
-        Vector3 dodgeDirection = forward * Input.GetAxis("Vertical") + right * Input.GetAxis("Horizontal");
-        dodgeDirection = dodgeDirection.normalized;
-
-        if (lockedTarget != null)
-        {
-            Vector3 targetDirection = (lockedTarget.transform.position - transform.position).normalized;
-            dodgeDirection = Vector3.RotateTowards(dodgeDirection, targetDirection, Mathf.PI, 0.0f);
-        }
-
-        if (Input.GetKeyDown(KeyCode.LeftAlt) && dodgeDirection != Vector3.zero)
+        Vector3 inputDirection = forward * Input.GetAxis("Vertical") + Vector3.right * Input.GetAxis("Horizontal");
+        inputDirection = inputDirection.normalized;
+        
+        if (Input.GetKeyDown(KeyCode.Space) && inputDirection != Vector3.zero && !movementScript.isDodging)
         {
             playerController.animator.SetTrigger("DashingTrigger");
-            movementScript.Dodge(dodgeDirection);
+            if(lockedTarget)
+            {
+                movementScript.DodgeWithTarget(inputDirection, 0.5f, lockedTarget.transform);
+            }
+            else
+            {
+                movementScript.Dash(inputDirection,0.5f);
+            }
         }
     }
 

@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Cinemachine;
+using DG.Tweening;
 
-public class PlayerController : MonoBehaviour
+public class PlayerMovementController : MonoBehaviour
 {
     public MovementScript movementScript;
 
@@ -11,6 +12,9 @@ public class PlayerController : MonoBehaviour
     bool isSprintingAnim;
 
     public float playerRotationSpeed = 5f;
+
+    public float sprintingFOV;
+    public float normalFOV = 60f;
 
     public GameObject backupCamera;
     public CinemachineBrain cinemachineBrain;
@@ -41,7 +45,6 @@ public class PlayerController : MonoBehaviour
             if(!movementScript.isDodging)
             {
                 MovePlayer();
-                
             }
         }
         UpdateAnimator();
@@ -62,13 +65,28 @@ public class PlayerController : MonoBehaviour
 
     void MovePlayer()
     {
-        if(Input.GetKey(KeyCode.LeftShift) && !Input.GetMouseButton(1))
+        bool isSprinting = false;
+
+
+        if(Input.GetKeyDown(KeyCode.LeftShift) && !Input.GetMouseButton(1))
         {
             isSprintingAnim = true;
+            Camera.main.DOFieldOfView(sprintingFOV, 0.2f);
+        }
+        if(Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            isSprintingAnim = false;
+            Camera.main.DOFieldOfView(normalFOV, 0.2f);
+        }
+
+
+        if(Input.GetKey(KeyCode.LeftShift) && !Input.GetMouseButton(1))
+        {
+            isSprinting = true;
         }
         else
         {
-            isSprintingAnim = false;
+            isSprinting = false;
         }
 
         Vector3 forward = cameraTransform.forward;
@@ -87,11 +105,8 @@ public class PlayerController : MonoBehaviour
         {
             movementScript.FaceTowards(moveDirection, playerRotationSpeed);
         }
-        movementScript.Move(moveDirection, isSprintingAnim);
-    }    
-
-    
-
+        movementScript.Move(moveDirection, isSprinting);
+    }
 
     void DebugTools()
     {

@@ -45,7 +45,7 @@ public class BedScript : Interactable
 
         foreach (GameObject player in GameManager.instance.players)
         {
-            player.GetComponent<PlayerController>().isControlled = false;
+            player.GetComponent<PlayerMovementController>().isControlled = false;
         }
         GameManager.instance.interactEnabled = false;
 
@@ -81,7 +81,7 @@ public class BedScript : Interactable
         yield return new WaitForSeconds(animationLength + waitLength);
         foreach (GameObject player in GameManager.instance.players)
         {
-            player.GetComponent<PlayerController>().isControlled = true;
+            player.GetComponent<PlayerMovementController>().isControlled = true;
         }
 
         GameManager.instance.interactEnabled = true;

@@ -279,6 +279,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerCamera
       objectReference: {fileID: 0}
+    - target: {fileID: 4449900634200441679, guid: 482ebfd14f899b1498c9b150b938468f, type: 3}
+      propertyPath: TrackerSettings.PositionDamping.x
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4449900634200441679, guid: 482ebfd14f899b1498c9b150b938468f, type: 3}
+      propertyPath: TrackerSettings.PositionDamping.y
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4449900634200441679, guid: 482ebfd14f899b1498c9b150b938468f, type: 3}
+      propertyPath: TrackerSettings.PositionDamping.z
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 6282616302992276024, guid: 482ebfd14f899b1498c9b150b938468f, type: 3}
       propertyPath: Target.LookAtTarget
       value: 
@@ -700,6 +712,18 @@ PrefabInstance:
       propertyPath: dashForce
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 161812321840275169, guid: 40c565ee377da1b40beae600764c177d, type: 3}
+      propertyPath: dodgeTime
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 161812321840275169, guid: 40c565ee377da1b40beae600764c177d, type: 3}
+      propertyPath: dodgeForce
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 161812321840275169, guid: 40c565ee377da1b40beae600764c177d, type: 3}
+      propertyPath: dodgeMoveDuration
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 4170848390567775362, guid: 40c565ee377da1b40beae600764c177d, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.04
@@ -747,6 +771,10 @@ PrefabInstance:
     - target: {fileID: 6739474880526340487, guid: 40c565ee377da1b40beae600764c177d, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 6779007132249043213, guid: 40c565ee377da1b40beae600764c177d, type: 3}
+      propertyPath: sprintingFOV
+      value: 80
       objectReference: {fileID: 0}
     - target: {fileID: 7892101299078601583, guid: 40c565ee377da1b40beae600764c177d, type: 3}
       propertyPath: cam

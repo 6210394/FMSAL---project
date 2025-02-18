@@ -4,10 +4,13 @@ using UnityEngine;
 public class EnemyDetection : MonoBehaviour
 {
     [SerializeField] private EnemyManager enemyManager;
-    private CombatScript combatScript;
+
+    public PlayerCombatController playerCombatController;
 
     public LayerMask layerMask;
     public float autoLockOnRange = 10f; //THIS NEEDS TO BE CHANGED BASED ON THE WEAPON'S RANGE
+
+    public float sphereCastAOESize = 3f;
 
     [SerializeField] Vector3 inputDirection;
     [SerializeField] private EnemyScript currentTarget;
@@ -16,7 +19,7 @@ public class EnemyDetection : MonoBehaviour
 
     private void Start()
     {
-        combatScript = GetComponentInParent<CombatScript>();
+        playerCombatController = GetComponent<PlayerCombatController>();
     }
 
     private void Update()
@@ -36,16 +39,17 @@ public class EnemyDetection : MonoBehaviour
 
         RaycastHit info;
 
-        if (Physics.SphereCast(transform.position, 3f, inputDirection, out info, autoLockOnRange, layerMask))
+        if (Physics.SphereCast(transform.position, sphereCastAOESize, inputDirection, out info, autoLockOnRange, layerMask))
         {
             if(info.collider.transform.GetComponent<EnemyScript>().IsAttackable())
             currentTarget = info.collider.transform.GetComponent<EnemyScript>();
         }
         
-        if (currentTarget != null && Vector3.Distance(transform.position, currentTarget.transform.position) > autoLockOnRange)
+        if (currentTarget != null && Vector3.Distance(transform.position, currentTarget.transform.position) > autoLockOnRange*1.5f)
         {
             currentTarget = null;
         }
+        
     }
 
     public EnemyScript CurrentTarget()
@@ -68,7 +72,16 @@ public class EnemyDetection : MonoBehaviour
         Gizmos.color = Color.black;
         Gizmos.DrawRay(transform.position, inputDirection);
         Gizmos.DrawWireSphere(transform.position, 1);
-        if(CurrentTarget() != null)
-        Gizmos.DrawSphere(CurrentTarget().transform.position, .5f);
+
+        // Draw the SphereCast
+        Gizmos.color = Color.red;
+        Vector3 endPosition = transform.position + inputDirection * autoLockOnRange;
+        Gizmos.DrawWireSphere(transform.position, sphereCastAOESize);
+        Gizmos.DrawWireSphere(endPosition, sphereCastAOESize);
+
+        if (CurrentTarget() != null)
+        {
+            Gizmos.DrawSphere(CurrentTarget().transform.position, .5f);
+        }
     }
 }

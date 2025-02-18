@@ -47,7 +47,7 @@ public class PantryScript : Interactable
         GameObject.FindWithTag("MainCamera").GetComponent<CameraMovement>().lockMode = true;
         pantryUI.SetActive(true);
         isPantryOpen = true;
-        player.GetComponent<PlayerController>().isControlled = false;
+        player.GetComponent<PlayerMovementController>().isControlled = false;
     }
 
     public void ClosePantry()
@@ -56,6 +56,6 @@ public class PantryScript : Interactable
         GameObject.FindWithTag("MainCamera").GetComponent<CameraMovement>().lockMode = false;
         pantryUI.SetActive(false);
         isPantryOpen = false;
-        player.GetComponent<PlayerController>().isControlled = true;
+        player.GetComponent<PlayerMovementController>().isControlled = true;
     }
 }

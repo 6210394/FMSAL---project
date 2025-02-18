@@ -5,15 +5,13 @@ using UnityEngine;
 
 public class CombatScript : MonoBehaviour
 {
-    private PlayerController playerController;
+    private PlayerMovementController playerController;
     public Animator animator;
 
     public enum AttackType
     {
         Melee, HeavyMelee, Shoot
     }
-
-
 
     public bool isStunned = false;
     public bool canAttack = false; //debug variable
@@ -35,7 +33,7 @@ public class CombatScript : MonoBehaviour
     public void Start()
     {
         attackCooldownTimer = 0;
-        playerController = GetComponent<PlayerController>();
+        playerController = GetComponent<PlayerMovementController>();
         //animator = GetComponent<Animator>();
     }
     
