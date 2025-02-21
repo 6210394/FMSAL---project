@@ -7,6 +7,20 @@ public class DiogenicPlayerInventory : MonoBehaviour
 
     GameObject instantiatedVisual;
 
+    public static DiogenicPlayerInventory instance;
+
+    void Awake()
+    {
+        if(instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(this);
+        }
+    }
+
     void Update()
     {
         ShowItemInHands();

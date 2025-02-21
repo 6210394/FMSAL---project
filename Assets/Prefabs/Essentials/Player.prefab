@@ -701,7 +701,7 @@ MonoBehaviour:
   movementScript: {fileID: 161812321840275169}
   isControlled: 1
   playerRotationSpeed: 20
-  sprintingFOV: 0
+  sprintingFOV: 80
   normalFOV: 60
   backupCamera: {fileID: 2576606312467759291, guid: 482ebfd14f899b1498c9b150b938468f, type: 3}
   cinemachineBrain: {fileID: 0}
@@ -715,7 +715,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6739474880526340487}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 97be122e5f6df464d8c8ef27e1cd7a73, type: 3}
   m_Name: 
@@ -756,7 +756,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a8ef733ed8e0dc41a1a6b672435519d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animator: {fileID: 0}
+  animator: {fileID: 3918215746344003973}
   isStunned: 0
   canAttack: 1
   nudgeForce: 9.87
@@ -783,8 +783,8 @@ MonoBehaviour:
   isSprinting: 0
   isMoving: 0
   isGrounded: 0
-  dodgeMoveDuration: 0
-  dodgeForce: 0
+  dodgeMoveDuration: 0.5
+  dodgeForce: 5
   maxDodgeCooldown: 0.5
   isDodging: 0
   isDashing: 0
@@ -796,7 +796,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6739474880526340487}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6920607f2aebc2c4e86e49cdeb316504, type: 3}
   m_Name: 
@@ -806,7 +806,7 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 128
-  autoLockOnRange: 10
+  autoLockOnRange: 4
   sphereCastAOESize: 3
   inputDirection: {x: 0, y: 0, z: 0}
   currentTarget: {fileID: 0}

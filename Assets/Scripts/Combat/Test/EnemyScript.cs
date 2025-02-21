@@ -82,7 +82,6 @@ public class EnemyScript : MonoBehaviour
     void Update()
     {
         //Constantly look at player
-        transform.LookAt(new Vector3(playerCombatController.transform.position.x, transform.position.y, playerCombatController.transform.position.z));
 
         //Only moves if the direction is set
         //MoveEnemy(moveDirection);
@@ -140,7 +139,7 @@ public class EnemyScript : MonoBehaviour
         enabled = false;
         characterController.enabled = false;
         animator.SetTrigger("Death");
-        enemyManager.SetEnemyAvailiability(this, false);
+        //enemyManager.SetEnemyAvailiability(this, false);
     }
 
     public void SetRetreat()
@@ -258,7 +257,7 @@ public class EnemyScript : MonoBehaviour
     public void HitEvent()
     {
         if(!playerCombatController.GetComponent<CombatScript>().isAttacking)
-            playerCombatController.DamageEvent();
+            playerCombatController.DealDamageEvent();
 
         PrepareAttack(false);
     }

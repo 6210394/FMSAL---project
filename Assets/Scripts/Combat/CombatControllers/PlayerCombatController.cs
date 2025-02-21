@@ -7,32 +7,52 @@ using Unity.Cinemachine;
 [RequireComponent(typeof(PlayerMovementController))]
 public class PlayerCombatController : MonoBehaviour
 {
-    private MovementScript movementScript;
-    private PlayerMovementController playerController;
-    private CombatScript combatScript;
+#region Variables & States
+    [Header("Stats")]
+    public int health = 5;
 
-    private CinemachineCamera playerCamera;
-    private CinemachineCamera aimCamera;
+    [Header("Attack Values")]
+    public float punchRange = 4f;
+    public float punchDuration = 0.5f;
+    private float meleeRange;
+    private float meleeDuration;
 
-    public EnemyScript lockedTarget;
-
-    private EnemyManager enemyManager;
-    EnemyDetection enemyDetection;
-
-    public UnityEvent<int, EnemyScript> OnHit;
-    public UnityEvent<EnemyScript> OnTrajectory;
-
+    public float gunHipFireBulletAccuracyRange = 10f;
+    
+    [Header("States")]
     private bool meleeEquipped = false;
     private bool gunEquipped = false;
     private bool junkEquipped = false;
 
     private bool isAiming = false;
+    private bool isLockOnToggle = false;
+#endregion
 
-    public float punchRange = 4f;
-    public float punchDuration = 0.5f;
+#region Component References
+    private MovementScript movementScript;
+    private PlayerMovementController playerMovementController;
+    private CombatScript combatScript;
+    private EnemyManager enemyManager;
+    private EnemyDetection enemyDetection;
+#endregion
 
-    public float gunHipFireBulletAccuracyRange = 10f;
+#region Camera References & Targeting
+    [SerializeField] private CinemachineCamera playerCamera;
+    [SerializeField] private CinemachineCamera targetCamera;
+    [SerializeField] private CinemachineCamera aimCamera;
 
+    [Header("Target References")]
+    public EnemyCombatController currentLockedTarget;
+    public EnemyCombatController lastTarget;
+#endregion
+
+    [Header("Player Combat Events")]
+    public UnityEvent<int, EnemyCombatController> OnHit;
+    public UnityEvent<EnemyCombatController> OnTrajectory;
+
+    
+    [Header("Debug")]
+    public bool debugDeadBoolean = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -40,20 +60,27 @@ public class PlayerCombatController : MonoBehaviour
         enemyDetection = FindFirstObjectByType<EnemyDetection>();
         combatScript = GetComponent<CombatScript>();
         movementScript = GetComponent<MovementScript>();
-        playerController = GetComponent<PlayerMovementController>();
+        playerMovementController = GetComponent<PlayerMovementController>();
 
-        playerCamera = GameObject.Find("PlayerCamera").GetComponent<CinemachineCamera>();
+        playerCamera = GameObject.Find("DefaultPlayerCamera").GetComponent<CinemachineCamera>();
+        targetCamera = GameObject.Find("TargetCamera").GetComponent<CinemachineCamera>();
         aimCamera = GameObject.Find("ThirdPersonAimCamera").GetComponent<CinemachineCamera>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(!combatScript.isAttacking)
+        if(!combatScript.isAttacking) //Between Attack Actions
         {
-            lockedTarget = enemyDetection.CurrentTarget();
+            if(currentLockedTarget != enemyDetection.CurrentTarget())
+            {
+                lastTarget = currentLockedTarget;
+                currentLockedTarget = enemyDetection.CurrentTarget();
+            }
             SwitchWeapons();
         }
+
+        AdjustCamera();
 
         PlayerAim();
         //or
@@ -62,9 +89,10 @@ public class PlayerCombatController : MonoBehaviour
         PlayerDodge();
 
 
-        if(Input.GetKeyDown(KeyCode.Mouse0))
+
+        if(Input.GetKeyDown(KeyCode.Mouse0)) //Attack Command
         {
-            if(playerController.isControlled && !movementScript.isDodging)
+            if(playerMovementController.isControlled && !movementScript.isDodging)
             {
                 if(isAiming)
                 {
@@ -77,11 +105,26 @@ public class PlayerCombatController : MonoBehaviour
             }
         }
 
-        if(Input.GetKeyDown(KeyCode.LeftAlt))
+        if(Input.GetKeyDown(KeyCode.Q)) //Lock On Command
         {
-            combatScript.AttackCancel();
+            if(currentLockedTarget)
+            {
+                isLockOnToggle = !isLockOnToggle;
+            }
+            else
+            {
+                isLockOnToggle = false;
+            }
+            //make the FOV zoom closer or farther based on LockOnMode
+        }
+
+        if(debugDeadBoolean)
+        {
+            playerMovementController.isControlled = false;
         }
     }
+
+#region Player Actions
 
     void SwitchWeapons()
     {
@@ -122,12 +165,12 @@ public class PlayerCombatController : MonoBehaviour
         }
                
         combatScript.Attack(CombatScript.AttackType.Melee, punchDuration); //to change later when we have more weapons
-        if(lockedTarget != null)
+        if(currentLockedTarget != null)
         {
-            transform.DOLookAt(lockedTarget.transform.position, punchDuration);
-            if(TargetDistance(lockedTarget) < range)
+            transform.DOLookAt(currentLockedTarget.transform.position, punchDuration);
+            if(TargetDistance(currentLockedTarget.transform) < range)
             {
-                movementScript.MoveTowardsTarget(lockedTarget, punchDuration);
+                movementScript.MoveTowardsTarget(currentLockedTarget.gameObject.transform, punchDuration);
             }
         }
     }
@@ -138,51 +181,62 @@ public class PlayerCombatController : MonoBehaviour
         {
             return;
         }
-        if(lockedTarget != null && !isAiming)
+        if(currentLockedTarget != null && !isAiming)
         {
-            transform.DOLookAt(lockedTarget.transform.position, punchDuration);
+            transform.DOLookAt(currentLockedTarget.transform.position, punchDuration);
         }
         combatScript.Attack(CombatScript.AttackType.Shoot, 0.2f); //change later to be a variable for different guns
     }
 
     void PlayerAim()
     {
-        if(!gunEquipped)
+        if(!gunEquipped) //Can't aim without a gun OR A THROWABLE OBJECT -- TO ADJUST
         {
             return;
         }
 
-        if(Input.GetKeyDown(KeyCode.Mouse1))
+        if(Input.GetKeyDown(KeyCode.Mouse1)) //Press Aim
         {
-            if(playerController.isControlled)
+            if(playerMovementController.isControlled)
             {
                 isAiming = true;
+
+                playerMovementController.canSprint = false;
+                isLockOnToggle = false;
+                enemyDetection.SetCurrentTarget(null);
+                
+                aimCamera.enabled = true;
+                playerCamera.enabled = false;
+                targetCamera.enabled = false;
+
                 combatScript.animator.SetTrigger("enterAim");
                 combatScript.animator.SetBool("isAiming", true);
-                playerCamera.enabled = false;
-                aimCamera.enabled = true;
             }
         } 
-        if(Input.GetKeyUp(KeyCode.Mouse1))
+
+        if(Input.GetKeyUp(KeyCode.Mouse1)) //Let go of Aim
         { 
             isAiming = false;
-            combatScript.animator.SetBool("isAiming", false);
+            playerMovementController.canSprint = true;
+
             playerCamera.enabled = true;
             aimCamera.enabled = false;
+
+            combatScript.animator.SetBool("isAiming", false);
         }
         
-        if(isAiming)
+        if(isAiming) //While Aiming
         {
             Vector3 direction = new Vector3(aimCamera.transform.forward.x, 0, aimCamera.transform.forward.z);
-            movementScript.FaceTowards(direction, playerController.playerRotationSpeed);
+            movementScript.FaceTowards(direction, playerMovementController.playerRotationSpeed);
         }
     }
 
     void PlayerFaceTarget()
     {
-        if(lockedTarget != null && !isAiming && !movementScript.isDashing)
+        if(currentLockedTarget != null && !isAiming && !movementScript.isDashing)
         {
-           transform.DOLookAt(lockedTarget.transform.position, 0.1f);
+           transform.DOLookAt(currentLockedTarget.transform.position, 0.1f);
         }
     }
 
@@ -193,14 +247,15 @@ public class PlayerCombatController : MonoBehaviour
         forward.Normalize();
 
         Vector3 inputDirection = forward * Input.GetAxis("Vertical") + Vector3.right * Input.GetAxis("Horizontal");
-        inputDirection = inputDirection.normalized;
+        inputDirection.Normalize();
         
         if (Input.GetKeyDown(KeyCode.Space) && inputDirection != Vector3.zero && !movementScript.isDodging)
         {
-            playerController.animator.SetTrigger("DashingTrigger");
-            if(lockedTarget)
+            combatScript.AttackCancel();
+            playerMovementController.animator.SetTrigger("DashingTrigger");
+            if(currentLockedTarget)
             {
-                movementScript.DodgeWithTarget(inputDirection, 0.5f, lockedTarget.transform);
+                movementScript.DodgeWithTarget(inputDirection, 0.5f, currentLockedTarget.transform);
             }
             else
             {
@@ -209,30 +264,62 @@ public class PlayerCombatController : MonoBehaviour
         }
     }
 
-    public void DamageEvent()
+#endregion
+
+#region Controller Functions
+
+    void AdjustCamera()
+    {   
+        if(!isAiming)
+        {
+            CinemachineTargetGroup cinemachineTargetGroup = targetCamera.GetComponentInChildren<CinemachineTargetGroup>();
+
+            if (currentLockedTarget != null && isLockOnToggle) 
+            {
+                if (cinemachineTargetGroup.FindMember(currentLockedTarget.transform) == -1)
+                {
+                    cinemachineTargetGroup.AddMember(currentLockedTarget.transform, 1, 2);
+                }
+                playerCamera.enabled = false;
+                targetCamera.enabled = true;
+            }
+            else
+            {
+                if(lastTarget != null)
+                {
+                    cinemachineTargetGroup.RemoveMember(lastTarget.transform);
+                }
+                isLockOnToggle = false;
+                playerCamera.enabled = true;
+                targetCamera.enabled = false;
+            }
+        }
+    }
+
+    public void DealDamageEvent()
     {
-        if (lockedTarget == null)
+        if (currentLockedTarget == null)
         {
             return;
         }
-        if(Vector3.Distance(transform.position, lockedTarget.gameObject.transform.position) > enemyDetection.autoLockOnRange)
+        if(Vector3.Distance(transform.position, currentLockedTarget.gameObject.transform.position) > enemyDetection.autoLockOnRange)
         {
             return;
         }
 
-        OnHit.Invoke(combatScript.attackDamage, lockedTarget);
+        Debug.Log(currentLockedTarget);
+        OnHit.Invoke(combatScript.attackDamage, currentLockedTarget);
         //punchParticle.PlayParticleAtPosition(punchPosition.position);
     }
     
-
-    float TargetDistance(EnemyScript target)
+    float TargetDistance(Transform target)
     {
         return Vector3.Distance(transform.position, target.transform.position);
     }
 
     float CalculateOddOfHipFire()
     {
-        float result = TargetDistance(lockedTarget);
+        float result = TargetDistance(currentLockedTarget.transform);
 
         if((100f / result) > 90)
         {
@@ -243,4 +330,34 @@ public class PlayerCombatController : MonoBehaviour
             return 100f/result;
         }
     }
+
+    public void OnTakeHit(int damageReceived, PlayerCombatController target)
+    {
+        if(target == this)
+        {
+            Debug.Log("Took Damage");
+
+            playerMovementController.animator.SetTrigger("RecieveHit");
+            movementScript.KnockBack(0.3f, 0.1f);
+
+            health -= damageReceived;
+
+            if(health <= 0)
+            {
+                Die();
+            }
+        }
+        else
+        {
+            Debug.Log(name + ": I wasnt the target");
+        }
+    }
+
+    void Die()
+    {
+        Debug.Log("Player got knocked out");
+        debugDeadBoolean = true;
+    }
+#endregion
+
 }

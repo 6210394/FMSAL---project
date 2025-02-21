@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EnemyManager : MonoBehaviour
 {
-    private EnemyScript[] enemies;
+    private EnemyCombatController[] enemies;
     public EnemyStruct[] allEnemies;
     private List<int> enemyIndexes;
 
@@ -14,7 +14,7 @@ public class EnemyManager : MonoBehaviour
     public int aliveEnemyCount;
     void Start()
     {
-        enemies = GetComponentsInChildren<EnemyScript>();
+        enemies = GetComponentsInChildren<EnemyCombatController>();
 
         allEnemies = new EnemyStruct[enemies.Length];
 
@@ -37,7 +37,7 @@ public class EnemyManager : MonoBehaviour
         AI_Loop_Coroutine = StartCoroutine(AI_Loop(null));
     }
 
-    IEnumerator AI_Loop(EnemyScript enemy)
+    IEnumerator AI_Loop(EnemyCombatController enemy)
     {
         if (AliveEnemyCount() == 0)
         {
@@ -47,7 +47,7 @@ public class EnemyManager : MonoBehaviour
 
         yield return new WaitForSeconds(Random.Range(.5f,1.5f));
 
-        EnemyScript attackingEnemy = RandomEnemyExcludingOne(enemy);
+        EnemyCombatController attackingEnemy = RandomEnemyExcludingOne(enemy);
 
         if (attackingEnemy == null)
             attackingEnemy = RandomEnemy();
@@ -55,7 +55,7 @@ public class EnemyManager : MonoBehaviour
         if (attackingEnemy == null)
             yield break;
             
-        yield return new WaitUntil(()=>attackingEnemy.IsRetreating() == false);
+        yield return new WaitUntil(() => attackingEnemy.IsRetreating() == false);
         yield return new WaitUntil(() => attackingEnemy.IsLockedTarget() == false);
         yield return new WaitUntil(() => attackingEnemy.IsStunned() == false);
 
@@ -71,7 +71,7 @@ public class EnemyManager : MonoBehaviour
             AI_Loop_Coroutine = StartCoroutine(AI_Loop(attackingEnemy));
     }
 
-    public EnemyScript RandomEnemy()
+    public EnemyCombatController RandomEnemy()
     {
         enemyIndexes = new List<int>();
 
@@ -84,14 +84,14 @@ public class EnemyManager : MonoBehaviour
         if (enemyIndexes.Count == 0)
             return null;
 
-        EnemyScript randomEnemy;
+        EnemyCombatController randomEnemy;
         int randomIndex = Random.Range(0, enemyIndexes.Count);
         randomEnemy = allEnemies[enemyIndexes[randomIndex]].enemyScript;
 
         return randomEnemy;
     }
 
-    public EnemyScript RandomEnemyExcludingOne(EnemyScript exclude)
+    public EnemyCombatController RandomEnemyExcludingOne(EnemyCombatController exclude)
     {
         enemyIndexes = new List<int>();
 
@@ -104,7 +104,7 @@ public class EnemyManager : MonoBehaviour
         if (enemyIndexes.Count == 0)
             return null;
 
-        EnemyScript randomEnemy;
+        EnemyCombatController randomEnemy;
         int randomIndex = Random.Range(0, enemyIndexes.Count);
         randomEnemy = allEnemies[enemyIndexes[randomIndex]].enemyScript;
 
@@ -147,7 +147,7 @@ public class EnemyManager : MonoBehaviour
         return count;
     }
 
-    public void SetEnemyAvailiability (EnemyScript enemy, bool state)
+    public void SetEnemyAvailiability (EnemyCombatController enemy, bool state)
     {
         for (int i = 0; i < allEnemies.Length; i++)
         {
@@ -163,6 +163,6 @@ public class EnemyManager : MonoBehaviour
 [System.Serializable]
 public struct EnemyStruct
 {
-    public EnemyScript enemyScript;
+    public EnemyCombatController enemyScript;
     public bool enemyAvailability;
 }

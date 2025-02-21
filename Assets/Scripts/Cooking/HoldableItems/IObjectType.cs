@@ -14,7 +14,7 @@ public class IObjectType : ScriptableObject
 
     #region Object Details
         public bool isHeavy;
-        public bool isIngredient;
+        public Food foodScript;
         public bool isThrowable;
 
         public int damage;

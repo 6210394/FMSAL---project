@@ -6,29 +6,30 @@ public class MovementScript : MonoBehaviour
 {
     private CharacterController characterController;
 
-    //Movement variables
+    [Header("Movement Variable")]
     public float movementSpeed =5f;
     public bool isSprinting;
 
     float normalSpeed = 5f;
     float sprintSpeed = 9f;
     public bool isMoving;
+    public float moveTowardsTargetOffset = 2f;
 
-    //Gravity
+
+    [Header("Gravity")]
     public bool isGrounded;
     float gravityScale = 9.8f;
 
-    //Dashing Varaibles
+    [Header("Dodging/Dashing Values")]
     public float dodgeMoveDuration;
     public float dodgeForce; // to be made private
 
-    //Dashing Timer Variables
+    [Header("Dodging/Dashing Cooldown")]
     public float maxDodgeCooldown = 0.5f;
     float dodgeCooldownRemaining = 0;
     public bool isDodging = false;
     public bool isDashing = false;
 
-    public float offsetDistanceToTarget = 2f;
 
     void Start()
     {
@@ -65,13 +66,13 @@ public class MovementScript : MonoBehaviour
         }
     }
 
-    public void MoveTowardsTarget(EnemyScript target, float baseDuration)
+    public void MoveTowardsTarget(Transform target, float baseDuration)
     {
         transform.DOLookAt(target.transform.position, .2f);
-        Vector3 targetPosition = TargetOffset(target.transform, offsetDistanceToTarget);
+        Vector3 targetPosition = TargetOffset(target.transform, moveTowardsTargetOffset);
         transform.DOMove(targetPosition, baseDuration); 
-        
     }
+
     Vector3 TargetOffset(Transform target, float offsetDistance)
     {
         Vector3 position;

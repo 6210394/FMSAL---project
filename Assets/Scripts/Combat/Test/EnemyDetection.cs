@@ -13,7 +13,7 @@ public class EnemyDetection : MonoBehaviour
     public float sphereCastAOESize = 3f;
 
     [SerializeField] Vector3 inputDirection;
-    [SerializeField] private EnemyScript currentTarget;
+    [SerializeField] private EnemyCombatController currentTarget;
 
     public GameObject cam;
 
@@ -41,8 +41,8 @@ public class EnemyDetection : MonoBehaviour
 
         if (Physics.SphereCast(transform.position, sphereCastAOESize, inputDirection, out info, autoLockOnRange, layerMask))
         {
-            if(info.collider.transform.GetComponent<EnemyScript>().IsAttackable())
-            currentTarget = info.collider.transform.GetComponent<EnemyScript>();
+            if(info.collider.transform.GetComponent<EnemyCombatController>().IsAttackable())
+            currentTarget = info.collider.transform.GetComponent<EnemyCombatController>();
         }
         
         if (currentTarget != null && Vector3.Distance(transform.position, currentTarget.transform.position) > autoLockOnRange*1.5f)
@@ -52,12 +52,12 @@ public class EnemyDetection : MonoBehaviour
         
     }
 
-    public EnemyScript CurrentTarget()
+    public EnemyCombatController CurrentTarget()
     {
         return currentTarget;
     }
 
-    public void SetCurrentTarget(EnemyScript target)
+    public void SetCurrentTarget(EnemyCombatController target)
     {
         currentTarget = target;
     }

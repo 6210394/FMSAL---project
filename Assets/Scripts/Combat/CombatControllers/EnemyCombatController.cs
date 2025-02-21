@@ -4,31 +4,9 @@ using UnityEngine;
 
 public class EnemyCombatController : MonoBehaviour
 {
-    Animator anim;
-    private Rigidbody rb;
-
-    private EnemyScript enemyScript;
-    private EnemyManager enemyManager;
-    private EnemyDetection enemyDetection;
-    private MovementScript movementScript;
-
-    public bool moveDebugBool = false;
-    public List<GameObject> players = new List<GameObject>();
-
-
-    [Tooltip ("If true, the enemy will patrol around its spawn point. Otherwise, it will wander freely.")]
-    public bool tiedPatrol = true;
-    Vector3 spawnPoint;
-    public float patrolRangeFromSpawn = 10f;
-
-    public float detectionRange = 15f;
-    public float fieldOfViewAngle = -135f;
-
-    public float deathTime = 1f;
-
     [Header("Stats")]
     public int health = 3;
-    private float moveSpeed = 1;
+    public float moveSpeed = 1;
     private Vector3 moveDirection;
 
     [Header("States")]
@@ -38,6 +16,36 @@ public class EnemyCombatController : MonoBehaviour
     [SerializeField] private bool isLockedTarget;
     [SerializeField] private bool isStunned;
     [SerializeField] private bool isWaiting = true;
+
+    bool isDead = false;
+
+    //Animations
+    Animator anim;
+    private Rigidbody rb;
+
+    //References
+    private EnemyManager enemyManager;
+    private MovementScript movementScript;
+    private CharacterController characterController;
+
+    [Header("Player References")]
+    public List<GameObject> players = new List<GameObject>();
+    public List<EnemyDetection> playerEnemyDetections = new List<EnemyDetection>();
+    public PlayerCombatController target;
+
+    [Header("Debug Tools")]
+    public bool moveDebugBool = false;
+
+    [Header("Patrol Options and Detection")]
+    [Tooltip ("If true, the enemy will patrol around its spawn point. Otherwise, it will wander freely.")]
+    public bool tiedPatrol = true;
+    Vector3 spawnPoint;
+    public float patrolRangeFromSpawn = 10f;
+
+    public float detectionRange = 15f;
+    public float fieldOfViewAngle = -135f;
+
+    public float deathTime = 1f;
 
     public enum BehaviorState
     {
@@ -51,27 +59,37 @@ public class EnemyCombatController : MonoBehaviour
     void Start()
     {
        Initialize();
-       GameManager.onPlayersListed.AddListener(UpdatePlayerList);
     }
 
     void Update()
     {
-        
+        if(!isStunned && !isDead)
+        {
+            transform.LookAt(new Vector3(target.transform.position.x, transform.position.y, target.transform.position.z));
+        }
     }
 
     void Initialize()
     {
         anim = GetComponentInChildren<Animator>();
         rb = GetComponent<Rigidbody>();
-
-        enemyScript = GetComponent<EnemyScript>();
+        
         movementScript = GetComponent<MovementScript>();
         players = GameManager.instance.players;
+        foreach (GameObject player in players)
+        {
+            playerEnemyDetections.Add(player.GetComponent<EnemyDetection>());
+            PlayerCombatController playerCombat = player.GetComponent<PlayerCombatController>();
+            Debug.Log("Adding " + player + " OnHit");
+            playerCombat.OnHit.AddListener((x, y) => OnTakeHit(x, y));
+        }
         spawnPoint = transform.position;
+        characterController = GetComponent<CharacterController>();
     }
 
     void UpdatePlayerList()
     {
+        Debug.Log("UpdatingPlayerList");
         foreach(GameObject player in players)
         {
             PlayerCombatController playerCombat = player.GetComponent<PlayerCombatController>();
@@ -92,14 +110,9 @@ public class EnemyCombatController : MonoBehaviour
         return angle <= fieldOfViewAngle / 2;
     }
 
-    public void Patrol()
+    public void OnTakeHit(int damageReceived, EnemyCombatController target)
     {
-        
-    }
-
-    public void OnTakeHit(int damageReceived, EnemyScript target)
-    {
-        if(target == enemyScript)
+        if(target == this)
         {
             Debug.Log("Took Damage");
             StopEnemyCoroutines();
@@ -125,9 +138,36 @@ public class EnemyCombatController : MonoBehaviour
         
     }
 
-    void Die()
+    public void SetAttack()
     {
-        
+
+    }
+
+    public void SetRetreat()
+    {
+
+    }
+
+    void Die()
+    {   
+        StopEnemyCoroutines();
+
+        isDead = true;
+        target = null;
+        characterController.enabled = false;
+
+        foreach(EnemyDetection enemyDetection in playerEnemyDetections)
+        {
+            enemyDetection.SetCurrentTarget(null);
+            Debug.Log(enemyDetection.CurrentTarget());
+        }
+
+        int dieAnimAnex = Random.Range(1,4);
+        anim.SetFloat("deathIndex", dieAnimAnex);
+        anim.SetTrigger("Die");
+
+        enemyManager.SetEnemyAvailiability(this, false);  
+        enabled = false;
     }
 
 
@@ -158,5 +198,34 @@ public class EnemyCombatController : MonoBehaviour
         Gizmos.DrawRay(transform.position, leftRay);
         Gizmos.DrawRay(transform.position, rightRay);
     }
+
+     #region Public Booleans
+
+    public bool IsAttackable()
+    {
+        return health > 0;
+    }
+
+    public bool IsPreparingAttack()
+    {
+        return isPreparingAttack;
+    }
+
+    public bool IsRetreating()
+    {
+        return isRetreating;
+    }
+
+    public bool IsLockedTarget()
+    {
+        return isLockedTarget;
+    }
+
+    public bool IsStunned()
+    {
+        return isStunned;
+    }
+
+    #endregion
 
 }

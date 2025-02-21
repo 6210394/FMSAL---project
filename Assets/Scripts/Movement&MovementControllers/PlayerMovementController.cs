@@ -6,40 +6,50 @@ using DG.Tweening;
 
 public class PlayerMovementController : MonoBehaviour
 {
-    public MovementScript movementScript;
-
     public bool isControlled = true;
+    public bool canSprint = true;
     bool isSprintingAnim;
 
+
+    [Header("Field Of View & Speed Values")]
+    public float normalFOV = 60f;
+    public float sprintingFOV;
     public float playerRotationSpeed = 5f;
 
-    public float sprintingFOV;
-    public float normalFOV = 60f;
 
+    [Header("Component References")]
     public GameObject backupCamera;
-    public CinemachineBrain cinemachineBrain;
-    public Transform cameraTransform; 
-    public Rigidbody rb;
+    public Transform cameraTransform;
     public Animator animator;
 
+    private MovementScript movementScript;
+    private CinemachineBrain cinemachineBrain;
+    private Rigidbody rb;
 
+#region Initialization
     void Awake()
     {
-        Initizialize();
+        Initialize();
     }
     
     void Start()
     {
         //characterController = GetComponent<CharacterController>();
         DebugTools();
-        movementScript = GetComponent<MovementScript>();
-        animator = GetComponent<Animator>();
+        cinemachineBrain = FindAnyObjectByType<CinemachineBrain>();
     }
 
-    // Update is called once per frame
+    void Initialize()
+    {
+        rb = GetComponent<Rigidbody>();
+        animator = GetComponent<Animator>();
+        movementScript = GetComponent<MovementScript>();
+    }
+#endregion
+
     void Update()
     {
-        cameraTransform = Camera.main.transform;
+        cameraTransform = Camera.main.transform; //Find the reference for the current active camera
         if(isControlled)
         {   
             if(!movementScript.isDodging)
@@ -48,12 +58,6 @@ public class PlayerMovementController : MonoBehaviour
             }
         }
         UpdateAnimator();
-    }
-
-    void Initizialize()
-    {
-        rb = GetComponent<Rigidbody>();
-        animator = GetComponentInChildren<Animator>();
     }
 
     void UpdateAnimator()
@@ -67,8 +71,7 @@ public class PlayerMovementController : MonoBehaviour
     {
         bool isSprinting = false;
 
-
-        if(Input.GetKeyDown(KeyCode.LeftShift) && !Input.GetMouseButton(1))
+        if(Input.GetKeyDown(KeyCode.LeftShift) && canSprint)
         {
             isSprintingAnim = true;
             Camera.main.DOFieldOfView(sprintingFOV, 0.2f);
@@ -80,7 +83,7 @@ public class PlayerMovementController : MonoBehaviour
         }
 
 
-        if(Input.GetKey(KeyCode.LeftShift) && !Input.GetMouseButton(1))
+        if(Input.GetKey(KeyCode.LeftShift) && canSprint)
         {
             isSprinting = true;
         }

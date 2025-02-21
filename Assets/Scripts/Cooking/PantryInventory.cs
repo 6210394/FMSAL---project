@@ -20,7 +20,7 @@ public class PantryInventory : MonoBehaviour
     }
 #endregion
 
-    public Dictionary<Ingredient, int> pantry;
+    public Dictionary<Food, int> pantry;
 
     // Start is called before the first frame update
     void Start()
@@ -34,7 +34,7 @@ public class PantryInventory : MonoBehaviour
         
     }
 
-    public void AddIngredient(Ingredient ingredient, int portions)
+    public void AddIngredient(Food ingredient, int portions)
     {
         if(pantry.ContainsKey(ingredient))
         {
@@ -46,7 +46,7 @@ public class PantryInventory : MonoBehaviour
         }
     }
 
-    public bool RemoveIngredient(Ingredient ingredient, int portions)
+    public bool RemoveIngredient(Food ingredient, int portions)
     {
         if(pantry.ContainsKey(ingredient))
         {
