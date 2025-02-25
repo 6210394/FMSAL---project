@@ -147,6 +147,10 @@ PrefabInstance:
       value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 5313352283361955119, guid: 0f26102b0e50e7849930cb2b9a086604, type: 3}
+      propertyPath: LensModeOverride.Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5313352283361955119, guid: 0f26102b0e50e7849930cb2b9a086604, type: 3}
       propertyPath: DefaultBlend.CustomCurve.m_Curve.Array.size
       value: 2
       objectReference: {fileID: 0}
@@ -196,11 +200,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5655132365104462554, guid: 0f26102b0e50e7849930cb2b9a086604, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 12.032
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5655132365104462554, guid: 0f26102b0e50e7849930cb2b9a086604, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0.573
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5655132365104462554, guid: 0f26102b0e50e7849930cb2b9a086604, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -584,7 +588,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 13.4401, y: 13.2432}
+  m_SizeDelta: {x: 10, y: 10}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1458953583
 MonoBehaviour:
@@ -599,7 +603,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1652,6 +1656,10 @@ PrefabInstance:
       propertyPath: target
       value: 
       objectReference: {fileID: 1747645527}
+    - target: {fileID: 5603946255351336252, guid: 257fe48e4379fa447a8f728f258038b9, type: 3}
+      propertyPath: isWaiting
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8661229243928107996, guid: 257fe48e4379fa447a8f728f258038b9, type: 3}
       propertyPath: m_LocalPosition.x
       value: -2.74868
@@ -1868,6 +1876,10 @@ PrefabInstance:
     - target: {fileID: 5637078297329754237, guid: 31a631ea320e51545a7e12a38d4f98d2, type: 3}
       propertyPath: m_ControllerManager.Controllers.Array.data[1].Input.Gain
       value: -0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5637078297329754237, guid: 31a631ea320e51545a7e12a38d4f98d2, type: 3}
+      propertyPath: m_ControllerManager.Controllers.Array.data[1].Driver.AccelTime
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6804584995471763108, guid: 31a631ea320e51545a7e12a38d4f98d2, type: 3}
       propertyPath: Target.TrackingTarget

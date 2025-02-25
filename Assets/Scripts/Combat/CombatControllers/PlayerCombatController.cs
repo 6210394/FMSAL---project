@@ -19,6 +19,7 @@ public class PlayerCombatController : MonoBehaviour
     private float meleeRange;
     private float meleeDuration;
 
+    private EnemyCombatController bulletHitTarget;
     public float gunHipFireBulletAccuracyRange = 10f;
     public float gunAimAssistSize = 1f;
     
@@ -28,7 +29,7 @@ public class PlayerCombatController : MonoBehaviour
     private bool junkEquipped = false;
 
     private bool isAiming = false;
-    private bool isLockOnToggle = false;
+    public bool isLockOnToggle = false;
 #endregion
 
 #region Component References
@@ -52,7 +53,7 @@ public class PlayerCombatController : MonoBehaviour
 #endregion
 
     [Header("Player Combat Events")]
-    public UnityEvent<int, EnemyCombatController> OnHit;
+    public UnityEvent<int, EnemyCombatController> OnHit; //damage, target
     public UnityEvent<EnemyCombatController> OnTrajectory;
 
     
@@ -86,7 +87,7 @@ public class PlayerCombatController : MonoBehaviour
             SwitchWeapons();
         }
 
-        AdjustCamera();
+        AdjustLockOnCamera();
 
         PlayerAim();
         //or
@@ -95,7 +96,10 @@ public class PlayerCombatController : MonoBehaviour
         PlayerDodge();
 
 
+        //Process player inputs
+        PlayerLockOn();
 
+        
         if(Input.GetKeyDown(KeyCode.Mouse0)) //Attack Command
         {
             if(playerMovementController.isControlled && !movementScript.isDodging)
@@ -110,19 +114,7 @@ public class PlayerCombatController : MonoBehaviour
                 }
             }
         }
-
-        if(Input.GetKeyDown(KeyCode.Q)) //Lock On Command
-        {
-            if(currentLockedTarget)
-            {
-                isLockOnToggle = !isLockOnToggle;
-            }
-            else
-            {
-                isLockOnToggle = false;
-            }
-            //make the FOV zoom closer or farther based on LockOnMode
-        }
+            
 
         if(debugDeadBoolean)
         {
@@ -191,6 +183,21 @@ public class PlayerCombatController : MonoBehaviour
         {
             transform.DOLookAt(currentLockedTarget.transform.position, punchDuration);
         }
+        
+        if(isAiming)
+        {   
+            bulletHitTarget = null;
+            Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2));
+            RaycastHit hit;
+
+            if (Physics.SphereCast(ray, gunAimAssistSize, out hit, 100f))
+            {
+                Debug.Log("Hit: " + hit.collider.name);
+                // Save the first hit
+                bulletHitTarget = hit.collider.GetComponent<EnemyCombatController>();
+            }
+        }
+        
         combatScript.Attack(CombatScript.AttackType.Shoot, 0.2f); //change later to be a variable for different guns
     }
 
@@ -240,9 +247,28 @@ public class PlayerCombatController : MonoBehaviour
         }
     }
 
+    void PlayerLockOn()
+    {
+        if(Input.GetKeyDown(KeyCode.Q) && !isLockOnToggle) //Lock On Command
+        {
+            if(currentLockedTarget)
+            {
+                isLockOnToggle = !isLockOnToggle;
+                playerMovementController.canSprint = false;
+            }
+            //make the FOV zoom closer or farther based on LockOnMode
+        }
+
+        else if(Input.GetKeyDown(KeyCode.Q) && isLockOnToggle)
+        {
+            isLockOnToggle = false;
+            playerMovementController.canSprint = true;
+        }
+    }
+
     void PlayerFaceTarget()
     {
-        if(currentLockedTarget != null && !isAiming && !movementScript.isDashing && !movementScript.isSprinting)
+        if(isLockOnToggle && !isAiming && !movementScript.isDashing && !movementScript.isSprinting)
         {
            transform.DOLookAt(currentLockedTarget.transform.position, 0.1f);
         }
@@ -276,9 +302,9 @@ public class PlayerCombatController : MonoBehaviour
 
 #region Controller Functions
 
-    void AdjustCamera()
+    void AdjustLockOnCamera()
     {   
-        if(!isAiming)
+        if(!isAiming) //Manage the target group by remembering the last target and comparing with the current target
         {
             CinemachineTargetGroup cinemachineTargetGroup = targetCamera.GetComponentInChildren<CinemachineTargetGroup>();
 
@@ -306,18 +332,31 @@ public class PlayerCombatController : MonoBehaviour
 
     public void DealDamageEvent()
     {
-        if (currentLockedTarget == null)
+        if(meleeEquipped)
         {
-            return;
-        }
-        if(Vector3.Distance(transform.position, currentLockedTarget.gameObject.transform.position) > enemyDetection.autoLockOnRange)
-        {
-            return;
+            if (currentLockedTarget == null)
+            {
+                return;
+            }
+            if(Vector3.Distance(transform.position, currentLockedTarget.gameObject.transform.position) > enemyDetection.autoLockOnRange)
+            {
+                return;
+            }
+
+            Debug.Log(currentLockedTarget);
+            OnHit.Invoke(combatScript.attackDamage, currentLockedTarget);
+            //punchParticle.PlayParticleAtPosition(punchPosition.position);
         }
 
-        Debug.Log(currentLockedTarget);
-        OnHit.Invoke(combatScript.attackDamage, currentLockedTarget);
-        //punchParticle.PlayParticleAtPosition(punchPosition.position);
+        if(gunEquipped)
+        {
+            Debug.Log("Shot fired!");
+            if(bulletHitTarget == null)
+            {
+                return;
+            }
+            OnHit.Invoke(combatScript.attackDamage, bulletHitTarget);
+        }
     }
     
     float TargetDistance(Transform target)

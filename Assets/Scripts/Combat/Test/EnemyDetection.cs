@@ -24,32 +24,35 @@ public class EnemyDetection : MonoBehaviour
 
     private void Update()
     {
-        var camera = Camera.main;
-        var forward = camera.transform.forward;
-        var right = camera.transform.right;
-
-        forward.y = 0f;
-        right.y = 0f;
-
-        forward.Normalize();
-        right.Normalize();
-
-        inputDirection = forward * Input.GetAxis("Vertical") + right * Input.GetAxis("Horizontal");
-        inputDirection = inputDirection.normalized;
-
-        RaycastHit info;
-
-        if (Physics.SphereCast(transform.position, sphereCastAOESize, inputDirection, out info, autoLockOnRange, layerMask))
+        if(!playerCombatController.isLockOnToggle)
         {
-            if(info.collider.transform.GetComponent<EnemyCombatController>().IsAttackable())
-            currentTarget = info.collider.transform.GetComponent<EnemyCombatController>();
+            var camera = Camera.main;
+            Debug.Log(camera.name);
+            var forward = camera.transform.forward;
+            var right = camera.transform.right;
+
+            forward.y = 0f;
+            right.y = 0f;
+
+            forward.Normalize();
+            right.Normalize();
+
+            inputDirection = forward * Input.GetAxis("Vertical") + right * Input.GetAxis("Horizontal");
+            inputDirection = inputDirection.normalized;
+
+            RaycastHit info;
+
+            if (Physics.SphereCast(transform.position, sphereCastAOESize, inputDirection, out info, autoLockOnRange, layerMask))
+            {
+                if(info.collider.transform.GetComponent<EnemyCombatController>().IsAttackable())
+                currentTarget = info.collider.transform.GetComponent<EnemyCombatController>();
+            }
+            
+            if (currentTarget != null && Vector3.Distance(transform.position, currentTarget.transform.position) > autoLockOnRange*1.5f)
+            {
+                currentTarget = null;
+            }
         }
-        
-        if (currentTarget != null && Vector3.Distance(transform.position, currentTarget.transform.position) > autoLockOnRange*1.5f)
-        {
-            currentTarget = null;
-        }
-        
     }
 
     public EnemyCombatController CurrentTarget()
