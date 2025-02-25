@@ -80,14 +80,16 @@ public class MovementScript : MonoBehaviour
         return Vector3.MoveTowards(position, transform.position, offsetDistance);
     }
 
-    void SprintCheckAndSpeedSetup(bool isSprinting)
+    void SprintCheckAndSpeedSetup(bool sprintInput)
     {
-        if (isSprinting)
+        if (sprintInput)
         {
+            isSprinting = true;
             movementSpeed = sprintSpeed;
         }
         else
         {
+            isSprinting = false;
             movementSpeed = normalSpeed;
         }
     }

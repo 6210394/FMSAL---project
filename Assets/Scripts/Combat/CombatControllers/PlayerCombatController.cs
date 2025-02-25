@@ -242,7 +242,7 @@ public class PlayerCombatController : MonoBehaviour
 
     void PlayerFaceTarget()
     {
-        if(currentLockedTarget != null && !isAiming && !movementScript.isDashing)
+        if(currentLockedTarget != null && !isAiming && !movementScript.isDashing && !movementScript.isSprinting)
         {
            transform.DOLookAt(currentLockedTarget.transform.position, 0.1f);
         }
