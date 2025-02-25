@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.Events;
 using DG.Tweening;
 using Unity.Cinemachine;
+using UnityEngine.UI;
+
 
 [RequireComponent(typeof(CombatScript))]
 [RequireComponent(typeof(PlayerMovementController))]
@@ -18,6 +20,7 @@ public class PlayerCombatController : MonoBehaviour
     private float meleeDuration;
 
     public float gunHipFireBulletAccuracyRange = 10f;
+    public float gunAimAssistSize = 1f;
     
     [Header("States")]
     private bool meleeEquipped = false;
@@ -34,6 +37,8 @@ public class PlayerCombatController : MonoBehaviour
     private CombatScript combatScript;
     private EnemyManager enemyManager;
     private EnemyDetection enemyDetection;
+
+    public Image crosshairReference;
 #endregion
 
 #region Camera References & Targeting
@@ -65,6 +70,7 @@ public class PlayerCombatController : MonoBehaviour
         playerCamera = GameObject.Find("DefaultPlayerCamera").GetComponent<CinemachineCamera>();
         targetCamera = GameObject.Find("TargetCamera").GetComponent<CinemachineCamera>();
         aimCamera = GameObject.Find("ThirdPersonAimCamera").GetComponent<CinemachineCamera>();
+        crosshairReference.enabled = false;
     }
 
     // Update is called once per frame
@@ -200,6 +206,7 @@ public class PlayerCombatController : MonoBehaviour
             if(playerMovementController.isControlled)
             {
                 isAiming = true;
+                crosshairReference.enabled = true;
 
                 playerMovementController.canSprint = false;
                 isLockOnToggle = false;
@@ -218,6 +225,7 @@ public class PlayerCombatController : MonoBehaviour
         { 
             isAiming = false;
             playerMovementController.canSprint = true;
+            crosshairReference.enabled = false;
 
             playerCamera.enabled = true;
             aimCamera.enabled = false;
