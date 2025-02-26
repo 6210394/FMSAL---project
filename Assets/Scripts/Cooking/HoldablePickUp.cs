@@ -1,8 +1,8 @@
 using UnityEngine;
 
-public class Food : Pickupable
+public class HoldablePickUp : Pickupable
 {
-    public int portions;
+    public IObjectType objectType;
 
     // Update is called once per frame
     void Update()
@@ -12,7 +12,7 @@ public class Food : Pickupable
 
     public override void OnPickup()
     {
-        //PantryInventory.instance.AddIngredient(this, portions);
+        
         //base.OnPickup();
     }
 }

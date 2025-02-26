@@ -3,7 +3,9 @@ using UnityEngine;
 public class DiogenicPlayerInventory : MonoBehaviour
 {
     public GameObject handAnchor;
-    public IObjectType heldObject;
+    public IObjectType mainHeldObject;
+    public IObjectType secondaryHeldItem;
+
 
     GameObject instantiatedVisual;
 
@@ -28,28 +30,27 @@ public class DiogenicPlayerInventory : MonoBehaviour
 
     public void ShowItemInHands()
     {
-        if (heldObject != null && heldObject.itemMesh != null && instantiatedVisual == null)
+        if (mainHeldObject != null && mainHeldObject.itemMesh != null && instantiatedVisual == null)
         {
+            Debug.Log("Creating" + mainHeldObject.name);
             instantiatedVisual = new GameObject("HeldItem");
             instantiatedVisual.transform.SetParent(handAnchor.transform);
-            instantiatedVisual.transform.localPosition = -heldObject.grabPoint;
+            instantiatedVisual.transform.localPosition = -mainHeldObject.grabPoint;
             instantiatedVisual.transform.localRotation = Quaternion.identity;
 
             MeshFilter meshFilter = instantiatedVisual.AddComponent<MeshFilter>();
-            meshFilter.mesh = heldObject.itemMesh;
+            meshFilter.mesh = mainHeldObject.itemMesh;
 
             MeshRenderer meshRenderer = instantiatedVisual.AddComponent<MeshRenderer>();
-            meshRenderer.material = heldObject.itemMaterial;
+            meshRenderer.material = mainHeldObject.itemMaterial;
 
-            instantiatedVisual.transform.localScale *= heldObject.scale;
+            instantiatedVisual.transform.localScale *= mainHeldObject.scale;
         }
         
-        /* ONLY USE THIS FOR ADJUSTING
-        else
         {
             Destroy(instantiatedVisual);
         }
-        */
+        
     }
 
     public void HideItemInHands()

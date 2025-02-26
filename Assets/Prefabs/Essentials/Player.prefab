@@ -625,9 +625,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4170848390567775362}
   - component: {fileID: 4416159547452902258}
+  - component: {fileID: 4300923011328198163}
   - component: {fileID: 6779007132249043213}
   - component: {fileID: 1102951906637046753}
-  - component: {fileID: 4300923011328198163}
   - component: {fileID: 5720523247777047060}
   - component: {fileID: 161812321840275169}
   - component: {fileID: 7892101299078601583}
@@ -686,50 +686,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 2
---- !u!114 &6779007132249043213
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6739474880526340487}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ab3ccdd6d5ed6b149958122680c79883, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  movementScript: {fileID: 161812321840275169}
-  isControlled: 1
-  playerRotationSpeed: 20
-  sprintingFOV: 80
-  normalFOV: 60
-  backupCamera: {fileID: 2576606312467759291, guid: 482ebfd14f899b1498c9b150b938468f, type: 3}
-  cinemachineBrain: {fileID: 0}
-  cameraTransform: {fileID: 0}
-  rb: {fileID: 4416159547452902258}
-  animator: {fileID: 0}
---- !u!114 &1102951906637046753
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6739474880526340487}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 97be122e5f6df464d8c8ef27e1cd7a73, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  lockedTarget: {fileID: 0}
-  OnHit:
-    m_PersistentCalls:
-      m_Calls: []
-  OnTrajectory:
-    m_PersistentCalls:
-      m_Calls: []
-  punchRange: 6
-  punchDuration: 0.58
-  gunHipFireBulletAccuracyRange: 10
 --- !u!114 &4300923011328198163
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -743,7 +699,59 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   handAnchor: {fileID: 676170088959192611}
-  heldObject: {fileID: 0}
+  mainHeldObject: {fileID: 11400000, guid: 8b38d43e2aed37d47aacfd1b1a18c1f1, type: 2}
+  secondaryHeldItem: {fileID: 0}
+--- !u!114 &6779007132249043213
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6739474880526340487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab3ccdd6d5ed6b149958122680c79883, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isControlled: 1
+  canSprint: 1
+  normalFOV: 60
+  sprintingFOV: 80
+  playerRotationSpeed: 20
+  backupCamera: {fileID: 2576606312467759291, guid: 482ebfd14f899b1498c9b150b938468f, type: 3}
+  cameraTransform: {fileID: 0}
+  animator: {fileID: 0}
+--- !u!114 &1102951906637046753
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6739474880526340487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97be122e5f6df464d8c8ef27e1cd7a73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: 5
+  punchRange: 6
+  punchDuration: 0.8
+  gunHipFireBulletAccuracyRange: 10
+  gunAimAssistSize: 1
+  isLockOnToggle: 0
+  crosshairReference: {fileID: 0}
+  playerCamera: {fileID: 0}
+  targetCamera: {fileID: 0}
+  aimCamera: {fileID: 0}
+  currentLockedTarget: {fileID: 0}
+  lastTarget: {fileID: 0}
+  OnHit:
+    m_PersistentCalls:
+      m_Calls: []
+  OnTrajectory:
+    m_PersistentCalls:
+      m_Calls: []
+  debugDeadBoolean: 0
 --- !u!114 &5720523247777047060
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -782,13 +790,13 @@ MonoBehaviour:
   movementSpeed: 5
   isSprinting: 0
   isMoving: 0
+  moveTowardsTargetOffset: 1
   isGrounded: 0
   dodgeMoveDuration: 0.5
   dodgeForce: 5
   maxDodgeCooldown: 0.5
   isDodging: 0
   isDashing: 0
-  offsetDistanceToTarget: 0.9
 --- !u!114 &7892101299078601583
 MonoBehaviour:
   m_ObjectHideFlags: 0

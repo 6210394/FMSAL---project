@@ -27,7 +27,6 @@ public class EnemyDetection : MonoBehaviour
         if(!playerCombatController.isLockOnToggle)
         {
             var camera = Camera.main;
-            Debug.Log(camera.name);
             var forward = camera.transform.forward;
             var right = camera.transform.right;
 

@@ -17,7 +17,6 @@ public class Interactable : MonoBehaviour
 
     void Start()
     {
-        GameManager.onPlayersListed.AddListener(Initialize);
         interactCollider = GetComponent<SphereCollider>();
         interactCollider.isTrigger = true;
         interactCollider.radius = interactRadius;
@@ -25,14 +24,6 @@ public class Interactable : MonoBehaviour
         icon.SetIconActive(false);
     }
 
-    void Initialize()
-    {
-        if(SceneManager.GetActiveScene().name == "Home")
-        {
-            Debug.Log("Initializing");
-            player = GameManager.instance.players[0];
-        }
-    }   
 
     void OnTriggerEnter(Collider other)
     {
