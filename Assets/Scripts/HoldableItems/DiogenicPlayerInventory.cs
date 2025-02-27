@@ -2,9 +2,18 @@ using UnityEngine;
 
 public class DiogenicPlayerInventory : MonoBehaviour
 {
+    [Header("Booleans")]
+    public bool canDropItem;
+
+    [Header("Hand Anchor Reference")]
     public GameObject handAnchor;
+
+    [Header("Hand Slots")]
     public IObjectType mainHeldObject;
     public IObjectType secondaryHeldItem;
+    [Space]
+    public WeaponScript mainWeapon;
+    public WeaponScript sidearm;
 
 
     GameObject instantiatedVisual;
@@ -23,34 +32,42 @@ public class DiogenicPlayerInventory : MonoBehaviour
         }
     }
 
-    void Update()
+    void RecieveObject(WeaponScript weapon)
     {
-        ShowItemInHands();
+        if(mainWeapon = null)
+        {
+            mainWeapon = weapon;
+        }
+        else if (sidearm = null)
+        {
+            sidearm = weapon;
+        }
+        ShowItemInHands(weapon);
     }
 
-    public void ShowItemInHands()
+    void RecieveObject(IObjectType objectType)
     {
-        if (mainHeldObject != null && mainHeldObject.itemMesh != null && instantiatedVisual == null)
-        {
-            Debug.Log("Creating" + mainHeldObject.name);
-            instantiatedVisual = new GameObject("HeldItem");
-            instantiatedVisual.transform.SetParent(handAnchor.transform);
-            instantiatedVisual.transform.localPosition = -mainHeldObject.grabPoint;
-            instantiatedVisual.transform.localRotation = Quaternion.identity;
+        mainHeldObject = objectType;
+        ShowItemInHands(objectType);
+    }
 
-            MeshFilter meshFilter = instantiatedVisual.AddComponent<MeshFilter>();
-            meshFilter.mesh = mainHeldObject.itemMesh;
+    public void ShowItemInHands(IObjectType objectType)
+    {
+        HideItemInHands();
 
-            MeshRenderer meshRenderer = instantiatedVisual.AddComponent<MeshRenderer>();
-            meshRenderer.material = mainHeldObject.itemMaterial;
+        Debug.Log("Creating" + objectType.name);
+        instantiatedVisual = new GameObject("HeldItem");
+        instantiatedVisual.transform.SetParent(handAnchor.transform);
+        instantiatedVisual.transform.localPosition = -objectType.grabPoint;
+        instantiatedVisual.transform.localRotation = Quaternion.Euler(objectType.rotation);
 
-            instantiatedVisual.transform.localScale *= mainHeldObject.scale;
-        }
-        
-        {
-            Destroy(instantiatedVisual);
-        }
-        
+        MeshFilter meshFilter = instantiatedVisual.AddComponent<MeshFilter>();
+        meshFilter.mesh = objectType.itemMesh;
+
+        MeshRenderer meshRenderer = instantiatedVisual.AddComponent<MeshRenderer>();
+        meshRenderer.material = objectType.itemMaterial;
+
+        instantiatedVisual.transform.localScale *= objectType.scale;
     }
 
     public void HideItemInHands()

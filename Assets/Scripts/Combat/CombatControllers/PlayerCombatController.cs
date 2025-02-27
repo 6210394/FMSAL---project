@@ -18,18 +18,21 @@ public class PlayerCombatController : MonoBehaviour
     public float punchDuration = 0.5f;
     private float meleeRange;
     private float meleeDuration;
-
-    private EnemyCombatController bulletHitTarget;
+    [Space]
     public float gunHipFireBulletAccuracyRange = 10f;
     public float gunAimAssistSize = 1f;
+
+    private EnemyCombatController bulletHitTarget;
     
     [Header("States")]
+    public bool isLockOnToggle = false;
+    
+    private bool isAiming = false;
+
     private bool meleeEquipped = false;
     private bool gunEquipped = false;
-    private bool junkEquipped = false;
+    private bool junkEquipped;
 
-    private bool isAiming = false;
-    public bool isLockOnToggle = false;
 #endregion
 
 #region Component References
@@ -38,11 +41,13 @@ public class PlayerCombatController : MonoBehaviour
     private CombatScript combatScript;
     private EnemyManager enemyManager;
     private EnemyDetection enemyDetection;
+    private DiogenicPlayerInventory diogenicPlayerInventory;
 
     public Image crosshairReference;
 #endregion
 
 #region Camera References & Targeting
+    [Header("Camera References")]
     [SerializeField] private CinemachineCamera playerCamera;
     [SerializeField] private CinemachineCamera targetCamera;
     [SerializeField] private CinemachineCamera aimCamera;
@@ -56,7 +61,6 @@ public class PlayerCombatController : MonoBehaviour
     public UnityEvent<int, EnemyCombatController> OnHit; //damage, target
     public UnityEvent<EnemyCombatController> OnTrajectory;
 
-    
     [Header("Debug")]
     public bool debugDeadBoolean = false;
 
@@ -67,6 +71,7 @@ public class PlayerCombatController : MonoBehaviour
         combatScript = GetComponent<CombatScript>();
         movementScript = GetComponent<MovementScript>();
         playerMovementController = GetComponent<PlayerMovementController>();
+        diogenicPlayerInventory = GetComponent<DiogenicPlayerInventory>();
 
         playerCamera = GameObject.Find("DefaultPlayerCamera").GetComponent<CinemachineCamera>();
         targetCamera = GameObject.Find("TargetCamera").GetComponent<CinemachineCamera>();
@@ -110,7 +115,7 @@ public class PlayerCombatController : MonoBehaviour
                 }
                 else
                 {
-                    PlayerMelee(punchRange);
+                    PlayerMelee(meleeRange);
                 }
             }
         }
@@ -132,15 +137,46 @@ public class PlayerCombatController : MonoBehaviour
         {
             return;
         }
+
         if(Input.GetKeyDown("1"))
         {
-            meleeEquipped = true;
-            gunEquipped = false;
+            if(diogenicPlayerInventory.mainWeapon)
+            {
+                diogenicPlayerInventory.ShowItemInHands(diogenicPlayerInventory.mainWeapon);
+                UpdateStatsBasedOnWeapon(diogenicPlayerInventory.mainWeapon);   
+            }
+            else if (diogenicPlayerInventory.sidearm)
+            {
+                diogenicPlayerInventory.ShowItemInHands(diogenicPlayerInventory.sidearm);
+                UpdateStatsBasedOnWeapon(diogenicPlayerInventory.sidearm);
+            }
+            else
+            {
+                //maybe drop whatever the player is holding if it was a pickup
+                diogenicPlayerInventory.HideItemInHands();
+                UpdateStatsBasedOnWeapon(null);
+            }
         }
+
         if(Input.GetKeyDown("2"))
         {
-            meleeEquipped = false;
-            gunEquipped = true;
+            if (diogenicPlayerInventory.sidearm)
+            {
+                diogenicPlayerInventory.ShowItemInHands(diogenicPlayerInventory.sidearm);
+                UpdateStatsBasedOnWeapon(diogenicPlayerInventory.sidearm);
+            }
+
+            else if(diogenicPlayerInventory.mainWeapon)
+            {
+                diogenicPlayerInventory.ShowItemInHands(diogenicPlayerInventory.mainWeapon);
+                UpdateStatsBasedOnWeapon(diogenicPlayerInventory.mainWeapon);   
+            }
+            else
+            {
+                //maybe drop whatever the player is holding if it was a pickup
+                diogenicPlayerInventory.HideItemInHands();
+                UpdateStatsBasedOnWeapon(null);
+            }
         }
 
         /*
@@ -162,13 +198,13 @@ public class PlayerCombatController : MonoBehaviour
             return;
         }
                
-        combatScript.Attack(CombatScript.AttackType.Melee, punchDuration); //to change later when we have more weapons
+        combatScript.Attack(CombatScript.AttackType.Melee, meleeDuration); //to change later when we have more weapons
         if(currentLockedTarget != null)
         {
-            transform.DOLookAt(currentLockedTarget.transform.position, punchDuration);
+            transform.DOLookAt(currentLockedTarget.transform.position, meleeDuration);
             if(TargetDistance(currentLockedTarget.transform) < range)
             {
-                movementScript.MoveTowardsTarget(currentLockedTarget.gameObject.transform, punchDuration);
+                movementScript.MoveTowardsTarget(currentLockedTarget.gameObject.transform, meleeDuration/1.75f);
             }
         }
     }
@@ -302,6 +338,44 @@ public class PlayerCombatController : MonoBehaviour
 
 #region Controller Functions
 
+    void UpdateStatsBasedOnWeapon(WeaponScript weapon) //THIS NEEDS TO BE A WEAPON AND MUST BE VERIFIED
+    {
+        if(weapon != null)
+        {
+            combatScript.attackDamage = weapon.damage;
+
+            switch(weapon.weaponType)
+            {
+                case WeaponScript.WeaponType.Melee:
+                {
+                    meleeEquipped = true;
+                    gunEquipped = false;
+
+                    meleeRange = weapon.weaponReach;
+                    meleeDuration = weapon.swingTime;
+                    break;
+                }
+
+                case WeaponScript.WeaponType.Gun:
+                {
+                    gunEquipped = true;
+                    meleeEquipped = false;
+                    break;
+                }
+            }
+        }
+
+        else
+        {
+            combatScript.attackDamage = 1;
+            meleeEquipped = true;
+            gunEquipped = false;
+            meleeRange = punchRange;
+            meleeDuration = punchDuration;
+        }
+        
+    }
+
     void AdjustLockOnCamera()
     {   
         if(!isAiming) //Manage the target group by remembering the last target and comparing with the current target
@@ -344,7 +418,10 @@ public class PlayerCombatController : MonoBehaviour
             }
 
             Debug.Log(currentLockedTarget);
-            OnHit.Invoke(combatScript.attackDamage, currentLockedTarget);
+            if(currentLockedTarget)
+            {
+                OnHit.Invoke(combatScript.attackDamage, currentLockedTarget);
+            }
             //punchParticle.PlayParticleAtPosition(punchPosition.position);
         }
 

@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e0212878c032064dbd073d61ffbd55e, type: 3}
   m_Name: Gun
   m_EditorClassIdentifier: 
-  grabPoint: {x: 0, y: 0, z: 0}
-  itemMesh: {fileID: -5495902117074765545, guid: e33a9df6f07b2704bbd54968f5530520, type: 3}
-  itemMaterial: {fileID: -876546973899608171, guid: e33a9df6f07b2704bbd54968f5530520, type: 3}
-  scale: 1
+  grabPoint: {x: 0.05, y: 0, z: 0.1}
+  itemMesh: {fileID: 2941274158721294118, guid: e33a9df6f07b2704bbd54968f5530520, type: 3}
+  itemMaterial: {fileID: 2100000, guid: c8d56cfdd2163f3488d1961f876d455c, type: 2}
+  scale: 100
+  rotation: {x: -10, y: 0, z: 270}
   isThrowable: 1
-  isMelee: 0
-  isGun: 1
+  weaponType: 1
   damage: 2
   stunTime: 0
   swingTime: 0
@@ -26,7 +26,7 @@ MonoBehaviour:
   rateOfFire: 140
   weaponAimAssistValue: 10
   reloadSpeed: 0
-  maxAmmo: 6
+  maxAmmo: 24
   magSize: 6
   totalAmmoRemaining: 4
   currentAmmoInMag: 4

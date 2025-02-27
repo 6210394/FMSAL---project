@@ -10,5 +10,6 @@ public class IObjectType : ScriptableObject
         public Material itemMaterial;
 
         public float scale = 1;
+        public Vector3 rotation; 
 
 }

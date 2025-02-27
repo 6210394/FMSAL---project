@@ -15,7 +15,7 @@ public class EnemyCombatController : MonoBehaviour
     [SerializeField] private bool isRetreating;
     [SerializeField] private bool isLockedTarget;
     [SerializeField] private bool isStunned;
-    [SerializeField] private bool isWaiting = true;
+    [SerializeField] private bool isWaiting;
 
     bool isDead = false;
 
@@ -159,7 +159,6 @@ public class EnemyCombatController : MonoBehaviour
         foreach(EnemyDetection enemyDetection in playerEnemyDetections)
         {
             enemyDetection.SetCurrentTarget(null);
-            Debug.Log(enemyDetection.CurrentTarget());
         }
 
         int dieAnimAnex = Random.Range(1,4);

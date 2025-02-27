@@ -6,6 +6,7 @@ using DG.Tweening;
 
 public class PlayerMovementController : MonoBehaviour
 {
+    [Header("Booleans")]
     public bool isControlled = true;
     public bool canSprint = true;
     bool isSprintingAnim;

@@ -3,12 +3,12 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "HoldableItem", menuName = "Scriptable Objects/Weapon")]
 public class WeaponScript : IObjectType
 {
+    public enum WeaponType {Melee, Gun, Junk}
+
     [Header("Object Details")]
 
         public bool isThrowable;
-
-        public bool isMelee;
-        public bool isGun;
+        public WeaponType weaponType;
 
     [Header("Weapon Stats")]
     
@@ -22,6 +22,7 @@ public class WeaponScript : IObjectType
         //Guns
         public float rateOfFire;
         public float weaponAimAssistValue;
+    [Space]
         public float reloadSpeed;
         public int maxAmmo;
         public int magSize;
