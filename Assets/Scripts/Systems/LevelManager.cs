@@ -55,9 +55,9 @@ public class LevelManager : MonoBehaviour
 
     void InitializeLevel()
     {
-        Destroy(GameObject.Find("MainCamera"));
+        //Destroy(GameObject.Find("MainCamera"));
         FindSpawnPoints();
-        Instantiate(playerPrefab, playerSpawnPoint.position, playerSpawnPoint.rotation).GetComponent<CombatScript>().enabled = true;
+        //Instantiate(playerPrefab, playerSpawnPoint.position, playerSpawnPoint.rotation).GetComponent<CombatScript>().enabled = true;
         StartCoroutine(StartTimer());
         onMissionInitialize.Invoke();
     }    
