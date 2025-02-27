@@ -12,6 +12,7 @@ public class EnemyManager : MonoBehaviour
     private Coroutine AI_Loop_Coroutine;
 
     public int aliveEnemyCount;
+    
     void Start()
     {
         enemies = GetComponentsInChildren<EnemyCombatController>();
@@ -32,6 +33,7 @@ public class EnemyManager : MonoBehaviour
         
     }
 
+/*
     public void StartAI()
     {
         AI_Loop_Coroutine = StartCoroutine(AI_Loop(null));
@@ -70,6 +72,7 @@ public class EnemyManager : MonoBehaviour
         if (AliveEnemyCount() > 0)
             AI_Loop_Coroutine = StartCoroutine(AI_Loop(attackingEnemy));
     }
+*/
 
     public EnemyCombatController RandomEnemy()
     {
@@ -122,11 +125,11 @@ public class EnemyManager : MonoBehaviour
         return count;
     }
 
-    public bool AnEnemyIsPreparingAttack()
+    public bool AnEnemyIsAttacking()
     {
         foreach (EnemyStruct enemyStruct in allEnemies)
         {
-            if (enemyStruct.enemyScript.IsPreparingAttack())
+            if (enemyStruct.enemyScript.currentState == EnemyCombatController.BehaviorState.Attacking)
             {
                 return true;
             }

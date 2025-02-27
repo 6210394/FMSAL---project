@@ -5,7 +5,6 @@ using UnityEngine;
 public class EnemyCombatController : MonoBehaviour
 {
     [Header("Stats")]
-    public int health = 3;
     public float moveSpeed = 1;
     private Vector3 moveDirection;
 
@@ -22,6 +21,7 @@ public class EnemyCombatController : MonoBehaviour
     //References
     private EnemyManager enemyManager;
     private MovementScript movementScript;
+    private CombatScript combatScript;
     private CharacterController characterController;
 
     [Header("Player References")]
@@ -46,7 +46,7 @@ public class EnemyCombatController : MonoBehaviour
     public enum BehaviorState
     {
         Patrol,
-        Fighting,
+        Attacking,
         Moving
     }
 
@@ -71,6 +71,9 @@ public class EnemyCombatController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         
         movementScript = GetComponent<MovementScript>();
+        combatScript = GetComponent<CombatScript>();
+        characterController = GetComponent<CharacterController>();
+
         players = GameManager.instance.players;
         foreach (GameObject player in players)
         {
@@ -80,7 +83,6 @@ public class EnemyCombatController : MonoBehaviour
             playerCombat.OnHit.AddListener((x, y) => OnTakeHit(x, y));
         }
         spawnPoint = transform.position;
-        characterController = GetComponent<CharacterController>();
     }
 
     void UpdatePlayerList()
@@ -116,9 +118,9 @@ public class EnemyCombatController : MonoBehaviour
             anim.SetTrigger("RecieveHit");
             movementScript.KnockBack(0.3f, 0.1f);
 
-            health -= damageReceived;
+            combatScript.health -= damageReceived;
 
-            if(health <= 0)
+            if(combatScript.health <= 0)
             {
                 Die();
             }
@@ -183,7 +185,7 @@ public class EnemyCombatController : MonoBehaviour
 
     public bool IsAttackable()
     {
-        return health > 0;
+        return combatScript.health > 0;
     }
 
     public bool IsLockedTarget()

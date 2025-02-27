@@ -23,7 +23,7 @@ MonoBehaviour:
   stunTime: 0
   swingTime: 0
   weaponReach: 0
-  rateOfFire: 140
+  rateOfFire: 200
   weaponAimAssistValue: 0.7
   reloadSpeed: 0
   maxAmmo: 24

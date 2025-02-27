@@ -10,8 +10,6 @@ using UnityEngine.UI;
 public class PlayerCombatController : MonoBehaviour
 {
 #region Variables & States
-    [Header("Stats")]
-    public int health = 5;
 
     [Header("Attack Values")]
     public float punchRange = 4f;
@@ -192,7 +190,7 @@ public class PlayerCombatController : MonoBehaviour
 
     void PlayerMelee(float range)
     {
-        if(!meleeEquipped || !combatScript.attackAvailable || !combatScript.canAttack)
+        if(!meleeEquipped || !combatScript.attackIsAvailable)
         {
             return;
         }
@@ -210,7 +208,7 @@ public class PlayerCombatController : MonoBehaviour
 
     void PlayerShoot()
     {
-        if(!gunEquipped || !combatScript.attackAvailable || !combatScript.canAttack)
+        if(!gunEquipped || !combatScript.attackIsAvailable)
         {
             return;
         }
@@ -365,7 +363,7 @@ public class PlayerCombatController : MonoBehaviour
                     Debug.Log(gunRateOfFireTime);
                     meleeEquipped = false;
 
-                    float animationSpeed = gunRateOfFireTime / 60f;
+                    float animationSpeed = weapon.rateOfFire / 60f;
                     combatScript.animator.SetFloat("ShootSpeed", animationSpeed);
                     Debug.Log(combatScript.animator.GetFloat("ShootSpeed"));
                     break;
@@ -472,9 +470,9 @@ public class PlayerCombatController : MonoBehaviour
             playerMovementController.animator.SetTrigger("RecieveHit");
             movementScript.KnockBack(0.3f, 0.1f);
 
-            health -= damageReceived;
+            combatScript.health -= damageReceived;
 
-            if(health <= 0)
+            if(combatScript.health <= 0)
             {
                 Die();
             }

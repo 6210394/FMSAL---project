@@ -5,30 +5,35 @@ using UnityEngine;
 
 public class CombatScript : MonoBehaviour
 {
+    public enum AttackType
+    {
+        Melee, HeavyMelee, Shoot, Slash
+    }
+
+    [Header ("Stats")]
+    public int health = 3;
+    public int attackDamage = 1;
+
+    [Header ("States")]
+    public bool isStunned = false;
+    public bool stunImmune = false;
+    [Space]
+    public bool attackIsAvailable = true;
+    public bool isAttacking = false;
+    float attackCooldown = 0.5f;
+    float attackCooldownTimer = 0f;
+    
+    [Header ("Object & Component References ")]
+    [SerializeField] Vector3 reticleOffset;
+    [SerializeField] GameObject bulletVisualsPrefab;
+    [SerializeField] Transform spawnOriginOffset;
+    [Space]
     private PlayerMovementController playerController;
     public Animator animator;
 
-    public enum AttackType
-    {
-        Melee, HeavyMelee, Shoot
-    }
+    [Header ("Debug")]
+    [SerializeField] bool canAttack = false; //debug variable
 
-    public bool isStunned = false;
-    public bool canAttack = false; //debug variable
-
-    public float nudgeForce = 30f;
-
-    public bool attackAvailable = true;
-    public int attackDamage = 1;
-    public float attackCooldown = 0.5f;
-    float attackCooldownTimer = 0f;
-
-    public bool isAttacking = false;
-
-    public Vector3 reticleOffset;
-
-    public GameObject bulletVisualsPrefab;
-    public Transform spawnOriginOffset;
 
     public void Start()
     {
@@ -36,10 +41,15 @@ public class CombatScript : MonoBehaviour
         playerController = GetComponent<PlayerMovementController>();
         //animator = GetComponent<Animator>();
     }
+
+    public void ProcessAttackList(Dictionary<AttackType, int> stringOfAttacks)
+    {
+        //
+    }
     
     public void Attack(AttackType attackType, float specificAttackCooldown)
     {
-        if(!isStunned)
+        if(!isStunned && canAttack)
         {
             attackCooldown = specificAttackCooldown;
             switch(attackType)
@@ -97,14 +107,14 @@ public class CombatScript : MonoBehaviour
 
     void Update()
     {
-        AttackCooldownCountdown();      
+        AttackCooldownCountdown();   
     }
 
     public void AttackCancel()
     {
         StopAllCoroutines();
         isAttacking = false;
-        attackAvailable = true;
+        attackIsAvailable = true;
         if(playerController != null)
         {
             playerController.isControlled = true;
@@ -121,23 +131,18 @@ public class CombatScript : MonoBehaviour
 
         if (attackCooldownTimer >= 0)
         {
-            attackAvailable = false;
+            attackIsAvailable = false;
             attackCooldownTimer -= Time.deltaTime;
             
             if (attackCooldownTimer <= 0)
             {
                 attackCooldownTimer = 0;
-                attackAvailable = true;
+                attackIsAvailable = true;
             }
         }
     }
 
-    public void NudgeEntity()
-    {
-        transform.DOMove(transform.forward, nudgeForce);
-    }
-
-    IEnumerator Stunned(float time)
+    public IEnumerator IStunned(float time)
     {
         isStunned = true;
         yield return new WaitForSeconds(time);

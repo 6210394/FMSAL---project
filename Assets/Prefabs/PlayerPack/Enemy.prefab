@@ -77,20 +77,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f3134d60c0acec48a326b675f7b5c70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveDebugBool: 1
+  isLockedTarget: 0
+  isStunned: 0
   players: []
+  playerEnemyDetections: []
+  target: {fileID: 0}
+  moveDebugBool: 1
   tiedPatrol: 1
   patrolRangeFromSpawn: 10
   detectionRange: 0
   fieldOfViewAngle: -135
   deathTime: 1
-  health: 3
-  isPreparingAttack: 0
-  isMoving: 0
-  isRetreating: 0
-  isLockedTarget: 0
-  isStunned: 0
-  isWaiting: 1
   currentState: 0
 --- !u!114 &6820935013679965740
 MonoBehaviour:
@@ -107,13 +104,13 @@ MonoBehaviour:
   movementSpeed: 5
   isSprinting: 0
   isMoving: 0
+  moveTowardsTargetOffset: 2
   isGrounded: 0
   dodgeMoveDuration: 0
   dodgeForce: 0
   maxDodgeCooldown: 0.5
   isDodging: 0
   isDashing: 0
-  offsetDistanceToTarget: 2
 --- !u!114 &2058122964224401961
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -126,17 +123,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a8ef733ed8e0dc41a1a6b672435519d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animator: {fileID: 6659547010701238330}
-  isStunned: 0
-  canAttack: 0
-  nudgeForce: 30
-  attackAvailable: 1
+  health: 3
   attackDamage: 1
-  attackCooldown: 0.5
+  isStunned: 0
+  stunImmune: 0
+  attackIsAvailable: 1
   isAttacking: 0
   reticleOffset: {x: 0, y: 0, z: 0}
   bulletVisualsPrefab: {fileID: 0}
   spawnOriginOffset: {fileID: 8661229243928107996}
+  animator: {fileID: 6659547010701238330}
+  canAttack: 0
 --- !u!143 &6548890165488695915
 CharacterController:
   m_ObjectHideFlags: 0
