@@ -21,6 +21,7 @@ public class PlayerCombatController : MonoBehaviour
     [Space]
     public float gunHipFireBulletAccuracyRange = 10f;
     public float gunAimAssistSize = 1f;
+    public float gunRateOfFireTime = 140f; //in round per minute
 
     private EnemyCombatController bulletHitTarget;
     
@@ -103,9 +104,8 @@ public class PlayerCombatController : MonoBehaviour
 
         //Process player inputs
         PlayerLockOn();
-
         
-        if(Input.GetKeyDown(KeyCode.Mouse0)) //Attack Command
+        if(Input.GetKey(KeyCode.Mouse0)) //Attack Command
         {
             if(playerMovementController.isControlled && !movementScript.isDodging)
             {
@@ -120,7 +120,6 @@ public class PlayerCombatController : MonoBehaviour
             }
         }
             
-
         if(debugDeadBoolean)
         {
             playerMovementController.isControlled = false;
@@ -233,8 +232,10 @@ public class PlayerCombatController : MonoBehaviour
                 bulletHitTarget = hit.collider.GetComponent<EnemyCombatController>();
             }
         }
+
         
-        combatScript.Attack(CombatScript.AttackType.Shoot, 0.2f); //change later to be a variable for different guns
+        
+        combatScript.Attack(CombatScript.AttackType.Shoot, gunRateOfFireTime); //change later to be a variable for different guns
     }
 
     void PlayerAim()
@@ -359,7 +360,14 @@ public class PlayerCombatController : MonoBehaviour
                 case WeaponScript.WeaponType.Gun:
                 {
                     gunEquipped = true;
+                    gunAimAssistSize = weapon.weaponAimAssistValue;
+                    gunRateOfFireTime = 60f / weapon.rateOfFire;
+                    Debug.Log(gunRateOfFireTime);
                     meleeEquipped = false;
+
+                    float animationSpeed = gunRateOfFireTime / 60f;
+                    combatScript.animator.SetFloat("ShootSpeed", animationSpeed);
+                    Debug.Log(combatScript.animator.GetFloat("ShootSpeed"));
                     break;
                 }
             }

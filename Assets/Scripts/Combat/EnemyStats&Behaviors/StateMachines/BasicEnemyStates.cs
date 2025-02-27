@@ -1,7 +1,7 @@
 using UnityEngine;
 
 
-public class BasicEnemyStates : EnemyStateMachine
+public class BasicEnemyStates : EnemyStateMachineBlueprint
 {
     public float attackRange = 2;
     public float detectionRange = 20;

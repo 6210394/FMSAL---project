@@ -633,7 +633,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 10, y: 10}
+  m_SizeDelta: {x: 5, y: 5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1458953583
 MonoBehaviour:
@@ -955,9 +955,13 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4300923011328198163, guid: 40c565ee377da1b40beae600764c177d, type: 3}
-      propertyPath: mainWeapon
+      propertyPath: sidearm
       value: 
       objectReference: {fileID: 11400000, guid: 8629cfa026f8f4e41b63e0ca7cbdb34e, type: 2}
+    - target: {fileID: 4300923011328198163, guid: 40c565ee377da1b40beae600764c177d, type: 3}
+      propertyPath: mainWeapon
+      value: 
+      objectReference: {fileID: 11400000, guid: 8b38d43e2aed37d47aacfd1b1a18c1f1, type: 2}
     - target: {fileID: 4300923011328198163, guid: 40c565ee377da1b40beae600764c177d, type: 3}
       propertyPath: mainHeldObject
       value: 

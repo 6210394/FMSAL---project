@@ -24,7 +24,7 @@ MonoBehaviour:
   swingTime: 0
   weaponReach: 0
   rateOfFire: 140
-  weaponAimAssistValue: 10
+  weaponAimAssistValue: 0.7
   reloadSpeed: 0
   maxAmmo: 24
   magSize: 6

@@ -1,15 +1,15 @@
 using UnityEngine;
 
-public class EnemyStateMachine : MonoBehaviour
+public class EnemyStateMachineBlueprint : MonoBehaviour
 {
-    public enum STATE { PATROL, CHASING, ATTACKING}
+    public enum STATE { PATROL, MOVING, ATTACKING}
     public enum EVENT { ENTER, UPDATE, EXIT }
     
     public STATE currentState;
     public EVENT currentEvent;
     protected STATE nextState;
 
-    public EnemyStateMachine()
+    public EnemyStateMachineBlueprint()
     {
         currentState = STATE.PATROL;
         currentEvent = EVENT.ENTER;
@@ -53,7 +53,7 @@ public class EnemyStateMachine : MonoBehaviour
                     Patrol();
                     break;
 
-                case STATE.CHASING:
+                case STATE.MOVING:
                     Chasing();
                     break;
 
@@ -72,7 +72,7 @@ public class EnemyStateMachine : MonoBehaviour
         currentEvent = nextEvent;
     }
 
-    public void MeleeAttack()
+    public void EnemyMelee()
     {
         animator.SetTrigger("MeleeAttack");
     }

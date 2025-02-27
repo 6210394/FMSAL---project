@@ -20,8 +20,8 @@ public class WeaponScript : IObjectType
         public float weaponReach;
     [Header("Ranged Weapon")]
         //Guns
-        public float rateOfFire;
-        public float weaponAimAssistValue;
+        public float rateOfFire; //RPM - Rounds per minute, example: 140RPM
+        public float weaponAimAssistValue; //Size of the aim assist bubble in units, ~1
     [Space]
         public float reloadSpeed;
         public int maxAmmo;

@@ -10,12 +10,8 @@ public class EnemyCombatController : MonoBehaviour
     private Vector3 moveDirection;
 
     [Header("States")]
-    [SerializeField] private bool isPreparingAttack;
-    [SerializeField] private bool isMoving;
-    [SerializeField] private bool isRetreating;
     [SerializeField] private bool isLockedTarget;
     [SerializeField] private bool isStunned;
-    [SerializeField] private bool isWaiting;
 
     bool isDead = false;
 
@@ -51,7 +47,7 @@ public class EnemyCombatController : MonoBehaviour
     {
         Patrol,
         Fighting,
-        Searching
+        Moving
     }
 
     public BehaviorState currentState = BehaviorState.Patrol;
@@ -169,21 +165,6 @@ public class EnemyCombatController : MonoBehaviour
         enabled = false;
     }
 
-
-    /*
-        public override void LoseHealth(float amount)
-        {
-            base.LoseHealth(amount);
-            anim.SetTrigger("TakeDamage");
-        }
-
-        public override void Die()
-        {
-            rb.constraints = RigidbodyConstraints.None; //fun basic ragdoll
-            Destroy(gameObject, deathTime);
-        }
-
-    */
     public void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
@@ -203,16 +184,6 @@ public class EnemyCombatController : MonoBehaviour
     public bool IsAttackable()
     {
         return health > 0;
-    }
-
-    public bool IsPreparingAttack()
-    {
-        return isPreparingAttack;
-    }
-
-    public bool IsRetreating()
-    {
-        return isRetreating;
     }
 
     public bool IsLockedTarget()
