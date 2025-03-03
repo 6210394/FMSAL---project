@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8661229243928107996}
   - component: {fileID: 4345109750266240904}
   - component: {fileID: 5603946255351336252}
+  - component: {fileID: 1730179161992117604}
   - component: {fileID: 6820935013679965740}
   - component: {fileID: 2058122964224401961}
   - component: {fileID: 6548890165488695915}
@@ -77,18 +78,56 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f3134d60c0acec48a326b675f7b5c70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moveSpeed: 3
+  isMoving: 0
   isLockedTarget: 0
   isStunned: 0
+  maximumChainStun: 3
+  prefersShooting: 0
+  prefersPunching: 1
+  comfortRange: 5
+  tiedPatrol: 1
+  isWaiting: 0
+  spawnPoint: {x: 0, y: 0, z: 0}
+  patrolRangeFromSpawn: 10
+  detectionRange: 10
+  fieldOfViewAngle: 135
+  deathTime: 1
+  isPreparingAttack: 0
+  isRetreating: 0
+  movementScript: {fileID: 0}
   players: []
   playerEnemyDetections: []
   target: {fileID: 0}
+  OnDamage:
+    m_PersistentCalls:
+      m_Calls: []
+  OnStopMoving:
+    m_PersistentCalls:
+      m_Calls: []
+  OnRetreat:
+    m_PersistentCalls:
+      m_Calls: []
   moveDebugBool: 1
-  tiedPatrol: 1
-  patrolRangeFromSpawn: 10
-  detectionRange: 0
-  fieldOfViewAngle: -135
-  deathTime: 1
+--- !u!114 &1730179161992117604
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4544851032864408619}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43ebd56b27f1fb447a9a294f68f1ae02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackRange: 2
+  detectionRange: 20
+  comfortDistance: 5
   currentState: 0
+  currentEvent: 0
+  enemyCombatController: {fileID: 5603946255351336252}
+  animator: {fileID: 6659547010701238330}
 --- !u!114 &6820935013679965740
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -101,10 +140,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb8c1ecde760f724d84c6cc327db1ae2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 5
+  movementSpeed: 10
   isSprinting: 0
   isMoving: 0
-  moveTowardsTargetOffset: 2
   isGrounded: 0
   dodgeMoveDuration: 0
   dodgeForce: 0
@@ -131,7 +169,7 @@ MonoBehaviour:
   isAttacking: 0
   reticleOffset: {x: 0, y: 0, z: 0}
   bulletVisualsPrefab: {fileID: 0}
-  spawnOriginOffset: {fileID: 8661229243928107996}
+  bulletSpawnOriginOffset: {fileID: 0}
   animator: {fileID: 6659547010701238330}
   canAttack: 0
 --- !u!143 &6548890165488695915
@@ -207,7 +245,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 70755b4344e974041ab4b8955c7e902f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.08
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 70755b4344e974041ab4b8955c7e902f, type: 3}
       propertyPath: m_LocalPosition.z

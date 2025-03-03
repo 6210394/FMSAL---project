@@ -2,12 +2,16 @@ using UnityEngine;
 
 public class EnemyStateMachineBlueprint : MonoBehaviour
 {
-    public enum STATE { PATROL, MOVING, ATTACKING}
+    public float attackRange = 2;
+    public float detectionRange = 20;
+
+    public float comfortDistance = 5f;
+
+    public enum STATE { PATROL, MOVING, ATTACKING, CIRCLING}
     public enum EVENT { ENTER, UPDATE, EXIT }
     
     public STATE currentState;
     public EVENT currentEvent;
-    protected STATE nextState;
 
     public EnemyStateMachineBlueprint()
     {
@@ -15,52 +19,26 @@ public class EnemyStateMachineBlueprint : MonoBehaviour
         currentEvent = EVENT.ENTER;
     }
 
-    public EnemyCombatController enemyEntityScript;
+    public EnemyCombatController enemyCombatController;
     public Animator animator;
-    public GameObject target;
 
     public virtual void Update()
     {
-        RunStateMachine();
+        if(!enemyCombatController.isPaused)
+        {
+            RunStateMachine();
+        }
     }
 
     public virtual void Init()
     {
-        enemyEntityScript = GetComponent<EnemyCombatController>();
+        enemyCombatController = GetComponent<EnemyCombatController>();
         animator = GetComponentInChildren<Animator>();
     }
 
-    public virtual void Patrol()
+    protected virtual void RunStateMachine()
     {
         
-    }
-
-    public virtual void Chasing()
-    {
-    }
-
-    public virtual void Attacking()
-    {
-
-    }
-
-
-    protected void RunStateMachine()
-    {
-            switch (currentState)
-            {
-                case STATE.PATROL:
-                    Patrol();
-                    break;
-
-                case STATE.MOVING:
-                    Chasing();
-                    break;
-
-                case STATE.ATTACKING:
-                    Attacking();
-                    break;
-            }
     }
 
     protected void SwitchToNextState(STATE nextState)
@@ -70,11 +48,6 @@ public class EnemyStateMachineBlueprint : MonoBehaviour
     protected void SwitchToNextEvent(EVENT nextEvent)
     {
         currentEvent = nextEvent;
-    }
-
-    public void EnemyMelee()
-    {
-        animator.SetTrigger("MeleeAttack");
     }
 
     protected bool CheckIfObjectInSight(GameObject gameObject)

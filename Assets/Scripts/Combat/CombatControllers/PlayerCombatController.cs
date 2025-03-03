@@ -3,6 +3,7 @@ using UnityEngine.Events;
 using DG.Tweening;
 using Unity.Cinemachine;
 using UnityEngine.UI;
+using System.Collections;
 
 
 [RequireComponent(typeof(CombatScript))]
@@ -16,6 +17,7 @@ public class PlayerCombatController : MonoBehaviour
     public float punchDuration = 0.5f;
     private float meleeRange;
     private float meleeDuration;
+    public float punchTargetDistanceOffset = 2f;
     [Space]
     public float gunHipFireBulletAccuracyRange = 10f;
     public float gunAimAssistSize = 1f;
@@ -27,6 +29,7 @@ public class PlayerCombatController : MonoBehaviour
     public bool isLockOnToggle = false;
     
     private bool isAiming = false;
+    public bool isAttackingEnemy = false;
 
     private bool meleeEquipped = false;
     private bool gunEquipped = false;
@@ -35,8 +38,8 @@ public class PlayerCombatController : MonoBehaviour
 #endregion
 
 #region Component References
-    private MovementScript movementScript;
     private PlayerMovementController playerMovementController;
+    public MovementScript movementScript;
     private CombatScript combatScript;
     private EnemyManager enemyManager;
     private EnemyDetection enemyDetection;
@@ -105,7 +108,7 @@ public class PlayerCombatController : MonoBehaviour
         
         if(Input.GetKey(KeyCode.Mouse0)) //Attack Command
         {
-            if(playerMovementController.isControlled && !movementScript.isDodging)
+            if(playerMovementController.isControlled && !playerMovementController.movementScript.isDodging)
             {
                 if(isAiming)
                 {
@@ -113,7 +116,7 @@ public class PlayerCombatController : MonoBehaviour
                 }
                 else
                 {
-                    PlayerMelee(meleeRange);
+                    PlayerPunch(meleeRange);
                 }
             }
         }
@@ -188,20 +191,20 @@ public class PlayerCombatController : MonoBehaviour
         */
     }
 
-    void PlayerMelee(float range)
+    void PlayerPunch(float range)
     {
         if(!meleeEquipped || !combatScript.attackIsAvailable)
         {
             return;
         }
                
-        combatScript.Attack(CombatScript.AttackType.Melee, meleeDuration); //to change later when we have more weapons
+        combatScript.Attack(CombatScript.AttackType.LightMelee, meleeDuration, "Punch"); //to change later when we have more weapons
         if(currentLockedTarget != null)
         {
             transform.DOLookAt(currentLockedTarget.transform.position, meleeDuration);
             if(TargetDistance(currentLockedTarget.transform) < range)
             {
-                movementScript.MoveTowardsTarget(currentLockedTarget.gameObject.transform, meleeDuration/1.75f);
+                playerMovementController.movementScript.TweenToTarget(currentLockedTarget.gameObject.transform.position, meleeDuration/1.75f, punchTargetDistanceOffset);
             }
         }
     }
@@ -229,11 +232,9 @@ public class PlayerCombatController : MonoBehaviour
                 // Save the first hit
                 bulletHitTarget = hit.collider.GetComponent<EnemyCombatController>();
             }
-        }
-
+        }      
         
-        
-        combatScript.Attack(CombatScript.AttackType.Shoot, gunRateOfFireTime); //change later to be a variable for different guns
+        combatScript.Attack(CombatScript.AttackType.Shoot, gunRateOfFireTime, "Shoot"); //change later to be a variable for different guns
     }
 
     void PlayerAim()
@@ -278,7 +279,7 @@ public class PlayerCombatController : MonoBehaviour
         if(isAiming) //While Aiming
         {
             Vector3 direction = new Vector3(aimCamera.transform.forward.x, 0, aimCamera.transform.forward.z);
-            movementScript.FaceTowards(direction, playerMovementController.playerRotationSpeed);
+            playerMovementController.movementScript.FaceTowards(direction, playerMovementController.playerRotationSpeed);
         }
     }
 
@@ -290,14 +291,16 @@ public class PlayerCombatController : MonoBehaviour
             {
                 isLockOnToggle = !isLockOnToggle;
                 playerMovementController.canSprint = false;
+                playerMovementController.animator.SetBool("Strafe", true);
             }
             //make the FOV zoom closer or farther based on LockOnMode
         }
 
-        else if(Input.GetKeyDown(KeyCode.Q) && isLockOnToggle)
+        else if(Input.GetKeyDown(KeyCode.Q) && isLockOnToggle || currentLockedTarget == null)
         {
             isLockOnToggle = false;
             playerMovementController.canSprint = true;
+            playerMovementController.animator.SetBool("Strafe", false);
         }
     }
 
@@ -318,17 +321,17 @@ public class PlayerCombatController : MonoBehaviour
         Vector3 inputDirection = forward * Input.GetAxis("Vertical") + Vector3.right * Input.GetAxis("Horizontal");
         inputDirection.Normalize();
         
-        if (Input.GetKeyDown(KeyCode.Space) && inputDirection != Vector3.zero && !movementScript.isDodging)
+        if (Input.GetKeyDown(KeyCode.Space) && inputDirection != Vector3.zero && !playerMovementController.movementScript.isDodging)
         {
             combatScript.AttackCancel();
             playerMovementController.animator.SetTrigger("DashingTrigger");
             if(currentLockedTarget)
             {
-                movementScript.DodgeWithTarget(inputDirection, 0.5f, currentLockedTarget.transform);
+                playerMovementController.movementScript.DodgeWithTarget(inputDirection, 0.5f, currentLockedTarget.transform);
             }
             else
             {
-                movementScript.Dash(inputDirection,0.5f);
+                playerMovementController.movementScript.Dash(inputDirection,0.5f);
             }
         }
     }
@@ -379,7 +382,6 @@ public class PlayerCombatController : MonoBehaviour
             meleeRange = punchRange;
             meleeDuration = punchDuration;
         }
-        
     }
 
     void AdjustLockOnCamera()
@@ -461,14 +463,15 @@ public class PlayerCombatController : MonoBehaviour
         }
     }
 
-    public void OnTakeHit(int damageReceived, PlayerCombatController target)
+    public void OnTakeHit(int damageReceived, EnemyCombatController target)
     {
         if(target == this)
         {
             Debug.Log("Took Damage");
+            
 
             playerMovementController.animator.SetTrigger("RecieveHit");
-            movementScript.KnockBack(0.3f, 0.1f);
+            playerMovementController.movementScript.KnockBack(0.3f, 0.1f);
 
             combatScript.health -= damageReceived;
 
@@ -481,6 +484,13 @@ public class PlayerCombatController : MonoBehaviour
         {
             Debug.Log(name + ": I wasnt the target");
         }
+    }
+
+    public IEnumerator IDamageRecievedCoroutine()
+    {
+        playerMovementController.isControlled = false;
+        yield return new WaitForSeconds(1f);
+        playerMovementController.isControlled = true;
     }
 
     void Die()

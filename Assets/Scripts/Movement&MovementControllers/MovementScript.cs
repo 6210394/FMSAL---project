@@ -7,14 +7,13 @@ public class MovementScript : MonoBehaviour
     private CharacterController characterController;
 
     [Header("Movement Variable")]
-    public float movementSpeed =5f;
+    [HideInInspector]
+    public float currentMovementSpeed = 5f;
     public bool isSprinting;
 
-    float normalSpeed = 5f;
-    float sprintSpeed = 9f;
+    public float normalSpeed = 5f;
+    public float sprintSpeed = 9f;
     public bool isMoving;
-    public float moveTowardsTargetOffset = 2f;
-
 
     [Header("Gravity")]
     public bool isGrounded;
@@ -48,7 +47,7 @@ public class MovementScript : MonoBehaviour
 
     void Initizialize()
     {
-        movementSpeed = normalSpeed;
+        currentMovementSpeed = normalSpeed;
         characterController = GetComponent<CharacterController>();
     }
 
@@ -57,26 +56,25 @@ public class MovementScript : MonoBehaviour
         SprintCheckAndSpeedSetup(isSprinting);
         if(moveDirection != Vector3.zero)
         {
-            characterController.Move(moveDirection * movementSpeed * Time.deltaTime);
+            characterController.Move(moveDirection * currentMovementSpeed * Time.deltaTime);
         }
         else
         {
             isMoving = false;
-            movementSpeed = 0;
+            currentMovementSpeed = 0;
         }
     }
 
-    public void MoveTowardsTarget(Transform target, float baseDuration)
+    public void TweenToTarget(Vector3 target, float moveDuration, float moveTowardsTargetOffset)
     {
-        transform.DOLookAt(target.transform.position, .2f);
-        Vector3 targetPosition = TargetOffset(target.transform, moveTowardsTargetOffset);
-        transform.DOMove(targetPosition, baseDuration); 
+        transform.DOLookAt(target, .2f);
+        Vector3 targetPosition = TargetOffset(target, moveTowardsTargetOffset);
+        transform.DOMove(targetPosition, moveDuration);
     }
 
-    Vector3 TargetOffset(Transform target, float offsetDistance)
+    Vector3 TargetOffset(Vector3 target, float offsetDistance)
     {
-        Vector3 position;
-        position = target.position;
+        Vector3 position = target;
         return Vector3.MoveTowards(position, transform.position, offsetDistance);
     }
 
@@ -85,12 +83,12 @@ public class MovementScript : MonoBehaviour
         if (sprintInput)
         {
             isSprinting = true;
-            movementSpeed = sprintSpeed;
+            currentMovementSpeed = sprintSpeed;
         }
         else
         {
             isSprinting = false;
-            movementSpeed = normalSpeed;
+            currentMovementSpeed = normalSpeed;
         }
     }
 

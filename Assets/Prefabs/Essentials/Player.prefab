@@ -698,9 +698,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bfc0a2134a68e1d45aa5eb169212c5d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canDropItem: 0
   handAnchor: {fileID: 676170088959192611}
-  mainHeldObject: {fileID: 11400000, guid: 8b38d43e2aed37d47aacfd1b1a18c1f1, type: 2}
+  mainHeldObject: {fileID: 0}
   secondaryHeldItem: {fileID: 0}
+  mainWeapon: {fileID: 11400000, guid: 8b38d43e2aed37d47aacfd1b1a18c1f1, type: 2}
+  sidearm: {fileID: 11400000, guid: 8629cfa026f8f4e41b63e0ca7cbdb34e, type: 2}
 --- !u!114 &6779007132249043213
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -733,11 +736,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97be122e5f6df464d8c8ef27e1cd7a73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 5
   punchRange: 6
   punchDuration: 0.8
   gunHipFireBulletAccuracyRange: 10
   gunAimAssistSize: 1
+  gunRateOfFireTime: 140
   isLockOnToggle: 0
   crosshairReference: {fileID: 0}
   playerCamera: {fileID: 0}
@@ -764,17 +767,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a8ef733ed8e0dc41a1a6b672435519d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animator: {fileID: 3918215746344003973}
-  isStunned: 0
-  canAttack: 1
-  nudgeForce: 9.87
-  attackAvailable: 1
+  health: 3
   attackDamage: 1
-  attackCooldown: 0.3
+  isStunned: 0
+  stunImmune: 0
+  attackIsAvailable: 1
   isAttacking: 0
   reticleOffset: {x: 0, y: 0, z: 0}
   bulletVisualsPrefab: {fileID: 0}
-  spawnOriginOffset: {fileID: 4578630470139458280}
+  bulletSpawnOriginOffset: {fileID: 0}
+  animator: {fileID: 3918215746344003973}
+  canAttack: 1
 --- !u!114 &161812321840275169
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -923,7 +926,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 70755b4344e974041ab4b8955c7e902f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.08
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 70755b4344e974041ab4b8955c7e902f, type: 3}
       propertyPath: m_LocalPosition.z
@@ -961,6 +964,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -7396561535389951827, guid: 70755b4344e974041ab4b8955c7e902f, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 83958ae8d71bd464184544f3b1252666, type: 2}
     - target: {fileID: 919132149155446097, guid: 70755b4344e974041ab4b8955c7e902f, type: 3}
       propertyPath: m_Name
       value: PlayerVisuals

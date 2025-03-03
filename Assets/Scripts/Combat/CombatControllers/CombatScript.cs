@@ -7,7 +7,7 @@ public class CombatScript : MonoBehaviour
 {
     public enum AttackType
     {
-        Melee, HeavyMelee, Shoot, Slash
+        LightMelee, HeavyMelee, Shoot, Slash
     }
 
     [Header ("Stats")]
@@ -26,7 +26,7 @@ public class CombatScript : MonoBehaviour
     [Header ("Object & Component References ")]
     [SerializeField] Vector3 reticleOffset;
     [SerializeField] GameObject bulletVisualsPrefab;
-    [SerializeField] Transform spawnOriginOffset;
+    [SerializeField] Transform bulletSpawnOriginOffset;
     [Space]
     private PlayerMovementController playerController;
     public Animator animator;
@@ -47,28 +47,28 @@ public class CombatScript : MonoBehaviour
         //
     }
     
-    public void Attack(AttackType attackType, float specificAttackCooldown)
+    public void Attack(AttackType attackType, float specificAttackCooldown, string animationName)
     {
         if(!isStunned && canAttack)
         {
             attackCooldown = specificAttackCooldown;
             switch(attackType)
             {
-                case AttackType.Melee:
+                case AttackType.LightMelee:
                 {
-                    StartCoroutine(IMelee());
+                    StartCoroutine(ILightMelee(animationName));
                     break;
                 }
                 case AttackType.Shoot:
                 {
-                    StartCoroutine(IShoot());
+                    StartCoroutine(IShoot(animationName));
                     break;
                 }
             }
         }
     }
 
-    public IEnumerator IMelee()
+    public IEnumerator ILightMelee(string animationName)
     {
         if(playerController != null)
         {
@@ -76,7 +76,7 @@ public class CombatScript : MonoBehaviour
         }
         isAttacking = true;
 
-        animator.SetTrigger("Punch");
+        animator.SetTrigger(animationName);
         yield return new WaitForSeconds(attackCooldown);
         
         isAttacking = false;
@@ -87,7 +87,7 @@ public class CombatScript : MonoBehaviour
         }
     }
 
-    public IEnumerator IShoot()
+    public IEnumerator IShoot(string animationName)
     {
         if(playerController != null)
         {
@@ -95,7 +95,7 @@ public class CombatScript : MonoBehaviour
         }
         isAttacking = true;
 
-        animator.SetTrigger("Shoot");
+        animator.SetTrigger(animationName);
         yield return new WaitForSeconds(attackCooldown);
 
         isAttacking = false;
@@ -149,27 +149,12 @@ public class CombatScript : MonoBehaviour
         isStunned = false;
     }
 
-    public void Shoot()
-    {
-        RaycastHit hit;
-        Camera renderingCamera = Camera.main;
-        Ray ray = renderingCamera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
-        ray.origin += renderingCamera.transform.TransformDirection(reticleOffset);
-
-        if (Physics.Raycast(ray, out hit))
-        {
-            if (hit.collider.gameObject.GetComponent<EnemyCombatController>() != null)
-            {
-                //hit.collider.gameObject.GetComponent<EnemyCombatController>().LoseHealth(attackDamage);
-            }
-        }
-        GameObject bulletVisuals = Instantiate(bulletVisualsPrefab, transform.position + transform.rotation * spawnOriginOffset.position, transform.rotation);
-        bulletVisuals.GetComponent<AutomaticMovementScript>().target = hit.point;
-    }
-
     void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawSphere(transform.position + transform.rotation * spawnOriginOffset.position, 0.1f);
+        if(bulletSpawnOriginOffset)
+        {
+            Gizmos.DrawSphere(transform.position + transform.rotation * bulletSpawnOriginOffset.position, 0.1f);
+        }
     }
 }

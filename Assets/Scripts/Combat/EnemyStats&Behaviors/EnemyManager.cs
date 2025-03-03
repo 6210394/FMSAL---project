@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EnemyManager : MonoBehaviour
 {
-    private EnemyCombatController[] enemies;
+    private EnemyStateMachineBlueprint[] enemies;
     public EnemyStruct[] allEnemies;
     private List<int> enemyIndexes;
 
@@ -15,17 +15,17 @@ public class EnemyManager : MonoBehaviour
     
     void Start()
     {
-        enemies = GetComponentsInChildren<EnemyCombatController>();
+        enemies = GetComponentsInChildren<EnemyStateMachineBlueprint>();
 
         allEnemies = new EnemyStruct[enemies.Length];
 
         for (int i = 0; i < allEnemies.Length; i++)
         {
-            allEnemies[i].enemyScript = enemies[i];
+            allEnemies[i].enemyStateMachine = enemies[i];
             allEnemies[i].enemyAvailability = true;
         }
 
-        //StartAI();
+        StartAI();
     }
 
     public void InitializeEnemies()
@@ -33,7 +33,8 @@ public class EnemyManager : MonoBehaviour
         
     }
 
-/*
+
+    
     public void StartAI()
     {
         AI_Loop_Coroutine = StartCoroutine(AI_Loop(null));
@@ -57,11 +58,11 @@ public class EnemyManager : MonoBehaviour
         if (attackingEnemy == null)
             yield break;
             
-        yield return new WaitUntil(() => attackingEnemy.IsRetreating() == false);
+        //yield return new WaitUntil(() => attackingEnemy.IsRetreating() == false);
         yield return new WaitUntil(() => attackingEnemy.IsLockedTarget() == false);
         yield return new WaitUntil(() => attackingEnemy.IsStunned() == false);
 
-        attackingEnemy.SetAttack();
+        attackingEnemy.Attack();
 
         yield return new WaitUntil(() => attackingEnemy.IsPreparingAttack() == false);
 
@@ -72,7 +73,8 @@ public class EnemyManager : MonoBehaviour
         if (AliveEnemyCount() > 0)
             AI_Loop_Coroutine = StartCoroutine(AI_Loop(attackingEnemy));
     }
-*/
+    
+
 
     public EnemyCombatController RandomEnemy()
     {
@@ -89,7 +91,7 @@ public class EnemyManager : MonoBehaviour
 
         EnemyCombatController randomEnemy;
         int randomIndex = Random.Range(0, enemyIndexes.Count);
-        randomEnemy = allEnemies[enemyIndexes[randomIndex]].enemyScript;
+        randomEnemy = allEnemies[enemyIndexes[randomIndex]].enemyStateMachine.enemyCombatController;
 
         return randomEnemy;
     }
@@ -100,7 +102,7 @@ public class EnemyManager : MonoBehaviour
 
         for (int i = 0; i < allEnemies.Length; i++)
         {
-            if (allEnemies[i].enemyAvailability && allEnemies[i].enemyScript != exclude)
+            if (allEnemies[i].enemyAvailability && allEnemies[i].enemyStateMachine != exclude)
                 enemyIndexes.Add(i);
         }
 
@@ -109,7 +111,7 @@ public class EnemyManager : MonoBehaviour
 
         EnemyCombatController randomEnemy;
         int randomIndex = Random.Range(0, enemyIndexes.Count);
-        randomEnemy = allEnemies[enemyIndexes[randomIndex]].enemyScript;
+        randomEnemy = allEnemies[enemyIndexes[randomIndex]].enemyStateMachine.enemyCombatController;
 
         return randomEnemy;
     }
@@ -129,10 +131,7 @@ public class EnemyManager : MonoBehaviour
     {
         foreach (EnemyStruct enemyStruct in allEnemies)
         {
-            if (enemyStruct.enemyScript.currentState == EnemyCombatController.BehaviorState.Attacking)
-            {
-                return true;
-            }
+            
         }
         return false;
     }
@@ -143,7 +142,7 @@ public class EnemyManager : MonoBehaviour
         int count = 0;
         for (int i = 0; i < allEnemies.Length; i++)
         {
-            if (allEnemies[i].enemyScript.isActiveAndEnabled)
+            if (allEnemies[i].enemyStateMachine.isActiveAndEnabled)
                 count++;
         }
         aliveEnemyCount = count;
@@ -154,7 +153,7 @@ public class EnemyManager : MonoBehaviour
     {
         for (int i = 0; i < allEnemies.Length; i++)
         {
-            if (allEnemies[i].enemyScript == enemy)
+            if (allEnemies[i].enemyStateMachine == enemy)
                 allEnemies[i].enemyAvailability = state;
         }
 
@@ -166,6 +165,6 @@ public class EnemyManager : MonoBehaviour
 [System.Serializable]
 public struct EnemyStruct
 {
-    public EnemyCombatController enemyScript;
+    public EnemyStateMachineBlueprint enemyStateMachine;
     public bool enemyAvailability;
 }

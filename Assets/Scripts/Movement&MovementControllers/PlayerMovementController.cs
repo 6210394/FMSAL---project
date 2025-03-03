@@ -23,7 +23,7 @@ public class PlayerMovementController : MonoBehaviour
     public Transform cameraTransform;
     public Animator animator;
 
-    private MovementScript movementScript;
+    public MovementScript movementScript;
     private CinemachineBrain cinemachineBrain;
     private Rigidbody rb;
 
@@ -63,7 +63,7 @@ public class PlayerMovementController : MonoBehaviour
 
     void UpdateAnimator()
     {
-        animator.SetFloat("Speed", movementScript.movementSpeed);
+        animator.SetFloat("Speed", movementScript.currentMovementSpeed);
         animator.SetBool("Sprinting", isSprintingAnim);
         animator.SetBool("Dashing", movementScript.isDodging);
     }
@@ -104,6 +104,8 @@ public class PlayerMovementController : MonoBehaviour
 
         Vector3 moveDirection = forward * Input.GetAxis("Vertical") + right * Input.GetAxis("Horizontal");
         moveDirection = moveDirection.normalized;
+        animator.SetFloat("StrafeDirection", moveDirection.z);
+
 
         if (moveDirection != Vector3.zero && !Input.GetMouseButton(1))
         {
