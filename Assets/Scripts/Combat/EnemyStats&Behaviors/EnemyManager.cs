@@ -40,7 +40,7 @@ public class EnemyManager : MonoBehaviour
         AI_Loop_Coroutine = StartCoroutine(AI_Loop(null));
     }
 
-    IEnumerator AI_Loop(EnemyCombatController enemy)
+    IEnumerator AI_Loop(EnemyStateMachineBlueprint enemy)
     {
         if (AliveEnemyCount() == 0)
         {
@@ -48,9 +48,9 @@ public class EnemyManager : MonoBehaviour
             yield break;
         }
 
-        yield return new WaitForSeconds(Random.Range(.5f,1.5f));
+        yield return new WaitForSeconds(Random.Range(.5f,4f));
 
-        EnemyCombatController attackingEnemy = RandomEnemyExcludingOne(enemy);
+        EnemyStateMachineBlueprint attackingEnemy = RandomEnemyExcludingOne(enemy);
 
         if (attackingEnemy == null)
             attackingEnemy = RandomEnemy();
@@ -58,15 +58,14 @@ public class EnemyManager : MonoBehaviour
         if (attackingEnemy == null)
             yield break;
             
-        //yield return new WaitUntil(() => attackingEnemy.IsRetreating() == false);
-        yield return new WaitUntil(() => attackingEnemy.IsLockedTarget() == false);
-        yield return new WaitUntil(() => attackingEnemy.IsStunned() == false);
+        yield return new WaitUntil(() => attackingEnemy.currentState == EnemyStateMachineBlueprint.STATE.CIRCLING);
+        yield return new WaitUntil(() => attackingEnemy.enemyCombatController.IsStunned() == false);
 
-        attackingEnemy.Attack();
+        attackingEnemy.enemyCombatController.Attack();
 
-        yield return new WaitUntil(() => attackingEnemy.IsPreparingAttack() == false);
+        yield return new WaitUntil(() => attackingEnemy.enemyCombatController.IsPreparingAttack() == false);
 
-        attackingEnemy.SetRetreat();
+        attackingEnemy.enemyCombatController.SetRetreat();
 
         yield return new WaitForSeconds(Random.Range(0,.5f));
 
@@ -76,7 +75,7 @@ public class EnemyManager : MonoBehaviour
     
 
 
-    public EnemyCombatController RandomEnemy()
+    public EnemyStateMachineBlueprint RandomEnemy()
     {
         enemyIndexes = new List<int>();
 
@@ -89,14 +88,14 @@ public class EnemyManager : MonoBehaviour
         if (enemyIndexes.Count == 0)
             return null;
 
-        EnemyCombatController randomEnemy;
+        EnemyStateMachineBlueprint randomEnemy;
         int randomIndex = Random.Range(0, enemyIndexes.Count);
-        randomEnemy = allEnemies[enemyIndexes[randomIndex]].enemyStateMachine.enemyCombatController;
+        randomEnemy = allEnemies[enemyIndexes[randomIndex]].enemyStateMachine;
 
         return randomEnemy;
     }
 
-    public EnemyCombatController RandomEnemyExcludingOne(EnemyCombatController exclude)
+    public EnemyStateMachineBlueprint RandomEnemyExcludingOne(EnemyStateMachineBlueprint exclude)
     {
         enemyIndexes = new List<int>();
 
@@ -109,9 +108,9 @@ public class EnemyManager : MonoBehaviour
         if (enemyIndexes.Count == 0)
             return null;
 
-        EnemyCombatController randomEnemy;
+        EnemyStateMachineBlueprint randomEnemy;
         int randomIndex = Random.Range(0, enemyIndexes.Count);
-        randomEnemy = allEnemies[enemyIndexes[randomIndex]].enemyStateMachine.enemyCombatController;
+        randomEnemy = allEnemies[enemyIndexes[randomIndex]].enemyStateMachine;
 
         return randomEnemy;
     }

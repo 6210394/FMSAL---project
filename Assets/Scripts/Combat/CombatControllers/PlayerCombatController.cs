@@ -60,7 +60,7 @@ public class PlayerCombatController : MonoBehaviour
 #endregion
 
     [Header("Player Combat Events")]
-    public UnityEvent<int, EnemyCombatController> OnHit; //damage, target
+    public UnityEvent<int, EnemyCombatController, PlayerCombatController> OnHit; //damage, target
     public UnityEvent<EnemyCombatController> OnTrajectory;
 
     [Header("Debug")]
@@ -428,7 +428,7 @@ public class PlayerCombatController : MonoBehaviour
             Debug.Log(currentLockedTarget);
             if(currentLockedTarget)
             {
-                OnHit.Invoke(combatScript.attackDamage, currentLockedTarget);
+                OnHit.Invoke(combatScript.attackDamage, currentLockedTarget, this);
             }
             //punchParticle.PlayParticleAtPosition(punchPosition.position);
         }
@@ -440,7 +440,7 @@ public class PlayerCombatController : MonoBehaviour
             {
                 return;
             }
-            OnHit.Invoke(combatScript.attackDamage, bulletHitTarget);
+            OnHit.Invoke(combatScript.attackDamage, bulletHitTarget, this);
         }
     }
     
@@ -463,7 +463,7 @@ public class PlayerCombatController : MonoBehaviour
         }
     }
 
-    public void OnTakeHit(int damageReceived, EnemyCombatController target)
+    public void OnTakeHit(int damageReceived, PlayerCombatController target)
     {
         if(target == this)
         {

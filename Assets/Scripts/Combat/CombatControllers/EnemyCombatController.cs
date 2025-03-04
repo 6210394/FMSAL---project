@@ -14,7 +14,6 @@ public class EnemyCombatController : MonoBehaviour
     private Vector3 moveDestination;
 
     [Header("States")]
-    [SerializeField] private bool isLockedTarget;
     [SerializeField] private bool isStunned;
 
     [Header("Stun Tolerance")]
@@ -25,6 +24,17 @@ public class EnemyCombatController : MonoBehaviour
     public bool prefersShooting = false;
     public bool prefersPunching = false;
     public float comfortRange = 5f;
+
+    [Header("Attack Values")]
+    public float punchRange = 4f;
+    public float punchDuration = 0.5f;
+    private float meleeRange;
+    private float meleeDuration;
+    public float punchTargetDistanceOffset = 2f;
+    [Space]
+    public float gunHipFireBulletAccuracyRange = 10f;
+    public float gunAimAssistSize = 1f;
+    public float gunRateOfFireTime = 140f; //in round per minute
 
     [Header("Patrol Options and Detection")]
     [Tooltip ("If true, the enemy will patrol around its spawn point. Otherwise, it will wander freely.")]
@@ -100,7 +110,7 @@ public class EnemyCombatController : MonoBehaviour
         {
             playerEnemyDetections.Add(player.GetComponent<EnemyDetection>());
             PlayerCombatController playerCombat = player.GetComponent<PlayerCombatController>();
-            playerCombat.OnHit.AddListener((x, y) => OnTakeHit(x, y));
+            playerCombat.OnHit.AddListener((x, y, z) => OnTakeHit(x, y, z));
         }
         spawnPoint = transform.position;
     }
@@ -112,17 +122,25 @@ public class EnemyCombatController : MonoBehaviour
         {
             PlayerCombatController playerCombat = player.GetComponent<PlayerCombatController>();
             Debug.Log("Adding " + player + " OnHit");
-            playerCombat.OnHit.AddListener((x, y) => OnTakeHit(x, y));
+            playerCombat.OnHit.AddListener((x, y, z) => OnTakeHit(x, y, z));
         }
     }
 
     #region MyCode
-    public void OnTakeHit(int damageReceived, EnemyCombatController target)
+    public void OnTakeHit(int damageReceived, EnemyCombatController reciever, PlayerCombatController dealer)
     {
-        if(target == this)
+        if(reciever == this)
         {
             StopEnemyCoroutines();
 
+            if(Vector3.Distance(dealer.transform.position, transform.position) <= detectionRange)
+            {
+                target = dealer;
+            }
+            else
+            {
+                Panic();
+            }
             anim.SetTrigger("RecieveHit");
             movementScript.KnockBack(0.3f, 0.1f);
 
@@ -133,6 +151,11 @@ public class EnemyCombatController : MonoBehaviour
                 Die();
             }
         }
+    }
+
+    public void Panic()
+    {
+
     }
 
     public void WalkRandomly(float distanceMin, float distanceMax, float movementDuration)
@@ -268,7 +291,7 @@ public class EnemyCombatController : MonoBehaviour
 
         movedir += finalDirection * currentMoveSpeed * Time.deltaTime;
 
-        characterController.Move(movedir);
+        movementScript.Move(movedir, false);
 
         if (!isPreparingAttack)
             return;
@@ -290,25 +313,23 @@ public class EnemyCombatController : MonoBehaviour
         IEnumerator PrepRetreat()
         {
             yield return new WaitForSeconds(1.4f);
-            OnRetreat.Invoke(this);
             isRetreating = true;
             moveDirection = -Vector3.forward;
             isMoving = true;
-            yield return new WaitUntil(() => Vector3.Distance(transform.position, target.transform.position) > 4);
+            yield return new WaitUntil(() => Vector3.Distance(transform.position, target.transform.position) > comfortRange);
             isRetreating = false;
             StopMoving();
 
             //Free 
-            isPaused = true;
+            isPaused = false;
             MovementCoroutine = StartCoroutine(IRandomMovementDirection());
         }
     }
 
-
     public void DealDamageEvent()
     {
         if(!target.isAttackingEnemy && !target.movementScript.isDashing)
-            target.OnTakeHit(1, this);
+            target.OnTakeHit(1, target);
 
         //PrepareAttack(false);
     }
@@ -338,10 +359,13 @@ public class EnemyCombatController : MonoBehaviour
     {
         isPreparingAttack = true;
         yield return new WaitForSeconds(0.2f);
-        transform.DOMove(transform.position + (transform.forward / 1), .5f);
-        anim.SetTrigger("Punch");
-        yield return new WaitForSeconds(0.2f);
-        isPreparingAttack = false;
+        movementScript.TweenToTarget(target.transform.position, 0.5f, 1f);
+        if(Vector3.Distance(transform.position, target.transform.position) <= punchRange)
+        {
+            anim.SetTrigger("Punch");
+            yield return new WaitForSeconds(0.2f);
+            isPreparingAttack = false;
+        }
     }
 
     public bool CheckForPlayersInDetectionRange()
@@ -421,9 +445,9 @@ public class EnemyCombatController : MonoBehaviour
         return isPreparingAttack;
     }
 
-    public bool IsLockedTarget()
+    public bool IsRetreating()
     {
-        return isLockedTarget;
+        return isRetreating;
     }
 
     public bool IsStunned()

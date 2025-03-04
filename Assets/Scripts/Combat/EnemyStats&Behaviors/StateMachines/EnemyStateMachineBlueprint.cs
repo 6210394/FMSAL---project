@@ -7,7 +7,7 @@ public class EnemyStateMachineBlueprint : MonoBehaviour
 
     public float comfortDistance = 5f;
 
-    public enum STATE { PATROL, MOVING, ATTACKING, CIRCLING}
+    public enum STATE { PATROL, MOVING, ATTACKING, CIRCLING, RETREATING}
     public enum EVENT { ENTER, UPDATE, EXIT }
     
     public STATE currentState;
