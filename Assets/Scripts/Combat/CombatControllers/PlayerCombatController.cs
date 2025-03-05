@@ -15,12 +15,15 @@ public class PlayerCombatController : MonoBehaviour
     [Header("Attack Values")]
     public float punchRange = 4f;
     public float punchDuration = 0.5f;
+    public float punchStunDuration = 0.3f;
     private float meleeRange;
     private float meleeDuration;
+    private float meleeStunDuration;
     public float punchTargetDistanceOffset = 2f;
     [Space]
     public float gunHipFireBulletAccuracyRange = 10f;
     public float gunAimAssistSize = 1f;
+    private float gunStunDuration;
     public float gunRateOfFireTime = 140f; //in round per minute
 
     private EnemyCombatController bulletHitTarget;
@@ -38,14 +41,15 @@ public class PlayerCombatController : MonoBehaviour
 #endregion
 
 #region Component References
-    private PlayerMovementController playerMovementController;
     public MovementScript movementScript;
+    private PlayerMovementController playerMovementController;
     private CombatScript combatScript;
     private EnemyManager enemyManager;
     private EnemyDetection enemyDetection;
     private DiogenicPlayerInventory diogenicPlayerInventory;
 
     public Image crosshairReference;
+    public LayerMask playerLayermask;
 #endregion
 
 #region Camera References & Targeting
@@ -60,7 +64,7 @@ public class PlayerCombatController : MonoBehaviour
 #endregion
 
     [Header("Player Combat Events")]
-    public UnityEvent<int, EnemyCombatController, PlayerCombatController> OnHit; //damage, target
+    public UnityEvent<int, float, EnemyCombatController, PlayerCombatController> OnHit; //damage, stunTime, target, source
     public UnityEvent<EnemyCombatController> OnTrajectory;
 
     [Header("Debug")]
@@ -78,6 +82,7 @@ public class PlayerCombatController : MonoBehaviour
         playerCamera = GameObject.Find("DefaultPlayerCamera").GetComponent<CinemachineCamera>();
         targetCamera = GameObject.Find("TargetCamera").GetComponent<CinemachineCamera>();
         aimCamera = GameObject.Find("ThirdPersonAimCamera").GetComponent<CinemachineCamera>();
+        playerLayermask = LayerMask.GetMask("Player");
         crosshairReference.enabled = false;
     }
 
@@ -223,10 +228,17 @@ public class PlayerCombatController : MonoBehaviour
         if(isAiming)
         {   
             bulletHitTarget = null;
-            Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2));
+
+            Vector3 crosshairScreenPosition = crosshairReference.rectTransform.position;
+            Debug.Log(new Vector3(Screen.width / 2, Screen.height / 2, 0));
+            Debug.Log(crosshairScreenPosition);
+
+            Ray ray = Camera.main.ScreenPointToRay(crosshairScreenPosition);
             RaycastHit hit;
 
-            if (Physics.SphereCast(ray, gunAimAssistSize, out hit, 100f))
+            int layerMask = ~playerLayermask;
+
+            if (Physics.SphereCast(ray, gunAimAssistSize, out hit, 100f, layerMask))
             {
                 Debug.Log("Hit: " + hit.collider.name);
                 // Save the first hit
@@ -255,9 +267,9 @@ public class PlayerCombatController : MonoBehaviour
                 isLockOnToggle = false;
                 enemyDetection.SetCurrentTarget(null);
                 
-                aimCamera.enabled = true;
-                playerCamera.enabled = false;
-                targetCamera.enabled = false;
+                aimCamera.Priority = 1;
+                playerCamera.Priority = 0;
+                targetCamera.Priority = 0;
 
                 combatScript.animator.SetTrigger("enterAim");
                 combatScript.animator.SetBool("isAiming", true);
@@ -270,8 +282,9 @@ public class PlayerCombatController : MonoBehaviour
             playerMovementController.canSprint = true;
             crosshairReference.enabled = false;
 
-            playerCamera.enabled = true;
-            aimCamera.enabled = false;
+            playerCamera.Priority = 1;
+            
+            aimCamera.Priority = 0;
 
             combatScript.animator.SetBool("isAiming", false);
         }
@@ -425,10 +438,9 @@ public class PlayerCombatController : MonoBehaviour
                 return;
             }
 
-            Debug.Log(currentLockedTarget);
             if(currentLockedTarget)
             {
-                OnHit.Invoke(combatScript.attackDamage, currentLockedTarget, this);
+                OnHit.Invoke(combatScript.attackDamage, meleeStunDuration, currentLockedTarget, this);
             }
             //punchParticle.PlayParticleAtPosition(punchPosition.position);
         }
@@ -440,7 +452,7 @@ public class PlayerCombatController : MonoBehaviour
             {
                 return;
             }
-            OnHit.Invoke(combatScript.attackDamage, bulletHitTarget, this);
+            OnHit.Invoke(combatScript.attackDamage, gunStunDuration, bulletHitTarget, this);
         }
     }
     
@@ -463,7 +475,7 @@ public class PlayerCombatController : MonoBehaviour
         }
     }
 
-    public void OnTakeHit(int damageReceived, PlayerCombatController target)
+    public void OnTakeHit(int damageReceived, float stunTime, PlayerCombatController target, EnemyCombatController dealer)
     {
         if(target == this)
         {

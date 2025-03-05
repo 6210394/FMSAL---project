@@ -43,6 +43,8 @@ public class DefaultEnemyStates : EnemyStateMachineBlueprint
             case EVENT.ENTER:
             {
                 Debug.Log("Patroling");
+                float randomDistance = Random.Range(1, 5);
+
                 SwitchToNextEvent(EVENT.UPDATE);
                 break;
             }
@@ -52,7 +54,7 @@ public class DefaultEnemyStates : EnemyStateMachineBlueprint
                 {   
                     if(!enemyCombatController.tiedPatrol)
                     {
-                        enemyCombatController.WalkRandomly(1, 5, 1);
+                        enemyCombatController.WalkInRandomDirectionRandomly(Random.Range(1, 5));
                     }
                 }
                 else
@@ -140,8 +142,7 @@ public class DefaultEnemyStates : EnemyStateMachineBlueprint
             }
             case EVENT.EXIT:
             {
-                
-                
+                SwitchToNextState(STATE.CIRCLING);                
                 break;
             }
         }
@@ -166,7 +167,7 @@ public class DefaultEnemyStates : EnemyStateMachineBlueprint
                 }
                 else
                 {
-                    //enemyCombatController.movementScript.Move();
+                    enemyCombatController.RetreatAwayFromPlayer(enemyCombatController.comfortRange);
                 }
                 break;
             }

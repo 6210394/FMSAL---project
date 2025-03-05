@@ -28,12 +28,15 @@ public class EnemyCombatController : MonoBehaviour
     [Header("Attack Values")]
     public float punchRange = 4f;
     public float punchDuration = 0.5f;
+    public float punchStunDuration = 0.3f;
     private float meleeRange;
     private float meleeDuration;
+    private float meleeStunDuration;
     public float punchTargetDistanceOffset = 2f;
     [Space]
     public float gunHipFireBulletAccuracyRange = 10f;
     public float gunAimAssistSize = 1f;
+    private float gunStunDuration;
     public float gunRateOfFireTime = 140f; //in round per minute
 
     [Header("Patrol Options and Detection")]
@@ -110,7 +113,7 @@ public class EnemyCombatController : MonoBehaviour
         {
             playerEnemyDetections.Add(player.GetComponent<EnemyDetection>());
             PlayerCombatController playerCombat = player.GetComponent<PlayerCombatController>();
-            playerCombat.OnHit.AddListener((x, y, z) => OnTakeHit(x, y, z));
+            playerCombat.OnHit.AddListener((a, b, c, d) => OnTakeHit(a, b, c, d));
         }
         spawnPoint = transform.position;
     }
@@ -122,12 +125,12 @@ public class EnemyCombatController : MonoBehaviour
         {
             PlayerCombatController playerCombat = player.GetComponent<PlayerCombatController>();
             Debug.Log("Adding " + player + " OnHit");
-            playerCombat.OnHit.AddListener((x, y, z) => OnTakeHit(x, y, z));
+            playerCombat.OnHit.AddListener((a, b, c, d) => OnTakeHit(a, b, c, d));
         }
     }
 
     #region MyCode
-    public void OnTakeHit(int damageReceived, EnemyCombatController reciever, PlayerCombatController dealer)
+    public void OnTakeHit(int damageReceived, float stunDuration, EnemyCombatController reciever, PlayerCombatController dealer)
     {
         if(reciever == this)
         {
@@ -158,23 +161,28 @@ public class EnemyCombatController : MonoBehaviour
 
     }
 
-    public void WalkRandomly(float distanceMin, float distanceMax, float movementDuration)
-    {
+    public void WalkInRandomDirectionRandomly(float distance)
+    {            
+
         if (!isMoving && !isPaused)
         {
-            float randomDistance = Random.Range(distanceMin, distanceMax);
             Vector3 randomDirection = GenerateRandomDirection();
-            moveDestination = randomDirection * randomDistance + transform.position;
-            movementScript.TweenToTarget(moveDestination, randomDistance / moveSpeed, 0);
+            moveDestination = randomDirection * distance;
+            moveDirection = randomDirection;
             isMoving = true;
             anim.SetFloat("Speed", moveSpeed);
         }
 
-        if (isMoving && transform.position == moveDestination)
+        if (isMoving)
         {
-            isMoving = false;
-            anim.SetFloat("Speed", 0);
-            StartCoroutine(IWaitForRandomRange(1, 3));
+            movementScript.Move(moveDirection, false);
+
+            if(transform.position == moveDestination)
+            {
+                isMoving = false;
+                anim.SetFloat("Speed", 0);
+                StartCoroutine(IWaitForRandomRange(1, 3));
+            }
         }
     }
 
@@ -188,19 +196,55 @@ public class EnemyCombatController : MonoBehaviour
 
     public void ApproachPlayer(bool isSprinting)
     {
-        anim.SetFloat("Speed", 1);
-        anim.SetBool("Sprinting", isSprinting);
-        
-        Vector3 moveDir = (target.transform.position - transform.position).normalized;
-        movementScript.Move(moveDir, isSprinting);
-        
+        if(!isDead)
+        {
+            anim.SetFloat("Speed", 1);
+            anim.SetBool("Sprinting", isSprinting);
+            
+            Vector3 moveDir = (target.transform.position - transform.position).normalized;
+            movementScript.Move(moveDir, isSprinting);
+        }
+    }
+
+    public void RetreatAwayFromPlayer(float targetDistance)
+    {
+        if(!isDead)
+        {
+            anim.SetFloat("Speed", 1);
+
+            if(Vector3.Distance(target.transform.position, transform.position) < targetDistance)
+            {
+                transform.LookAt(target.transform);
+                movementScript.Move(-transform.forward, false);
+            }
+        }
+    }
+
+    
+    public void SetRetreat()
+    {
+        StopEnemyCoroutines();
+
+        RetreatCoroutine = StartCoroutine(PrepRetreat());
+
+        IEnumerator PrepRetreat()
+        {
+            isRetreating = true;
+            yield return new WaitUntil(() => Vector3.Distance(transform.position, target.transform.position) > comfortRange);
+            Debug.LogWarning("Reached the end of the retreat");
+            isRetreating = false;
+            StopMoving();
+
+            //Free 
+            isPaused = false;
+            MovementCoroutine = StartCoroutine(IRandomMovementDirection());
+        }
     }
     
     public IEnumerator IWaitForRandomRange(int a, int b)
     {
         if(!isPaused)
         {
-            Debug.Log("waiting now");
             isPaused = true;
 
             float waitTime = Random.Range(a, b); // Random delay between 1 and 3 seconds
@@ -304,32 +348,11 @@ public class EnemyCombatController : MonoBehaviour
         }
     }
 
-    public void SetRetreat()
-    {
-        StopEnemyCoroutines();
-
-        RetreatCoroutine = StartCoroutine(PrepRetreat());
-
-        IEnumerator PrepRetreat()
-        {
-            yield return new WaitForSeconds(1.4f);
-            isRetreating = true;
-            moveDirection = -Vector3.forward;
-            isMoving = true;
-            yield return new WaitUntil(() => Vector3.Distance(transform.position, target.transform.position) > comfortRange);
-            isRetreating = false;
-            StopMoving();
-
-            //Free 
-            isPaused = false;
-            MovementCoroutine = StartCoroutine(IRandomMovementDirection());
-        }
-    }
 
     public void DealDamageEvent()
     {
         if(!target.isAttackingEnemy && !target.movementScript.isDashing)
-            target.OnTakeHit(1, target);
+            target.OnTakeHit(1, meleeStunDuration, target, this);
 
         //PrepareAttack(false);
     }
@@ -360,10 +383,18 @@ public class EnemyCombatController : MonoBehaviour
         isPreparingAttack = true;
         yield return new WaitForSeconds(0.2f);
         movementScript.TweenToTarget(target.transform.position, 0.5f, 1f);
+        yield return new WaitForSeconds(0.2f);
+
         if(Vector3.Distance(transform.position, target.transform.position) <= punchRange)
         {
             anim.SetTrigger("Punch");
             yield return new WaitForSeconds(0.2f);
+            isPreparingAttack = false;
+        }
+        else
+        {
+            Debug.LogWarning("WHIF!!");
+            yield return new WaitForSeconds(0.3f);
             isPreparingAttack = false;
         }
     }
@@ -401,7 +432,7 @@ public class EnemyCombatController : MonoBehaviour
 
         isDead = true;
         target = null;
-        characterController.enabled = false;
+        movementScript.isAllowedToMove = false;
 
         foreach(EnemyDetection enemyDetection in playerEnemyDetections)
         {
@@ -413,7 +444,6 @@ public class EnemyCombatController : MonoBehaviour
         anim.SetTrigger("Die");
 
         enemyManager.SetEnemyAvailiability(this, false);  
-        enabled = false;
     }
 
     public void OnDrawGizmos()

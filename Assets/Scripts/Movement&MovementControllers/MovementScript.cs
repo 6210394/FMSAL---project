@@ -29,6 +29,9 @@ public class MovementScript : MonoBehaviour
     public bool isDodging = false;
     public bool isDashing = false;
 
+    [Header("Ultimate Bool")]
+    public bool isAllowedToMove = true;
+
 
     void Start()
     {
@@ -53,23 +56,34 @@ public class MovementScript : MonoBehaviour
 
     public void Move(Vector3 moveDirection, bool isSprinting)
     {
-        SprintCheckAndSpeedSetup(isSprinting);
-        if(moveDirection != Vector3.zero)
+        if(isAllowedToMove)
         {
-            characterController.Move(moveDirection * currentMovementSpeed * Time.deltaTime);
+            SprintCheckAndSpeedSetup(isSprinting);
+            if(moveDirection != Vector3.zero)
+            {
+                characterController.Move(moveDirection * currentMovementSpeed * Time.deltaTime);
+            }
+            else
+            {
+                isMoving = false;
+                currentMovementSpeed = 0;
+            }   
         }
         else
         {
             isMoving = false;
             currentMovementSpeed = 0;
-        }
+        }   
     }
 
     public void TweenToTarget(Vector3 target, float moveDuration, float moveTowardsTargetOffset)
     {
-        transform.DOLookAt(target, .2f);
-        Vector3 targetPosition = TargetOffset(target, moveTowardsTargetOffset);
-        transform.DOMove(targetPosition, moveDuration);
+        if(isAllowedToMove)
+        {
+            transform.DOLookAt(target, .2f);
+            Vector3 targetPosition = TargetOffset(target, moveTowardsTargetOffset);
+            transform.DOMove(targetPosition, moveDuration);
+        }
     }
 
     Vector3 TargetOffset(Vector3 target, float offsetDistance)
@@ -111,26 +125,33 @@ public class MovementScript : MonoBehaviour
 
     public void Dash(Vector3 dodgeDirection, float dodgeCooldownLength)
     {
-        maxDodgeCooldown = dodgeCooldownLength;
+        if(isAllowedToMove)
+        {
+            maxDodgeCooldown = dodgeCooldownLength;
 
-        isDashing = true;
+            isDashing = true;
+            
+            transform.DOMove(transform.position + (dodgeDirection * dodgeForce), dodgeMoveDuration);
+        }
         
-        transform.DOMove(transform.position + (dodgeDirection * dodgeForce), dodgeMoveDuration);
     }
 
     public void DodgeWithTarget(Vector3 dodgeDirection, float dodgeCooldownLength, Transform lockedTarget)
     {   
-        maxDodgeCooldown = dodgeCooldownLength;
+        if(isAllowedToMove)
+        {
+             maxDodgeCooldown = dodgeCooldownLength;
 
-        isDodging = true;
-        
-        if(dodgeDirection.z < 0)
-        {
-            Dash(dodgeDirection, dodgeCooldownLength);
-        }
-        else
-        {
-            StartCoroutine(DodgeAround(lockedTarget, dodgeDirection, 5, dodgeMoveDuration));
+            isDodging = true;
+            
+            if(dodgeDirection.z < 0)
+            {
+                Dash(dodgeDirection, dodgeCooldownLength);
+            }
+            else
+            {
+                StartCoroutine(DodgeAround(lockedTarget, dodgeDirection, 5, dodgeMoveDuration));
+            }
         }
     }
 
