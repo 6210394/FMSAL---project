@@ -14,7 +14,7 @@ public class EnemyCombatController : MonoBehaviour
     private Vector3 moveDestination;
 
     [Header("States")]
-    [SerializeField] private bool isStunned;
+    public bool seeksRetaliation = false;
 
     [Header("Stun Tolerance")]
     public int maximumChainStun = 3;
@@ -26,10 +26,12 @@ public class EnemyCombatController : MonoBehaviour
     public float comfortRange = 5f;
 
     [Header("Attack Values")]
-    public float punchRange = 4f;
+    public float punchRange = 3f;
+    public float punchReach = 4f;
     public float punchDuration = 0.5f;
     public float punchStunDuration = 0.3f;
     private float meleeRange;
+    private float meleeReach;
     private float meleeDuration;
     private float meleeStunDuration;
     public float punchTargetDistanceOffset = 2f;
@@ -65,7 +67,7 @@ public class EnemyCombatController : MonoBehaviour
     //References
     private EnemyManager enemyManager;
     public MovementScript movementScript;
-    private CombatScript combatScript;
+    public CombatScript combatScript;
     private CharacterController characterController;
 
     [Header("Player References")]
@@ -113,7 +115,7 @@ public class EnemyCombatController : MonoBehaviour
         {
             playerEnemyDetections.Add(player.GetComponent<EnemyDetection>());
             PlayerCombatController playerCombat = player.GetComponent<PlayerCombatController>();
-            playerCombat.OnHit.AddListener((a, b, c, d) => OnTakeHit(a, b, c, d));
+            playerCombat.OnHit.AddListener((a) => OnTakeHit(a));
         }
         spawnPoint = transform.position;
     }
@@ -125,20 +127,27 @@ public class EnemyCombatController : MonoBehaviour
         {
             PlayerCombatController playerCombat = player.GetComponent<PlayerCombatController>();
             Debug.Log("Adding " + player + " OnHit");
-            playerCombat.OnHit.AddListener((a, b, c, d) => OnTakeHit(a, b, c, d));
+            playerCombat.OnHit.AddListener((a) => OnTakeHit(a));
         }
     }
 
+
+
     #region MyCode
-    public void OnTakeHit(int damageReceived, float stunDuration, EnemyCombatController reciever, PlayerCombatController dealer)
+    public void OnTakeHit(CombatScript.HitEventArgs hitEventArgs)
     {
-        if(reciever == this)
+        if(hitEventArgs.enemyCombatController == this)
         {
+            if(Vector3.Distance(target.transform.position, hitEventArgs.playerCombatController.transform.position) > hitEventArgs.attackRange)
+            {
+                return;
+            }
+
             StopEnemyCoroutines();
 
-            if(Vector3.Distance(dealer.transform.position, transform.position) <= detectionRange)
+            if(Vector3.Distance(hitEventArgs.playerCombatController.transform.position, transform.position) <= detectionRange)
             {
-                target = dealer;
+                target = hitEventArgs.playerCombatController;
             }
             else
             {
@@ -146,18 +155,31 @@ public class EnemyCombatController : MonoBehaviour
             }
             anim.SetTrigger("RecieveHit");
             movementScript.KnockBack(0.3f, 0.1f);
-
-            combatScript.health -= damageReceived;
+            combatScript.GetStunned(hitEventArgs.stunDuration);
+            currentChainStun += 1;
+            combatScript.health -= hitEventArgs.damageReceived;
 
             if(combatScript.health <= 0)
             {
                 Die();
+            }
+
+            if(currentChainStun >= maximumChainStun)
+            {
+                combatScript.stunImmune = true;
+                seeksRetaliation = true;
             }
         }
     }
 
     public void Panic()
     {
+
+    }
+
+    public void Retaliate()
+    {
+        Attack();
 
     }
 
@@ -343,7 +365,7 @@ public class EnemyCombatController : MonoBehaviour
         if(Vector3.Distance(transform.position, target.transform.position) < 2)
         {
             StopMoving();
-            if (!isStunned)
+            if (!combatScript.isStunned)
                 Attack();
         }
     }
@@ -352,7 +374,7 @@ public class EnemyCombatController : MonoBehaviour
     public void DealDamageEvent()
     {
         if(!target.isAttackingEnemy && !target.movementScript.isDashing)
-            target.OnTakeHit(1, meleeStunDuration, target, this);
+            target.OnTakeHit(combatScript.BuildAttack(combatScript.attackDamage, punchDuration, punchRange, this, target));
 
         //PrepareAttack(false);
     }
@@ -381,9 +403,12 @@ public class EnemyCombatController : MonoBehaviour
     IEnumerator IPrepareAttack()
     {
         isPreparingAttack = true;
-        yield return new WaitForSeconds(0.2f);
-        movementScript.TweenToTarget(target.transform.position, 0.5f, 1f);
-        yield return new WaitForSeconds(0.2f);
+        if(!seeksRetaliation)
+        {
+            yield return new WaitForSeconds(0.2f);
+            movementScript.TweenToTarget(target.transform.position, 0.5f, 1f);
+            yield return new WaitForSeconds(0.2f);
+        }
 
         if(Vector3.Distance(transform.position, target.transform.position) <= punchRange)
         {
@@ -480,10 +505,7 @@ public class EnemyCombatController : MonoBehaviour
         return isRetreating;
     }
 
-    public bool IsStunned()
-    {
-        return isStunned;
-    }
+    
 
     #endregion
 

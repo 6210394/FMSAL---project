@@ -13,10 +13,12 @@ public class PlayerCombatController : MonoBehaviour
 #region Variables & States
 
     [Header("Attack Values")]
-    public float punchRange = 4f;
-    public float punchDuration = 0.5f;
-    public float punchStunDuration = 0.3f;
+    public float punchRange = 3f; //Range withing which the melee hits
+    public float punchReach = 4f; //Range within which the attack will tween
+    public float punchDuration = 0.5f; //Duration of the attack
+    public float punchStunDuration = 0.3f; //Duration of the stun
     private float meleeRange;
+    private float meleeReach;
     private float meleeDuration;
     private float meleeStunDuration;
     public float punchTargetDistanceOffset = 2f;
@@ -64,7 +66,7 @@ public class PlayerCombatController : MonoBehaviour
 #endregion
 
     [Header("Player Combat Events")]
-    public UnityEvent<int, float, EnemyCombatController, PlayerCombatController> OnHit; //damage, stunTime, target, source
+    public UnityEvent<CombatScript.HitEventArgs> OnHit;
     public UnityEvent<EnemyCombatController> OnTrajectory;
 
     [Header("Debug")]
@@ -440,7 +442,8 @@ public class PlayerCombatController : MonoBehaviour
 
             if(currentLockedTarget)
             {
-                OnHit.Invoke(combatScript.attackDamage, meleeStunDuration, currentLockedTarget, this);
+            
+                OnHit.Invoke(combatScript.BuildAttack(combatScript.attackDamage, meleeStunDuration, 2, currentLockedTarget, this));
             }
             //punchParticle.PlayParticleAtPosition(punchPosition.position);
         }
@@ -452,7 +455,7 @@ public class PlayerCombatController : MonoBehaviour
             {
                 return;
             }
-            OnHit.Invoke(combatScript.attackDamage, gunStunDuration, bulletHitTarget, this);
+            OnHit.Invoke(combatScript.BuildAttack(combatScript.attackDamage, gunStunDuration, 100, bulletHitTarget, this));
         }
     }
     
@@ -475,17 +478,20 @@ public class PlayerCombatController : MonoBehaviour
         }
     }
 
-    public void OnTakeHit(int damageReceived, float stunTime, PlayerCombatController target, EnemyCombatController dealer)
+    public void OnTakeHit(CombatScript.HitEventArgs hitEventArgs)
     {
-        if(target == this)
+        if(hitEventArgs.playerCombatController == this)
         {
+            if(Vector3.Distance(hitEventArgs.playerCombatController.transform.position, hitEventArgs.enemyCombatController.transform.position) > hitEventArgs.attackRange)
+            {
+                return;
+            }
             Debug.Log("Took Damage");
-            
 
             playerMovementController.animator.SetTrigger("RecieveHit");
             playerMovementController.movementScript.KnockBack(0.3f, 0.1f);
 
-            combatScript.health -= damageReceived;
+            combatScript.health -= hitEventArgs.damageReceived;
 
             if(combatScript.health <= 0)
             {

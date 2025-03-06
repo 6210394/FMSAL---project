@@ -17,6 +17,8 @@ public class CombatScript : MonoBehaviour
     [Header ("States")]
     public bool isStunned = false;
     public bool stunImmune = false;
+    float maxStunTimer;
+    float currentStunTime;
     [Space]
     public bool attackIsAvailable = true;
     public bool isAttacking = false;
@@ -41,10 +43,38 @@ public class CombatScript : MonoBehaviour
         playerController = GetComponent<PlayerMovementController>();
         //animator = GetComponent<Animator>();
     }
+    
+    void Update()
+    {
+        AttackCooldownCountdown();
+        StunCooldown();
+    }
 
     public void ProcessAttackList(Dictionary<AttackType, int> stringOfAttacks)
     {
         //
+    }
+
+    public struct HitEventArgs
+    {
+        public int damageReceived;
+        public float stunDuration;
+        public float attackRange;
+        public EnemyCombatController enemyCombatController;
+        public PlayerCombatController playerCombatController;
+    }
+
+    public HitEventArgs BuildAttack(int damageReceived, float stunDuration, float attackRange, EnemyCombatController enemyCombatController, PlayerCombatController playerCombatController)
+    {
+        HitEventArgs hitEventArgs;
+
+        hitEventArgs.damageReceived = damageReceived;
+        hitEventArgs.stunDuration = stunDuration;
+        hitEventArgs.attackRange = attackRange;
+        hitEventArgs.enemyCombatController = enemyCombatController;
+        hitEventArgs.playerCombatController = playerCombatController;
+
+        return hitEventArgs;
     }
     
     public void Attack(AttackType attackType, float specificAttackCooldown, string animationName)
@@ -66,6 +96,35 @@ public class CombatScript : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void GetStunned(float stunTimer)
+    {
+        isStunned = true;
+        maxStunTimer = stunTimer;
+    }
+
+    public void StunCooldown()
+    {
+        if(stunImmune)
+        {
+            isStunned = false;
+        }
+        if(isStunned && currentStunTime == 0)
+        {
+            currentStunTime = maxStunTimer;
+        }
+        if(currentStunTime > 0)
+        {
+            currentStunTime -= Time.deltaTime;
+            if(currentStunTime <= 0)
+            {
+                currentStunTime = 0;
+                isStunned = false;
+                Debug.Log("Out of stun!!");
+            }
+        }
+
     }
 
     public IEnumerator ILightMelee(string animationName)
@@ -105,10 +164,6 @@ public class CombatScript : MonoBehaviour
         }
     }
 
-    void Update()
-    {
-        AttackCooldownCountdown();   
-    }
 
     public void AttackCancel()
     {

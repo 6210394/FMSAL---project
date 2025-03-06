@@ -33,8 +33,24 @@ public class EnemyManager : MonoBehaviour
         
     }
 
+    public void Update()
+    {
+        
+    }
 
-    
+    EnemyStateMachineBlueprint CheckRetaliation()
+    {
+        foreach(EnemyStruct enemy in allEnemies)
+        {
+            EnemyCombatController enemyCombatController = enemy.enemyStateMachine.enemyCombatController;
+            if(enemyCombatController.seeksRetaliation)
+            {
+                return enemy.enemyStateMachine;
+            }
+        }
+        return null;
+    }
+
     public void StartAI()
     {
         AI_Loop_Coroutine = StartCoroutine(AI_Loop(null));
@@ -48,18 +64,28 @@ public class EnemyManager : MonoBehaviour
             yield break;
         }
 
+        
         yield return new WaitForSeconds(Random.Range(.5f,4f));
 
-        EnemyStateMachineBlueprint attackingEnemy = RandomEnemyExcludingOne(enemy);
+        EnemyStateMachineBlueprint attackingEnemy;
 
-        if (attackingEnemy == null)
-            attackingEnemy = RandomEnemy();
+        if(!CheckRetaliation())
+        {
+            attackingEnemy = RandomEnemyExcludingOne(enemy);
 
-        if (attackingEnemy == null)
-            yield break;
-            
-        yield return new WaitUntil(() => attackingEnemy.currentState == EnemyStateMachineBlueprint.STATE.CIRCLING);
-        yield return new WaitUntil(() => attackingEnemy.enemyCombatController.IsStunned() == false);
+            if (attackingEnemy == null)
+                attackingEnemy = RandomEnemy();
+
+            if (attackingEnemy == null)
+                yield break;
+                
+            yield return new WaitUntil(() => attackingEnemy.currentState == EnemyStateMachineBlueprint.STATE.CIRCLING);
+            yield return new WaitUntil(() => attackingEnemy.enemyCombatController.combatScript.isStunned == false);
+        }
+        else
+        {
+            attackingEnemy = CheckRetaliation();
+        }
 
         attackingEnemy.enemyCombatController.Attack();
 

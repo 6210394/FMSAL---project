@@ -10,6 +10,17 @@ public class DefaultEnemyStates : EnemyStateMachineBlueprint
         
     }
 
+    public override void Update()
+    {
+        base.Update();
+        if(enemyCombatController.seeksRetaliation)
+        {
+            SwitchToNextEvent(EVENT.ENTER);
+            SwitchToNextState(STATE.ATTACKING);
+            enemyCombatController.Retaliate();
+        }
+    }
+
     protected override void RunStateMachine()
     {
         switch (currentState)
@@ -194,7 +205,14 @@ public class DefaultEnemyStates : EnemyStateMachineBlueprint
             case EVENT.ENTER:
             {
                 Debug.Log("Circling");
-                SwitchToNextEvent(EVENT.UPDATE);
+                if(enemyCombatController.target)
+                {
+                    SwitchToNextEvent(EVENT.UPDATE);
+                }
+                else
+                {
+                    SwitchToNextState(STATE.PATROL);
+                }
                 break;
             }
             case EVENT.UPDATE:
