@@ -1,6 +1,7 @@
 using UnityEngine;
 using DG.Tweening;
 using System.Collections;
+using UnityEngine.Events;
 
 public class MovementScript : MonoBehaviour
 {
@@ -28,6 +29,8 @@ public class MovementScript : MonoBehaviour
     float dodgeCooldownRemaining = 0;
     public bool isDodging = false;
     public bool isDashing = false;
+
+    public bool isInvincible = false;
 
     [Header("Ultimate Bool")]
     public bool isAllowedToMove = true;
@@ -121,6 +124,11 @@ public class MovementScript : MonoBehaviour
         {
             transform.position += Vector3.down * gravityScale * Time.deltaTime;
         }
+    }
+
+    public void DodgeInvincibilityFrame()
+    {
+        isInvincible = !isInvincible;
     }
 
     public void Dash(Vector3 dodgeDirection, float dodgeCooldownLength)

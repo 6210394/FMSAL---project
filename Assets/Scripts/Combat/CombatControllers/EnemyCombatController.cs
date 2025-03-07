@@ -10,8 +10,8 @@ public class EnemyCombatController : MonoBehaviour
     [Header("Stats")]
     public float moveSpeed = 1;
     public bool isMoving;
-    private Vector3 moveDirection;
-    private Vector3 moveDestination;
+    private Vector3 givenMoveDirection;
+    private Vector3 givenMoveDestination;
 
     [Header("States")]
     public bool seeksRetaliation = false;
@@ -189,17 +189,18 @@ public class EnemyCombatController : MonoBehaviour
         if (!isMoving && !isPaused)
         {
             Vector3 randomDirection = GenerateRandomDirection();
-            moveDestination = randomDirection * distance;
-            moveDirection = randomDirection;
+            givenMoveDestination = randomDirection * distance;
+            givenMoveDirection = randomDirection;
             isMoving = true;
             anim.SetFloat("Speed", moveSpeed);
         }
 
         if (isMoving)
         {
-            movementScript.Move(moveDirection, false);
+            movementScript.Move(givenMoveDirection, false);
+            transform.LookAt(givenMoveDirection + transform.position);
 
-            if(transform.position == moveDestination)
+            if(transform.position == givenMoveDestination)
             {
                 isMoving = false;
                 anim.SetFloat("Speed", 0);
@@ -234,7 +235,7 @@ public class EnemyCombatController : MonoBehaviour
         {
             anim.SetFloat("Speed", 1);
 
-            if(Vector3.Distance(target.transform.position, transform.position) < targetDistance)
+            if(Vector3.Distance(target.transform.position, transform.position) <= targetDistance)
             {
                 transform.LookAt(target.transform);
                 movementScript.Move(-transform.forward, false);
@@ -245,21 +246,16 @@ public class EnemyCombatController : MonoBehaviour
     
     public void SetRetreat()
     {
-        StopEnemyCoroutines();
-
         RetreatCoroutine = StartCoroutine(PrepRetreat());
 
         IEnumerator PrepRetreat()
         {
             isRetreating = true;
+            
             yield return new WaitUntil(() => Vector3.Distance(transform.position, target.transform.position) > comfortRange);
             Debug.LogWarning("Reached the end of the retreat");
             isRetreating = false;
             StopMoving();
-
-            //Free 
-            isPaused = false;
-            MovementCoroutine = StartCoroutine(IRandomMovementDirection());
         }
     }
     
@@ -279,20 +275,18 @@ public class EnemyCombatController : MonoBehaviour
 
     void StopEnemyCoroutines()
     {
+        Debug.Log("Stopping enemy coroutines!");
         if (isRetreating)
         {
             if (RetreatCoroutine != null)
                 StopCoroutine(RetreatCoroutine);
+                isRetreating = false;
         }
 
         if (PrepareAttackCoroutine != null)
             StopCoroutine(PrepareAttackCoroutine);
+            isPreparingAttack = false;
 
-        if(DamageCoroutine != null)
-            StopCoroutine(DamageCoroutine);
-
-        if (MovementCoroutine != null)
-            StopCoroutine(MovementCoroutine);
     }
 
 
@@ -306,7 +300,7 @@ public class EnemyCombatController : MonoBehaviour
         if (randomChance == 1)
         {
             int randomDir = Random.Range(0, 2);
-            moveDirection = randomDir == 1 ? Vector3.right : Vector3.left;
+            givenMoveDirection = randomDir == 1 ? Vector3.right : Vector3.left;
             isMoving = true;
         }
         else
@@ -321,6 +315,11 @@ public class EnemyCombatController : MonoBehaviour
         MovementCoroutine = StartCoroutine(IRandomMovementDirection());
     }
 
+    public void SetCircling()
+    {
+        MovementCoroutine = StartCoroutine(IGenerateCirclingDirection());
+    }
+
     public void EnemyCirclingMovement()
     {
         if(!target.movementScript.isDodging)
@@ -332,8 +331,8 @@ public class EnemyCombatController : MonoBehaviour
         float currentMoveSpeed = moveSpeed;
 
         //Set Animator values
-        anim.SetBool("Strafe", moveDirection == Vector3.right || moveDirection == Vector3.left);
-        anim.SetFloat("StrafeDirection", moveDirection.normalized.x, .2f, Time.deltaTime);
+        anim.SetBool("Strafe", givenMoveDirection == Vector3.right || givenMoveDirection == Vector3.left);
+        anim.SetFloat("StrafeDirection", givenMoveDirection.normalized.x, .2f, Time.deltaTime);
 
         //Don't do anything if isMoving is false
         if (!isMoving)
@@ -341,23 +340,12 @@ public class EnemyCombatController : MonoBehaviour
 
         Vector3 dir = (target.transform.position - transform.position).normalized;
         Vector3 pDir = Quaternion.AngleAxis(90, Vector3.up) * dir; //Vector perpendicular to direction
-        Vector3 movedir = Vector3.zero;
 
-        Vector3 finalDirection = Vector3.zero;
+        Vector3 finalDirection = pDir * givenMoveDirection.normalized.x;
 
-        if (moveDirection == Vector3.forward)
-            finalDirection = dir;
-        if (moveDirection == Vector3.right || moveDirection == Vector3.left)
-            finalDirection = pDir * moveDirection.normalized.x;
-        if (moveDirection == -Vector3.forward)
-            finalDirection = -transform.forward;
+        dir += finalDirection * currentMoveSpeed * Time.deltaTime;
 
-        if (moveDirection == Vector3.right || moveDirection == Vector3.left)
-            currentMoveSpeed /= 1.5f;
-
-        movedir += finalDirection * currentMoveSpeed * Time.deltaTime;
-
-        movementScript.Move(movedir, false);
+        movementScript.Move(dir, false);
 
         if (!isPreparingAttack)
             return;
@@ -368,6 +356,36 @@ public class EnemyCombatController : MonoBehaviour
             if (!combatScript.isStunned)
                 Attack();
         }
+    }
+
+    public IEnumerator IGenerateCirclingDirection()
+    {
+        switch(Random.Range(1,4))
+        {
+            case 1:
+            {
+                givenMoveDirection = new Vector3(1,0,0);
+                break;
+            }
+            case 2:
+            {
+                givenMoveDirection = new Vector3(-1,0,0);
+                break;
+            }
+            case 3:
+            {
+                givenMoveDirection = new Vector3(0,0,0);
+                break;
+            }
+            default:
+            {
+                givenMoveDirection = new Vector3(0,0,0);
+                break;
+            }
+        }
+        yield return new WaitForSeconds(3);
+        Debug.Log("Generating new direction");
+        MovementCoroutine = StartCoroutine(IGenerateCirclingDirection());
     }
 
 
@@ -383,9 +401,9 @@ public class EnemyCombatController : MonoBehaviour
     {
         isMoving = false;
         
-        moveDirection = Vector3.zero;
+        givenMoveDirection = Vector3.zero;
         if(characterController.enabled)
-            characterController.Move(moveDirection);
+            characterController.Move(givenMoveDirection);
     }
 
     public void Attack()
@@ -410,18 +428,11 @@ public class EnemyCombatController : MonoBehaviour
             yield return new WaitForSeconds(0.2f);
         }
 
-        if(Vector3.Distance(transform.position, target.transform.position) <= punchRange)
-        {
-            anim.SetTrigger("Punch");
-            yield return new WaitForSeconds(0.2f);
-            isPreparingAttack = false;
-        }
-        else
-        {
-            Debug.LogWarning("WHIF!!");
-            yield return new WaitForSeconds(0.3f);
-            isPreparingAttack = false;
-        }
+        
+        anim.SetTrigger("Punch");
+        yield return new WaitForSeconds(0.2f);
+        isPreparingAttack = false;
+        
     }
 
     public bool CheckForPlayersInDetectionRange()
@@ -484,7 +495,7 @@ public class EnemyCombatController : MonoBehaviour
         if (isMoving)
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(moveDestination, 0.5f); // Adjust the size as needed
+            Gizmos.DrawWireSphere(givenMoveDestination, 0.5f); // Adjust the size as needed
         }
     }
 

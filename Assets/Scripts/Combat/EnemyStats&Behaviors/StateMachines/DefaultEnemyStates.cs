@@ -53,9 +53,6 @@ public class DefaultEnemyStates : EnemyStateMachineBlueprint
         {
             case EVENT.ENTER:
             {
-                Debug.Log("Patroling");
-                float randomDistance = Random.Range(1, 5);
-
                 SwitchToNextEvent(EVENT.UPDATE);
                 break;
             }
@@ -96,7 +93,6 @@ public class DefaultEnemyStates : EnemyStateMachineBlueprint
         {
             case EVENT.ENTER:
             {
-                Debug.Log("MovingToPlayer");
                 SwitchToNextEvent(EVENT.UPDATE);
                 break;
             }
@@ -105,7 +101,7 @@ public class DefaultEnemyStates : EnemyStateMachineBlueprint
             {
                 if(Vector3.Distance(enemyCombatController.target.transform.position, transform.position) < detectionRange)
                 {
-                    if(Vector3.Distance(enemyCombatController.target.transform.position, transform.position) > enemyCombatController.comfortRange - 1)
+                    if(Vector3.Distance(enemyCombatController.target.transform.position, transform.position) > enemyCombatController.comfortRange + 3)
                     {
                         enemyCombatController.ApproachPlayer(true);
                         transform.LookAt(enemyCombatController.target.transform);
@@ -138,7 +134,6 @@ public class DefaultEnemyStates : EnemyStateMachineBlueprint
         {
             case EVENT.ENTER:
             {
-                Debug.Log("Attacking");
                 SwitchToNextEvent(EVENT.UPDATE);
                 break;
             }
@@ -165,7 +160,14 @@ public class DefaultEnemyStates : EnemyStateMachineBlueprint
         {
             case EVENT.ENTER:
             {   
-                Debug.Log("Retreating");
+                if(Random.Range(0,2) == 1)
+                {
+                    if(enemyCombatController.target)
+                    {
+                        SwitchToNextState(STATE.CIRCLING);
+                        break;
+                    }
+                }
                 enemyCombatController.SetRetreat();
                 SwitchToNextEvent(EVENT.UPDATE);
                 break;
@@ -204,9 +206,9 @@ public class DefaultEnemyStates : EnemyStateMachineBlueprint
         {
             case EVENT.ENTER:
             {
-                Debug.Log("Circling");
                 if(enemyCombatController.target)
                 {
+                    enemyCombatController.SetCircling();
                     SwitchToNextEvent(EVENT.UPDATE);
                 }
                 else

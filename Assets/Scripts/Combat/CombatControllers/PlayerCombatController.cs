@@ -486,6 +486,12 @@ public class PlayerCombatController : MonoBehaviour
             {
                 return;
             }
+
+            if(movementScript.isInvincible)
+            {
+                Debug.LogWarning("DODGED");
+                return;
+            }
             Debug.Log("Took Damage");
 
             playerMovementController.animator.SetTrigger("RecieveHit");

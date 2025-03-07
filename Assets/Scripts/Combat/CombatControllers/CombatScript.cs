@@ -34,7 +34,7 @@ public class CombatScript : MonoBehaviour
     public Animator animator;
 
     [Header ("Debug")]
-    [SerializeField] bool canAttack = false; //debug variable
+    [SerializeField] public bool canAttack = false; //debug variable
 
 
     public void Start()

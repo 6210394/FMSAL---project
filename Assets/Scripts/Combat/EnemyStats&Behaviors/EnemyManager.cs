@@ -87,13 +87,16 @@ public class EnemyManager : MonoBehaviour
             attackingEnemy = CheckRetaliation();
         }
 
-        attackingEnemy.enemyCombatController.Attack();
+        if(attackingEnemy.enemyCombatController.combatScript.canAttack)
+        {
+            attackingEnemy.enemyCombatController.Attack();
+        }
 
         yield return new WaitUntil(() => attackingEnemy.enemyCombatController.IsPreparingAttack() == false);
 
         attackingEnemy.enemyCombatController.SetRetreat();
 
-        yield return new WaitForSeconds(Random.Range(0,.5f));
+        yield return new WaitForSeconds(Random.Range(0, 2));
 
         if (AliveEnemyCount() > 0)
             AI_Loop_Coroutine = StartCoroutine(AI_Loop(attackingEnemy));
