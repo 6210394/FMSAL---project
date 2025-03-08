@@ -21,7 +21,7 @@ MonoBehaviour:
   weaponType: 0
   damage: 1
   stunTime: 0.2
-  swingTime: 0.5
+  swingTime: 0.8
   weaponReach: 4
   rateOfFire: 0
   weaponAimAssistValue: 0

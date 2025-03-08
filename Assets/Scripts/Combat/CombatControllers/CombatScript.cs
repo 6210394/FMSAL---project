@@ -29,6 +29,8 @@ public class CombatScript : MonoBehaviour
     [SerializeField] Vector3 reticleOffset;
     [SerializeField] GameObject bulletVisualsPrefab;
     [SerializeField] Transform bulletSpawnOriginOffset;
+    public GameObject hitBoxReference;
+
     [Space]
     private PlayerMovementController playerController;
     public Animator animator;
@@ -121,7 +123,6 @@ public class CombatScript : MonoBehaviour
             {
                 currentStunTime = 0;
                 isStunned = false;
-                Debug.Log("Out of stun!!");
             }
         }
 

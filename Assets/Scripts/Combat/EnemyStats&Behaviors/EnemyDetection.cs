@@ -39,19 +39,63 @@ public class EnemyDetection : MonoBehaviour
             inputDirection = forward * Input.GetAxis("Vertical") + right * Input.GetAxis("Horizontal");
             inputDirection = inputDirection.normalized;
 
-            RaycastHit info;
-
-            if (Physics.SphereCast(transform.position, sphereCastAOESize, inputDirection, out info, autoLockOnRange, layerMask))
+            if(inputDirection == Vector3.zero)
             {
-                if(info.collider.transform.GetComponent<EnemyCombatController>().IsAttackable())
-                currentTarget = info.collider.transform.GetComponent<EnemyCombatController>();
+                Debug.Log("No input!");
+                //inputDirection = transform.forward;
             }
-            
-            if (currentTarget != null && Vector3.Distance(transform.position, currentTarget.transform.position) > autoLockOnRange*1.5f)
+
+            TargetLock(inputDirection);
+
+            if (currentTarget != null )
             {
-                currentTarget = null;
+                Vector3 toTarget = (currentTarget.transform.position - transform.position).normalized;
+                float angle = Vector3.Angle(inputDirection, toTarget);
+                if (angle > 80f)
+                {
+                    Debug.Log("Looking away!");
+                    currentTarget = null;
+                }
             }
         }
+    }
+
+    public void TargetLock(Vector3 inputDirection)
+    {
+            
+            GameObject closestTarget = null;
+            RaycastHit[] info = Physics.SphereCastAll(transform.position, sphereCastAOESize, inputDirection, autoLockOnRange, layerMask);
+
+            if (info.Length > 0)
+            {
+                foreach(RaycastHit hit in info)
+                {
+                    if(hit.collider.gameObject.GetComponent<EnemyCombatController>())
+                    {
+                        if(!closestTarget)
+                        {
+                            closestTarget = hit.collider.gameObject;
+                        }
+                        else
+                        {
+                            if(Vector3.Distance(transform.position, closestTarget.gameObject.transform.position) > Vector3.Distance(transform.position, hit.collider.gameObject.transform.position))
+                            {
+                                closestTarget = hit.collider.gameObject;
+                            }
+                        }
+                    }
+                }
+
+                if(closestTarget.transform.GetComponent<EnemyCombatController>().IsAttackable())
+                currentTarget = closestTarget.transform.GetComponent<EnemyCombatController>();
+            }
+            
+            
+            if (currentTarget != null && Vector3.Distance(transform.position, currentTarget.transform.position) > autoLockOnRange*1.5f)
+            {   
+                Debug.Log("NO MORE TARGET");
+                currentTarget = null;
+            }
     }
 
     public EnemyCombatController CurrentTarget()

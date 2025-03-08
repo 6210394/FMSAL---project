@@ -23,28 +23,32 @@ public class DefaultEnemyStates : EnemyStateMachineBlueprint
 
     protected override void RunStateMachine()
     {
-        switch (currentState)
+        if(!enemyCombatController.isDead)
         {
-            case STATE.PATROL:
-                Patrol();
-                break;
+            switch (currentState)
+            {
+                case STATE.PATROL:
+                    Patrol();
+                    break;
 
-            case STATE.MOVING:
-                MoveToPlayer();
-                break;
+                case STATE.MOVING:
+                    MoveToPlayer();
+                    break;
 
-            case STATE.ATTACKING:
-                Attacking();
-                break;
-            
-            case STATE.CIRCLING:
-                Circling();
-                break;
+                case STATE.ATTACKING:
+                    Attacking();
+                    break;
+                
+                case STATE.CIRCLING:
+                    Circling();
+                    break;
 
-            case STATE.RETREATING:
-                Retreat();
-                break;
+                case STATE.RETREATING:
+                    Retreat();
+                    break;
+            }
         }
+        
     }
 
     public void Patrol()
@@ -101,7 +105,7 @@ public class DefaultEnemyStates : EnemyStateMachineBlueprint
             {
                 if(Vector3.Distance(enemyCombatController.target.transform.position, transform.position) < detectionRange)
                 {
-                    if(Vector3.Distance(enemyCombatController.target.transform.position, transform.position) > enemyCombatController.comfortRange + 3)
+                    if(Vector3.Distance(enemyCombatController.target.transform.position, transform.position) > enemyCombatController.comfortRange)
                     {
                         enemyCombatController.ApproachPlayer(true);
                         transform.LookAt(enemyCombatController.target.transform);
@@ -219,9 +223,8 @@ public class DefaultEnemyStates : EnemyStateMachineBlueprint
             }
             case EVENT.UPDATE:
             {
-                if(Vector3.Distance(enemyCombatController.target.transform.position, transform.position) > comfortDistance)
+                if(Vector3.Distance(enemyCombatController.target.transform.position, transform.position) > comfortDistance + 3)
                 {
-                    Debug.Log("Player outside of comfort range!");
                     SwitchToNextState(STATE.MOVING);
                     SwitchToNextEvent(EVENT.ENTER);
                 }

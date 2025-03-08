@@ -51,6 +51,7 @@ public class PlayerCombatController : MonoBehaviour
     private DiogenicPlayerInventory diogenicPlayerInventory;
 
     public Image crosshairReference;
+    public Transform barrelAnchorReference;
     public LayerMask playerLayermask;
 #endregion
 
@@ -208,11 +209,41 @@ public class PlayerCombatController : MonoBehaviour
         combatScript.Attack(CombatScript.AttackType.LightMelee, meleeDuration, "Punch"); //to change later when we have more weapons
         if(currentLockedTarget != null)
         {
-            transform.DOLookAt(currentLockedTarget.transform.position, meleeDuration);
+            transform.LookAt(currentLockedTarget.transform.position);
             if(TargetDistance(currentLockedTarget.transform) < range)
             {
                 playerMovementController.movementScript.TweenToTarget(currentLockedTarget.gameObject.transform.position, meleeDuration/1.75f, punchTargetDistanceOffset);
             }
+        }
+        else
+        {
+            
+            var camera = Camera.main;
+            var forward = camera.transform.forward;
+            var right = camera.transform.right;
+
+            forward.y = 0f; // Keep the direction horizontal
+            forward.Normalize();
+            right.y = 0f;
+            right.Normalize();
+
+            Vector3 inputDirection = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).normalized;
+            Vector3 direction = (forward * inputDirection.z + right * inputDirection.x).normalized;
+
+            if (inputDirection != Vector3.zero)
+            {
+                direction = direction * 1f; // Move 1 meter in the input direction
+            }
+            else
+            {
+                direction = forward; // Default push towards the camera direction
+            }
+
+            transform.LookAt(transform.position + direction);
+            Debug.Log(inputDirection);
+
+            playerMovementController.movementScript.TweenToTarget(transform.position + direction * 1.5f, 0.5f, 0);
+                //playerMovementController.movementScript.TweenToTarget(direction.normalized * 1.5f, 0.5f, 0);
         }
     }
 
@@ -232,8 +263,6 @@ public class PlayerCombatController : MonoBehaviour
             bulletHitTarget = null;
 
             Vector3 crosshairScreenPosition = crosshairReference.rectTransform.position;
-            Debug.Log(new Vector3(Screen.width / 2, Screen.height / 2, 0));
-            Debug.Log(crosshairScreenPosition);
 
             Ray ray = Camera.main.ScreenPointToRay(crosshairScreenPosition);
             RaycastHit hit;
@@ -383,7 +412,6 @@ public class PlayerCombatController : MonoBehaviour
 
                     float animationSpeed = weapon.rateOfFire / 60f;
                     combatScript.animator.SetFloat("ShootSpeed", animationSpeed);
-                    Debug.Log(combatScript.animator.GetFloat("ShootSpeed"));
                     break;
                 }
             }
@@ -429,6 +457,7 @@ public class PlayerCombatController : MonoBehaviour
 
     public void DealDamageEvent()
     {
+        Debug.Log("Attack!");
         if(meleeEquipped)
         {
             if (currentLockedTarget == null)
@@ -442,8 +471,7 @@ public class PlayerCombatController : MonoBehaviour
 
             if(currentLockedTarget)
             {
-            
-                OnHit.Invoke(combatScript.BuildAttack(combatScript.attackDamage, meleeStunDuration, 2, currentLockedTarget, this));
+                OnHit.Invoke(combatScript.BuildAttack(combatScript.attackDamage, meleeStunDuration, meleeRange, currentLockedTarget, this));
             }
             //punchParticle.PlayParticleAtPosition(punchPosition.position);
         }
@@ -484,6 +512,7 @@ public class PlayerCombatController : MonoBehaviour
         {
             if(Vector3.Distance(hitEventArgs.playerCombatController.transform.position, hitEventArgs.enemyCombatController.transform.position) > hitEventArgs.attackRange)
             {
+                Debug.Log("Too far");
                 return;
             }
 

@@ -83,7 +83,7 @@ public class MovementScript : MonoBehaviour
     {
         if(isAllowedToMove)
         {
-            transform.DOLookAt(target, .2f);
+            //transform.DOLookAt(target, .2f);
             Vector3 targetPosition = TargetOffset(target, moveTowardsTargetOffset);
             transform.DOMove(targetPosition, moveDuration);
         }
@@ -141,7 +141,6 @@ public class MovementScript : MonoBehaviour
             
             transform.DOMove(transform.position + (dodgeDirection * dodgeForce), dodgeMoveDuration);
         }
-        
     }
 
     public void DodgeWithTarget(Vector3 dodgeDirection, float dodgeCooldownLength, Transform lockedTarget)

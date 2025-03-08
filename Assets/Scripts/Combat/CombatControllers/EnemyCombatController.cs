@@ -53,7 +53,7 @@ public class EnemyCombatController : MonoBehaviour
 
     public float deathTime = 1f;
 
-    bool isDead = false;
+    public bool isDead = false;
 
     [Header("Combat Booleans")]
     public bool isPreparingAttack;
@@ -138,9 +138,13 @@ public class EnemyCombatController : MonoBehaviour
     {
         if(hitEventArgs.enemyCombatController == this)
         {
-            if(Vector3.Distance(target.transform.position, hitEventArgs.playerCombatController.transform.position) > hitEventArgs.attackRange)
+            if(Vector3.Distance(transform.position, hitEventArgs.playerCombatController.transform.position) > hitEventArgs.attackRange)
             {
                 return;
+            }
+            else
+            {
+                Debug.Log("Player is in range!");
             }
 
             StopEnemyCoroutines();
@@ -287,6 +291,11 @@ public class EnemyCombatController : MonoBehaviour
             StopCoroutine(PrepareAttackCoroutine);
             isPreparingAttack = false;
 
+        if (MovementCoroutine != null)
+        {
+            StopCoroutine(MovementCoroutine);
+        }
+
     }
 
 
@@ -327,8 +336,6 @@ public class EnemyCombatController : MonoBehaviour
             transform.LookAt(target.transform);
         }
 
-        //Set movespeed based on direction
-        float currentMoveSpeed = moveSpeed;
 
         //Set Animator values
         anim.SetBool("Strafe", givenMoveDirection == Vector3.right || givenMoveDirection == Vector3.left);
@@ -343,9 +350,7 @@ public class EnemyCombatController : MonoBehaviour
 
         Vector3 finalDirection = pDir * givenMoveDirection.normalized.x;
 
-        dir += finalDirection * currentMoveSpeed * Time.deltaTime;
-
-        movementScript.Move(dir, false);
+        movementScript.Move(finalDirection, false);
 
         if (!isPreparingAttack)
             return;
@@ -384,7 +389,6 @@ public class EnemyCombatController : MonoBehaviour
             }
         }
         yield return new WaitForSeconds(3);
-        Debug.Log("Generating new direction");
         MovementCoroutine = StartCoroutine(IGenerateCirclingDirection());
     }
 
@@ -393,8 +397,7 @@ public class EnemyCombatController : MonoBehaviour
     {
         if(!target.isAttackingEnemy && !target.movementScript.isDashing)
             target.OnTakeHit(combatScript.BuildAttack(combatScript.attackDamage, punchDuration, punchRange, this, target));
-
-        //PrepareAttack(false);
+            PrepareAttackCoroutine = null;
     }
 
     public void StopMoving()
@@ -410,7 +413,10 @@ public class EnemyCombatController : MonoBehaviour
     {
         if(prefersPunching)
         {
-            PrepareAttackCoroutine = StartCoroutine(IPrepareAttack());
+            if(PrepareAttackCoroutine == null)
+            {
+                PrepareAttackCoroutine = StartCoroutine(IPrepareAttack());
+            }
         }
         else
         {
@@ -427,12 +433,11 @@ public class EnemyCombatController : MonoBehaviour
             movementScript.TweenToTarget(target.transform.position, 0.5f, 1f);
             yield return new WaitForSeconds(0.2f);
         }
-
         
+        seeksRetaliation = false;
         anim.SetTrigger("Punch");
         yield return new WaitForSeconds(0.2f);
         isPreparingAttack = false;
-        
     }
 
     public bool CheckForPlayersInDetectionRange()
