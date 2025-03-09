@@ -12,21 +12,7 @@ public class PlayerCombatController : MonoBehaviour
 {
 #region Variables & States
 
-    [Header("Attack Values")]
-    public float punchRange = 3f; //Range withing which the melee hits
-    public float punchReach = 4f; //Range within which the attack will tween
-    public float punchDuration = 0.5f; //Duration of the attack
-    public float punchStunDuration = 0.3f; //Duration of the stun
-    private float meleeRange;
-    private float meleeReach;
-    private float meleeDuration;
-    private float meleeStunDuration;
-    public float punchTargetDistanceOffset = 2f;
-    [Space]
-    public float gunHipFireBulletAccuracyRange = 10f;
-    public float gunAimAssistSize = 1f;
-    private float gunStunDuration;
-    public float gunRateOfFireTime = 140f; //in round per minute
+    public float detectionRange = 5;
 
     private EnemyCombatController bulletHitTarget;
     
@@ -124,7 +110,7 @@ public class PlayerCombatController : MonoBehaviour
                 }
                 else
                 {
-                    PlayerPunch(meleeRange);
+                    PlayerPunch(combatScript.meleeRange);
                 }
             }
         }
@@ -206,18 +192,17 @@ public class PlayerCombatController : MonoBehaviour
             return;
         }
                
-        combatScript.Attack(CombatScript.AttackType.LightMelee, meleeDuration, "Punch"); //to change later when we have more weapons
+        combatScript.Attack(CombatScript.AttackType.LightMelee, combatScript.meleeDuration, "Punch");
         if(currentLockedTarget != null)
         {
             transform.LookAt(currentLockedTarget.transform.position);
             if(TargetDistance(currentLockedTarget.transform) < range)
             {
-                playerMovementController.movementScript.TweenToTarget(currentLockedTarget.gameObject.transform.position, meleeDuration/1.75f, punchTargetDistanceOffset);
+                playerMovementController.movementScript.TweenToTarget(currentLockedTarget.gameObject.transform.position, combatScript.meleeDuration/1.75f, combatScript.punchTargetDistanceOffset);
             }
         }
         else
         {
-            
             var camera = Camera.main;
             var forward = camera.transform.forward;
             var right = camera.transform.right;
@@ -255,7 +240,8 @@ public class PlayerCombatController : MonoBehaviour
         }
         if(currentLockedTarget != null && !isAiming)
         {
-            transform.DOLookAt(currentLockedTarget.transform.position, punchDuration);
+            transform.DOLookAt(currentLockedTarget.transform.position, 0.5f);
+            //Hipfire shot
         }
         
         if(isAiming)
@@ -269,7 +255,7 @@ public class PlayerCombatController : MonoBehaviour
 
             int layerMask = ~playerLayermask;
 
-            if (Physics.SphereCast(ray, gunAimAssistSize, out hit, 100f, layerMask))
+            if (Physics.SphereCast(ray, combatScript.gunAimAssistSize, out hit, 100f, layerMask))
             {
                 Debug.Log("Hit: " + hit.collider.name);
                 // Save the first hit
@@ -277,7 +263,7 @@ public class PlayerCombatController : MonoBehaviour
             }
         }      
         
-        combatScript.Attack(CombatScript.AttackType.Shoot, gunRateOfFireTime, "Shoot"); //change later to be a variable for different guns
+        combatScript.Attack(CombatScript.AttackType.Shoot, combatScript.gunRateOfFireTime, "Shoot"); //change later to be a variable for different guns
     }
 
     void PlayerAim()
@@ -397,17 +383,17 @@ public class PlayerCombatController : MonoBehaviour
                     meleeEquipped = true;
                     gunEquipped = false;
 
-                    meleeRange = weapon.weaponReach;
-                    meleeDuration = weapon.swingTime;
+                    combatScript.meleeRange = weapon.weaponReach;
+                    combatScript.meleeDuration = weapon.swingTime;
                     break;
                 }
 
                 case WeaponScript.WeaponType.Gun:
                 {
                     gunEquipped = true;
-                    gunAimAssistSize = weapon.weaponAimAssistValue;
-                    gunRateOfFireTime = 60f / weapon.rateOfFire;
-                    Debug.Log(gunRateOfFireTime);
+                    combatScript.gunAimAssistSize = weapon.weaponAimAssistValue;
+                    combatScript.gunRateOfFireTime = 60f / weapon.rateOfFire;
+                    Debug.Log(combatScript.gunRateOfFireTime);
                     meleeEquipped = false;
 
                     float animationSpeed = weapon.rateOfFire / 60f;
@@ -422,8 +408,8 @@ public class PlayerCombatController : MonoBehaviour
             combatScript.attackDamage = 1;
             meleeEquipped = true;
             gunEquipped = false;
-            meleeRange = punchRange;
-            meleeDuration = punchDuration;
+            combatScript.meleeRange = combatScript.punchRange;
+            combatScript.meleeDuration = combatScript.punchDuration;
         }
     }
 
@@ -471,7 +457,7 @@ public class PlayerCombatController : MonoBehaviour
 
             if(currentLockedTarget)
             {
-                OnHit.Invoke(combatScript.BuildAttack(combatScript.attackDamage, meleeStunDuration, meleeRange, currentLockedTarget, this));
+                OnHit.Invoke(combatScript.BuildAttack(combatScript.attackDamage, combatScript.meleeStunDuration, combatScript.meleeRange, currentLockedTarget, this));
             }
             //punchParticle.PlayParticleAtPosition(punchPosition.position);
         }
@@ -483,7 +469,7 @@ public class PlayerCombatController : MonoBehaviour
             {
                 return;
             }
-            OnHit.Invoke(combatScript.BuildAttack(combatScript.attackDamage, gunStunDuration, 100, bulletHitTarget, this));
+            OnHit.Invoke(combatScript.BuildAttack(combatScript.attackDamage, combatScript.gunStunDuration, 100, bulletHitTarget, this));
         }
     }
     

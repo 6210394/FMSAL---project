@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -5,9 +6,13 @@ using UnityEngine.AI;
 public class DefaultEnemyStates : EnemyStateMachineBlueprint
 {
     
+    public Coroutine CircleTargetCoroutine;
+    public Coroutine PatrolCoroutine;
+
     void Start()
     {
-        
+        enemyMovementController.SetPatrol();
+        enemyMovementController.SetCircling();
     }
 
     public override void Update()
@@ -47,8 +52,7 @@ public class DefaultEnemyStates : EnemyStateMachineBlueprint
                     Retreat();
                     break;
             }
-        }
-        
+        }   
     }
 
     public void Patrol()
@@ -57,6 +61,7 @@ public class DefaultEnemyStates : EnemyStateMachineBlueprint
         {
             case EVENT.ENTER:
             {
+                enemyMovementController.givenMoveDestination = enemyMovementController.givenMoveDirection + transform.position;
                 SwitchToNextEvent(EVENT.UPDATE);
                 break;
             }
@@ -64,9 +69,11 @@ public class DefaultEnemyStates : EnemyStateMachineBlueprint
             {
                 if(!enemyCombatController.CheckForPlayersInDetectionRange())
                 {   
-                    if(!enemyCombatController.tiedPatrol)
+                    enemyMovementController.MoveEnemyUntilReached(enemyMovementController.givenMoveDestination, false);
+
+                    if(!enemyMovementController.movementScript.isMoving)
                     {
-                        enemyCombatController.WalkInRandomDirectionRandomly(Random.Range(1, 5));
+                        SwitchToNextEvent(EVENT.EXIT);
                     }
                 }
                 else
@@ -91,6 +98,53 @@ public class DefaultEnemyStates : EnemyStateMachineBlueprint
         }
     }
 
+    public void Circling()
+    {
+        switch (currentEvent)
+        {
+            case EVENT.ENTER:
+            {
+                if(enemyCombatController.target)
+                {
+                    SwitchToNextEvent(EVENT.UPDATE);
+                }
+                else
+                {
+                    SwitchToNextState(STATE.PATROL);
+                }
+                break;
+            }
+            case EVENT.UPDATE:
+            {
+                if(Vector3.Distance(enemyCombatController.target.transform.position, transform.position) > enemyCombatController.comfortRange + 3)
+                {
+                    SwitchToNextState(STATE.MOVING);
+                    SwitchToNextEvent(EVENT.ENTER);
+                }
+
+                if(enemyCombatController.target)
+                {
+                    if(!enemyCombatController.target.movementScript.isDodging)
+                    {
+                        transform.LookAt(enemyCombatController.target.transform);
+                    }
+                    enemyMovementController.EnemyCirclingMovement(enemyCombatController.target.transform.position);
+                }
+
+                if(enemyCombatController.isPreparingAttack)
+                {
+                    SwitchToNextState(STATE.ATTACKING);
+                    SwitchToNextEvent(EVENT.ENTER);
+                }
+                break;
+            }
+            case EVENT.EXIT:
+            {
+                break;
+            }
+        }
+    }
+
     public void MoveToPlayer()
     {
         switch (currentEvent)
@@ -103,11 +157,11 @@ public class DefaultEnemyStates : EnemyStateMachineBlueprint
 
             case EVENT.UPDATE:
             {
-                if(Vector3.Distance(enemyCombatController.target.transform.position, transform.position) < detectionRange)
+                if(Vector3.Distance(enemyCombatController.target.transform.position, transform.position) < enemyCombatController.detectionRange)
                 {
                     if(Vector3.Distance(enemyCombatController.target.transform.position, transform.position) > enemyCombatController.comfortRange)
                     {
-                        enemyCombatController.ApproachPlayer(true);
+                        enemyMovementController.MoveEnemyInDirection(enemyCombatController.target.transform.position,true);
                         transform.LookAt(enemyCombatController.target.transform);
                     }
                     else
@@ -138,12 +192,22 @@ public class DefaultEnemyStates : EnemyStateMachineBlueprint
         {
             case EVENT.ENTER:
             {
+
                 SwitchToNextEvent(EVENT.UPDATE);
                 break;
             }
             case EVENT.UPDATE:
             {
-                if(enemyCombatController.isRetreating)
+                if(Vector3.Distance(enemyCombatController.target.transform.position, transform.position) > 1)
+                {
+                    enemyMovementController.MoveEnemyInDirection(enemyCombatController.target.transform.position, false);
+                }
+                else
+                {
+                    enemyMovementController.isRetreating = true;
+                }
+
+                if(enemyMovementController.isRetreating)
                 {
                     SwitchToNextState(STATE.RETREATING);
                     SwitchToNextEvent(EVENT.ENTER);
@@ -172,19 +236,19 @@ public class DefaultEnemyStates : EnemyStateMachineBlueprint
                         break;
                     }
                 }
-                enemyCombatController.SetRetreat();
+                enemyMovementController.isRetreating = true;
                 SwitchToNextEvent(EVENT.UPDATE);
                 break;
             }
             case EVENT.UPDATE:
             {
-                if(!enemyCombatController.isRetreating)
+                if(!enemyMovementController.IsRetreating())
                 {
                     SwitchToNextEvent(EVENT.EXIT);
                 }
                 else
                 {
-                    enemyCombatController.RetreatAwayFromPlayer(enemyCombatController.comfortRange);
+                    enemyMovementController.RetreatAwayUntilDistance(enemyCombatController.comfortRange, enemyCombatController.target.transform.position);
                 }
                 break;
             }
@@ -204,45 +268,40 @@ public class DefaultEnemyStates : EnemyStateMachineBlueprint
         }
     }
 
-    public void Circling()
+    public IEnumerator MeleeAttack()
     {
-        switch (currentEvent)
+        yield return null;
+    }
+
+    public IEnumerator CircleTarget()
+    {
+        yield return new WaitForSeconds(Random.Range(1, 4));
+    }
+
+    void OnDrawGizmos()
+    {
+        if (enemyCombatController == null) return;
+
+        Gizmos.color = GetStateColor(currentState);
+        Gizmos.DrawSphere(transform.position + Vector3.up * 2, 0.5f);
+    }
+
+    Color GetStateColor(STATE state)
+    {
+        switch (state)
         {
-            case EVENT.ENTER:
-            {
-                if(enemyCombatController.target)
-                {
-                    enemyCombatController.SetCircling();
-                    SwitchToNextEvent(EVENT.UPDATE);
-                }
-                else
-                {
-                    SwitchToNextState(STATE.PATROL);
-                }
-                break;
-            }
-            case EVENT.UPDATE:
-            {
-                if(Vector3.Distance(enemyCombatController.target.transform.position, transform.position) > comfortDistance + 3)
-                {
-                    SwitchToNextState(STATE.MOVING);
-                    SwitchToNextEvent(EVENT.ENTER);
-                }
-                if(enemyCombatController.target)
-                {
-                    enemyCombatController.EnemyCirclingMovement();
-                }
-                if(enemyCombatController.isPreparingAttack)
-                {
-                    SwitchToNextState(STATE.ATTACKING);
-                    SwitchToNextEvent(EVENT.ENTER);
-                }
-                break;
-            }
-            case EVENT.EXIT:
-            {
-                break;
-            }
+            case STATE.PATROL:
+                return Color.green;
+            case STATE.MOVING:
+                return Color.blue;
+            case STATE.ATTACKING:
+                return Color.red;
+            case STATE.CIRCLING:
+                return Color.yellow;
+            case STATE.RETREATING:
+                return Color.magenta;
+            default:
+                return Color.white;
         }
     }
 }

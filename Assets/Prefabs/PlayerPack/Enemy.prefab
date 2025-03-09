@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8661229243928107996}
   - component: {fileID: 4345109750266240904}
   - component: {fileID: 5603946255351336252}
-  - component: {fileID: 1730179161992117604}
+  - component: {fileID: 4776239741273295831}
   - component: {fileID: 6820935013679965740}
   - component: {fileID: 2058122964224401961}
   - component: {fileID: 6548890165488695915}
@@ -78,33 +78,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f3134d60c0acec48a326b675f7b5c70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 3
-  isMoving: 0
   seeksRetaliation: 0
   maximumChainStun: 2
   prefersShooting: 0
   prefersPunching: 1
   comfortRange: 5
-  punchRange: 2
-  punchReach: 4
-  punchDuration: 0.5
-  punchStunDuration: 0.3
-  punchTargetDistanceOffset: 2
-  gunHipFireBulletAccuracyRange: 10
-  gunAimAssistSize: 1
-  gunRateOfFireTime: 140
-  tiedPatrol: 0
-  isPaused: 0
-  spawnPoint: {x: 0, y: 0, z: 0}
-  patrolRangeFromSpawn: 10
   detectionRange: 10
   fieldOfViewAngle: 135
   deathTime: 1
   isDead: 0
   isPreparingAttack: 0
-  isRetreating: 0
-  isCircling: 0
-  movementScript: {fileID: 0}
+  isAvailableForEnemyManager: 1
+  enemyMovementController: {fileID: 4776239741273295831}
   combatScript: {fileID: 0}
   players: []
   playerEnemyDetections: []
@@ -119,7 +104,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   moveDebugBool: 1
---- !u!114 &1730179161992117604
+--- !u!114 &4776239741273295831
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -128,16 +113,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 4544851032864408619}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 43ebd56b27f1fb447a9a294f68f1ae02, type: 3}
+  m_Script: {fileID: 11500000, guid: 6de8946289073ec4ba510581854b7216, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackRange: 2
-  detectionRange: 20
-  comfortDistance: 5
-  currentState: 0
-  currentEvent: 0
-  enemyCombatController: {fileID: 5603946255351336252}
-  animator: {fileID: 6659547010701238330}
+  moveSpeed: 1
+  givenMoveDirection: {x: 0, y: 0, z: 0}
+  givenMoveDestination: {x: 0, y: 0, z: 0}
+  isControlled: 1
+  canSprint: 1
+  isRetreating: 0
+  isCircling: 0
+  tiedPatrol: 1
+  spawnPoint: {x: 0, y: 0, z: 0}
+  patrolRangeFromSpawn: 10
+  animator: {fileID: 0}
+  movementScript: {fileID: 0}
+  navMeshAgent: {fileID: 0}
 --- !u!114 &6820935013679965740
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -177,6 +168,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 3
   attackDamage: 1
+  punchRange: 3
+  punchReach: 4
+  punchDuration: 0.5
+  punchStunDuration: 0.3
+  meleeRange: 0
+  meleeReach: 0
+  meleeDuration: 0
+  meleeStunDuration: 0
+  punchTargetDistanceOffset: 2
+  gunHipFireBulletAccuracyRange: 10
+  gunAimAssistSize: 1
+  gunStunDuration: 0
+  gunRateOfFireTime: 140
   isStunned: 0
   stunImmune: 0
   attackIsAvailable: 1
@@ -186,7 +190,7 @@ MonoBehaviour:
   bulletSpawnOriginOffset: {fileID: 0}
   hitBoxReference: {fileID: 0}
   animator: {fileID: 6659547010701238330}
-  canAttack: 1
+  debugCanAttack: 0
 --- !u!143 &6548890165488695915
 CharacterController:
   m_ObjectHideFlags: 0

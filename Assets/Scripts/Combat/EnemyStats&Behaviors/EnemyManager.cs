@@ -69,32 +69,20 @@ public class EnemyManager : MonoBehaviour
 
         EnemyStateMachineBlueprint attackingEnemy;
 
-        if(!CheckRetaliation())
-        {
-            attackingEnemy = RandomEnemyExcludingOne(enemy);
+        attackingEnemy = RandomEnemyExcludingOne(enemy);
 
-            if (attackingEnemy == null)
-                attackingEnemy = RandomEnemy();
+        if (attackingEnemy == null)
+            attackingEnemy = RandomEnemy();
 
-            if (attackingEnemy == null)
-                yield break;
-                
-            yield return new WaitUntil(() => attackingEnemy.currentState == EnemyStateMachineBlueprint.STATE.CIRCLING);
-            yield return new WaitUntil(() => attackingEnemy.enemyCombatController.combatScript.isStunned == false);
-        }
-        else
-        {
-            attackingEnemy = CheckRetaliation();
-        }
+        if (attackingEnemy == null)
+            yield break;
+            
+        yield return new WaitUntil(() => attackingEnemy.currentState == EnemyStateMachineBlueprint.STATE.CIRCLING);
+        yield return new WaitUntil(() => attackingEnemy.enemyCombatController.combatScript.isStunned == false);
 
-        if(attackingEnemy.enemyCombatController.combatScript.canAttack)
-        {
-            attackingEnemy.enemyCombatController.Attack();
-        }
-
+        attackingEnemy.enemyCombatController.Attack();
+        
         yield return new WaitUntil(() => attackingEnemy.enemyCombatController.IsPreparingAttack() == false);
-
-        attackingEnemy.enemyCombatController.SetRetreat();
 
         yield return new WaitForSeconds(Random.Range(0, 2));
 

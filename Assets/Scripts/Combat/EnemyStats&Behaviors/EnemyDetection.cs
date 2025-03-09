@@ -41,8 +41,7 @@ public class EnemyDetection : MonoBehaviour
 
             if(inputDirection == Vector3.zero)
             {
-                Debug.Log("No input!");
-                //inputDirection = transform.forward;
+                inputDirection = transform.forward;
             }
 
             TargetLock(inputDirection);
@@ -93,7 +92,6 @@ public class EnemyDetection : MonoBehaviour
             
             if (currentTarget != null && Vector3.Distance(transform.position, currentTarget.transform.position) > autoLockOnRange*1.5f)
             {   
-                Debug.Log("NO MORE TARGET");
                 currentTarget = null;
             }
     }

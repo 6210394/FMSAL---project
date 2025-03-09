@@ -14,6 +14,22 @@ public class CombatScript : MonoBehaviour
     public int health = 3;
     public int attackDamage = 1;
 
+    [Header("Attack Values")]
+    public float punchRange = 3f; //Range withing which the melee hits
+    public float punchReach = 4f; //Range within which the attack will tween
+    public float punchDuration = 0.5f; //Duration of the attack
+    public float punchStunDuration = 0.3f; //Duration of the stun
+    public float meleeRange;
+    public float meleeReach;
+    public float meleeDuration;
+    public float meleeStunDuration;
+    public float punchTargetDistanceOffset = 2f;
+    [Space]
+    public float gunHipFireBulletAccuracyRange = 10f;
+    public float gunAimAssistSize = 1f;
+    public float gunStunDuration;
+    public float gunRateOfFireTime = 140f; //in round per minute
+
     [Header ("States")]
     public bool isStunned = false;
     public bool stunImmune = false;
@@ -36,7 +52,7 @@ public class CombatScript : MonoBehaviour
     public Animator animator;
 
     [Header ("Debug")]
-    [SerializeField] public bool canAttack = false; //debug variable
+    [SerializeField] public bool debugCanAttack = false; //debug variable
 
 
     public void Start()
@@ -81,7 +97,7 @@ public class CombatScript : MonoBehaviour
     
     public void Attack(AttackType attackType, float specificAttackCooldown, string animationName)
     {
-        if(!isStunned && canAttack)
+        if(!isStunned && debugCanAttack)
         {
             attackCooldown = specificAttackCooldown;
             switch(attackType)
@@ -97,6 +113,10 @@ public class CombatScript : MonoBehaviour
                     break;
                 }
             }
+        }
+        else if (!debugCanAttack)
+        {
+            Debug.LogWarning("debugCanAttack is set to false!!");
         }
     }
 
@@ -182,6 +202,7 @@ public class CombatScript : MonoBehaviour
     {
         if (isAttacking && attackCooldownTimer <= 0)
         {
+            Debug.Log("Cooldown started!");
             attackCooldownTimer = attackCooldown;
         }
 
@@ -194,6 +215,7 @@ public class CombatScript : MonoBehaviour
             {
                 attackCooldownTimer = 0;
                 attackIsAvailable = true;
+                Debug.Log("Attack available!");
             }
         }
     }

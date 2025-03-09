@@ -1,11 +1,9 @@
+using System.Collections;
 using UnityEngine;
 
 public class EnemyStateMachineBlueprint : MonoBehaviour
 {
-    public float attackRange = 2;
-    public float detectionRange = 20;
-
-    public float comfortDistance = 5f;
+    public bool isPaused = false;
 
     public enum STATE { PATROL, MOVING, ATTACKING, CIRCLING, RETREATING}
     public enum EVENT { ENTER, UPDATE, EXIT }
@@ -20,11 +18,12 @@ public class EnemyStateMachineBlueprint : MonoBehaviour
     }
 
     public EnemyCombatController enemyCombatController;
+    public EnemyMovementController enemyMovementController;
     public Animator animator;
 
     public virtual void Update()
     {
-        if(!enemyCombatController.isPaused)
+        if(!isPaused)
         {
             RunStateMachine();
         }
@@ -33,6 +32,7 @@ public class EnemyStateMachineBlueprint : MonoBehaviour
     public virtual void Init()
     {
         enemyCombatController = GetComponent<EnemyCombatController>();
+        enemyMovementController = GetComponent<EnemyMovementController>();
         animator = GetComponentInChildren<Animator>();
     }
 
@@ -51,23 +51,32 @@ public class EnemyStateMachineBlueprint : MonoBehaviour
     }
 
     protected bool CheckIfObjectInSight(GameObject gameObject)
+    {
+        
+        Vector3 directionToTargetObject = gameObject.transform.position - transform.position;
+        RaycastHit hit;
+
+        if (Physics.Raycast(transform.position, directionToTargetObject, out hit))
         {
-            
-            Vector3 directionToTargetObject = gameObject.transform.position - transform.position;
-            RaycastHit hit;
-
-            if (Physics.Raycast(transform.position, directionToTargetObject, out hit))
+            if (hit.collider.gameObject.tag != "Player")
             {
-                if (hit.collider.gameObject.tag != "Player")
-                {
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
+                return false;
             }
-            return false;
+            else
+            {
+                return true;
+            }
         }
+        return false;
+    }
 
+    public IEnumerator IWait(int waitTime)
+    {
+        if(!isPaused)
+        {
+            isPaused = true;
+            yield return new WaitForSeconds(waitTime);
+            isPaused = false;
+        }
+    }
 }

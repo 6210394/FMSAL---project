@@ -7,12 +7,6 @@ using UnityEngine.Events;
 
 public class EnemyCombatController : MonoBehaviour
 {
-    [Header("Stats")]
-    public float moveSpeed = 1;
-    public bool isMoving;
-    private Vector3 givenMoveDirection;
-    private Vector3 givenMoveDestination;
-
     [Header("States")]
     public bool seeksRetaliation = false;
 
@@ -25,29 +19,6 @@ public class EnemyCombatController : MonoBehaviour
     public bool prefersPunching = false;
     public float comfortRange = 5f;
 
-    [Header("Attack Values")]
-    public float punchRange = 3f;
-    public float punchReach = 4f;
-    public float punchDuration = 0.5f;
-    public float punchStunDuration = 0.3f;
-    private float meleeRange;
-    private float meleeReach;
-    private float meleeDuration;
-    private float meleeStunDuration;
-    public float punchTargetDistanceOffset = 2f;
-    [Space]
-    public float gunHipFireBulletAccuracyRange = 10f;
-    public float gunAimAssistSize = 1f;
-    private float gunStunDuration;
-    public float gunRateOfFireTime = 140f; //in round per minute
-
-    [Header("Patrol Options and Detection")]
-    [Tooltip ("If true, the enemy will patrol around its spawn point. Otherwise, it will wander freely.")]
-    public bool tiedPatrol = true;
-    public bool isPaused = false;
-    public Vector3 spawnPoint;
-    public float patrolRangeFromSpawn = 10f;
-
     public float detectionRange = 15f;
     public float fieldOfViewAngle = -135f;
 
@@ -56,17 +27,16 @@ public class EnemyCombatController : MonoBehaviour
     public bool isDead = false;
 
     [Header("Combat Booleans")]
-    public bool isPreparingAttack;
-    public bool isRetreating;
-    public bool isCircling;
+    public bool isPreparingAttack = false;
+    public bool isAvailableForEnemyManager = true;
 
     //Animations
-    Animator anim;
+    Animator animator;
     private Rigidbody rb;
 
     //References
     private EnemyManager enemyManager;
-    public MovementScript movementScript;
+    public EnemyMovementController enemyMovementController;
     public CombatScript combatScript;
     private CharacterController characterController;
 
@@ -75,10 +45,8 @@ public class EnemyCombatController : MonoBehaviour
     public List<EnemyDetection> playerEnemyDetections = new List<EnemyDetection>();
     public PlayerCombatController target;
 
-    private Coroutine MovementCoroutine;
-    private Coroutine PrepareAttackCoroutine;
-    private Coroutine RetreatCoroutine;
-    private Coroutine DamageCoroutine;
+    public Coroutine PrepareAttackCoroutine;
+    public Coroutine DamageCoroutine;
 
     public UnityEvent<EnemyCombatController> OnDamage;
     public UnityEvent<EnemyCombatController> OnStopMoving;
@@ -93,7 +61,6 @@ public class EnemyCombatController : MonoBehaviour
     {
        Initialize();
 
-       MovementCoroutine = StartCoroutine(IRandomMovementDirection());
     }
 
     void Update()
@@ -103,10 +70,9 @@ public class EnemyCombatController : MonoBehaviour
 
     void Initialize()
     {
-        anim = GetComponentInChildren<Animator>();
+        animator = GetComponentInChildren<Animator>();
         rb = GetComponent<Rigidbody>();
         
-        movementScript = GetComponent<MovementScript>();
         combatScript = GetComponent<CombatScript>();
         characterController = GetComponent<CharacterController>();
 
@@ -117,7 +83,6 @@ public class EnemyCombatController : MonoBehaviour
             PlayerCombatController playerCombat = player.GetComponent<PlayerCombatController>();
             playerCombat.OnHit.AddListener((a) => OnTakeHit(a));
         }
-        spawnPoint = transform.position;
     }
 
     void UpdatePlayerList()
@@ -130,10 +95,7 @@ public class EnemyCombatController : MonoBehaviour
             playerCombat.OnHit.AddListener((a) => OnTakeHit(a));
         }
     }
-
-
-
-    #region MyCode
+    
     public void OnTakeHit(CombatScript.HitEventArgs hitEventArgs)
     {
         if(hitEventArgs.enemyCombatController == this)
@@ -153,12 +115,8 @@ public class EnemyCombatController : MonoBehaviour
             {
                 target = hitEventArgs.playerCombatController;
             }
-            else
-            {
-                Panic();
-            }
-            anim.SetTrigger("RecieveHit");
-            movementScript.KnockBack(0.3f, 0.1f);
+            animator.SetTrigger("RecieveHit");
+            enemyMovementController.movementScript.KnockBack(0.3f, 0.1f);
             combatScript.GetStunned(hitEventArgs.stunDuration);
             currentChainStun += 1;
             combatScript.health -= hitEventArgs.damageReceived;
@@ -168,276 +126,59 @@ public class EnemyCombatController : MonoBehaviour
                 Die();
             }
 
-            if(currentChainStun >= maximumChainStun)
+            if(currentChainStun >= maximumChainStun && combatScript.debugCanAttack)
             {
                 combatScript.stunImmune = true;
-                seeksRetaliation = true;
+                Retaliate();
             }
         }
-    }
-
-    public void Panic()
-    {
-
     }
 
     public void Retaliate()
     {
+        isAvailableForEnemyManager = false;
         Attack();
-
-    }
-
-    public void WalkInRandomDirectionRandomly(float distance)
-    {            
-
-        if (!isMoving && !isPaused)
-        {
-            Vector3 randomDirection = GenerateRandomDirection();
-            givenMoveDestination = randomDirection * distance;
-            givenMoveDirection = randomDirection;
-            isMoving = true;
-            anim.SetFloat("Speed", moveSpeed);
-        }
-
-        if (isMoving)
-        {
-            movementScript.Move(givenMoveDirection, false);
-            transform.LookAt(givenMoveDirection + transform.position);
-
-            if(transform.position == givenMoveDestination)
-            {
-                isMoving = false;
-                anim.SetFloat("Speed", 0);
-                StartCoroutine(IWaitForRandomRange(1, 3));
-            }
-        }
-    }
-
-    public Vector3 GenerateRandomDirection()
-    {
-        float randomX = Random.Range(-1f, 1f);
-        float randomZ = Random.Range(-1f, 1f);
-        Vector3 randomDirection = new Vector3(randomX, 0, randomZ).normalized;
-        return randomDirection;
-    }
-
-    public void ApproachPlayer(bool isSprinting)
-    {
-        if(!isDead)
-        {
-            anim.SetFloat("Speed", 1);
-            anim.SetBool("Sprinting", isSprinting);
-            
-            Vector3 moveDir = (target.transform.position - transform.position).normalized;
-            movementScript.Move(moveDir, isSprinting);
-        }
-    }
-
-    public void RetreatAwayFromPlayer(float targetDistance)
-    {
-        if(!isDead)
-        {
-            anim.SetFloat("Speed", 1);
-
-            if(Vector3.Distance(target.transform.position, transform.position) <= targetDistance)
-            {
-                transform.LookAt(target.transform);
-                movementScript.Move(-transform.forward, false);
-            }
-        }
-    }
-
-    
-    public void SetRetreat()
-    {
-        RetreatCoroutine = StartCoroutine(PrepRetreat());
-
-        IEnumerator PrepRetreat()
-        {
-            isRetreating = true;
-            
-            yield return new WaitUntil(() => Vector3.Distance(transform.position, target.transform.position) > comfortRange);
-            Debug.LogWarning("Reached the end of the retreat");
-            isRetreating = false;
-            StopMoving();
-        }
     }
     
-    public IEnumerator IWaitForRandomRange(int a, int b)
-    {
-        if(!isPaused)
-        {
-            isPaused = true;
-
-            float waitTime = Random.Range(a, b); // Random delay between 1 and 3 seconds
-            yield return new WaitForSeconds(waitTime);
-
-            isPaused = false;
-        }
-    }
-    #endregion
 
     void StopEnemyCoroutines()
     {
         Debug.Log("Stopping enemy coroutines!");
-        if (isRetreating)
+        if (enemyMovementController.isRetreating)
         {
-            if (RetreatCoroutine != null)
-                StopCoroutine(RetreatCoroutine);
-                isRetreating = false;
+            if (enemyMovementController.RetreatCoroutine != null)
+                StopCoroutine(enemyMovementController.RetreatCoroutine);
+                enemyMovementController.isRetreating = false;
         }
 
         if (PrepareAttackCoroutine != null)
             StopCoroutine(PrepareAttackCoroutine);
             isPreparingAttack = false;
 
-        if (MovementCoroutine != null)
+        if (enemyMovementController.PatrolDirectionCoroutine != null)
         {
-            StopCoroutine(MovementCoroutine);
+            StopCoroutine(enemyMovementController.PatrolDirectionCoroutine);
         }
 
     }
-
-
-    IEnumerator IRandomMovementDirection()
-    {
-        //Waits until the enemy is not assigned to no action like attacking or retreating
-        //yield return new WaitUntil(() => isWaiting == true);
-
-        int randomChance = Random.Range(0, 2);
-
-        if (randomChance == 1)
-        {
-            int randomDir = Random.Range(0, 2);
-            givenMoveDirection = randomDir == 1 ? Vector3.right : Vector3.left;
-            isMoving = true;
-        }
-        else
-        {
-            StopMoving();
-        }
-
-        anim.SetFloat("Speed", 0);
-        yield return new WaitForSeconds(1);
-        anim.SetFloat("Speed", moveSpeed);
-
-        MovementCoroutine = StartCoroutine(IRandomMovementDirection());
-    }
-
-    public void SetCircling()
-    {
-        MovementCoroutine = StartCoroutine(IGenerateCirclingDirection());
-    }
-
-    public void EnemyCirclingMovement()
-    {
-        if(!target.movementScript.isDodging)
-        {
-            transform.LookAt(target.transform);
-        }
-
-
-        //Set Animator values
-        anim.SetBool("Strafe", givenMoveDirection == Vector3.right || givenMoveDirection == Vector3.left);
-        anim.SetFloat("StrafeDirection", givenMoveDirection.normalized.x, .2f, Time.deltaTime);
-
-        //Don't do anything if isMoving is false
-        if (!isMoving)
-            return;
-
-        Vector3 dir = (target.transform.position - transform.position).normalized;
-        Vector3 pDir = Quaternion.AngleAxis(90, Vector3.up) * dir; //Vector perpendicular to direction
-
-        Vector3 finalDirection = pDir * givenMoveDirection.normalized.x;
-
-        movementScript.Move(finalDirection, false);
-
-        if (!isPreparingAttack)
-            return;
-
-        if(Vector3.Distance(transform.position, target.transform.position) < 2)
-        {
-            StopMoving();
-            if (!combatScript.isStunned)
-                Attack();
-        }
-    }
-
-    public IEnumerator IGenerateCirclingDirection()
-    {
-        switch(Random.Range(1,4))
-        {
-            case 1:
-            {
-                givenMoveDirection = new Vector3(1,0,0);
-                break;
-            }
-            case 2:
-            {
-                givenMoveDirection = new Vector3(-1,0,0);
-                break;
-            }
-            case 3:
-            {
-                givenMoveDirection = new Vector3(0,0,0);
-                break;
-            }
-            default:
-            {
-                givenMoveDirection = new Vector3(0,0,0);
-                break;
-            }
-        }
-        yield return new WaitForSeconds(3);
-        MovementCoroutine = StartCoroutine(IGenerateCirclingDirection());
-    }
-
 
     public void DealDamageEvent()
     {
         if(!target.isAttackingEnemy && !target.movementScript.isDashing)
-            target.OnTakeHit(combatScript.BuildAttack(combatScript.attackDamage, punchDuration, punchRange, this, target));
+            target.OnTakeHit(combatScript.BuildAttack(combatScript.attackDamage, combatScript.punchDuration,combatScript. punchRange, this, target));
             PrepareAttackCoroutine = null;
-    }
-
-    public void StopMoving()
-    {
-        isMoving = false;
-        
-        givenMoveDirection = Vector3.zero;
-        if(characterController.enabled)
-            characterController.Move(givenMoveDirection);
     }
 
     public void Attack()
     {
-        if(prefersPunching)
+        if(combatScript.debugCanAttack)
         {
-            if(PrepareAttackCoroutine == null)
-            {
-                PrepareAttackCoroutine = StartCoroutine(IPrepareAttack());
-            }
+            isPreparingAttack = true;
         }
         else
         {
-            Debug.Log("Shooting not implemented for enemies");
+            isPreparingAttack = false;
         }
-    }
-
-    IEnumerator IPrepareAttack()
-    {
-        isPreparingAttack = true;
-        if(!seeksRetaliation)
-        {
-            yield return new WaitForSeconds(0.2f);
-            movementScript.TweenToTarget(target.transform.position, 0.5f, 1f);
-            yield return new WaitForSeconds(0.2f);
-        }
-        
-        seeksRetaliation = false;
-        anim.SetTrigger("Punch");
-        yield return new WaitForSeconds(0.2f);
-        isPreparingAttack = false;
     }
 
     public bool CheckForPlayersInDetectionRange()
@@ -473,7 +214,7 @@ public class EnemyCombatController : MonoBehaviour
 
         isDead = true;
         target = null;
-        movementScript.isAllowedToMove = false;
+        enemyMovementController.movementScript.isAllowedToMove = false;
 
         foreach(EnemyDetection enemyDetection in playerEnemyDetections)
         {
@@ -481,8 +222,8 @@ public class EnemyCombatController : MonoBehaviour
         }
 
         int dieAnimAnex = Random.Range(1,4);
-        anim.SetFloat("deathIndex", dieAnimAnex);
-        anim.SetTrigger("Die");
+        animator.SetFloat("deathIndex", dieAnimAnex);
+        animator.SetTrigger("Die");
 
         enemyManager.SetEnemyAvailiability(this, false);  
     }
@@ -496,12 +237,6 @@ public class EnemyCombatController : MonoBehaviour
         Gizmos.color = Color.green;
         Gizmos.DrawRay(transform.position, leftRay);
         Gizmos.DrawRay(transform.position, rightRay);
-
-        if (isMoving)
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(givenMoveDestination, 0.5f); // Adjust the size as needed
-        }
     }
 
     #region Public Booleans
@@ -516,12 +251,6 @@ public class EnemyCombatController : MonoBehaviour
         return isPreparingAttack;
     }
 
-    public bool IsRetreating()
-    {
-        return isRetreating;
-    }
-
-    
 
     #endregion
 

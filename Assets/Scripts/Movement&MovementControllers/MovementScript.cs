@@ -65,6 +65,7 @@ public class MovementScript : MonoBehaviour
             if(moveDirection != Vector3.zero)
             {
                 characterController.Move(moveDirection * currentMovementSpeed * Time.deltaTime);
+                isMoving = true;
             }
             else
             {
