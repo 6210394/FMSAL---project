@@ -26,12 +26,20 @@ public class CirclingPlayer : IState
         DirectionChangeDelay(); //Timer to give time between direction switches
         if(_brawlerEnemy._target != null)
         {
+            if(IsTooClose())
+            {
+                _movementController.MoveEnemyInDirection(Vector3.back, false);
+                _movementController.transform.LookAt(_brawlerEnemy._target);
+                return;
+            }
             if(IsInComfortRange())
             {
                 _movementController.EnemyCirclingMovement(_brawlerEnemy._target.position, _perpendicularDirection);
             }
+            
             else
             {
+                Debug.Log("MOVIN OVER TO YA");
                 _animator.SetBool("Strafe", false);
                 Vector3 moveDir = (_brawlerEnemy._target.position - _movementController.transform.position).normalized;
                 _movementController.MoveEnemyInDirection(moveDir, true);
@@ -53,7 +61,19 @@ public class CirclingPlayer : IState
     public void OnExit()
     {
         _brawlerEnemy.ResetAnimator();
-        _brawlerEnemy.isReadyToAttack = false;
+        _brawlerEnemy._isReadyToAttack = false;
+    }
+
+    private bool IsTooClose()
+    {
+        if(Vector3.Distance(_brawlerEnemy._target.position, _movementController.transform.position) < 4)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     private bool IsInComfortRange()

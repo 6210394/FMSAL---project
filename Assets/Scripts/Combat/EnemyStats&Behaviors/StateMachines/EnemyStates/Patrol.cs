@@ -6,7 +6,6 @@ public class Patrol : IState
     BrawlerEnemy _brawlerEnemy;
 
     private EnemyMovementController _movementController;
-    private EnemyCombatController _combatController;
     private Animator _animator;
 
     private bool _reachedPosition = false;
@@ -16,11 +15,10 @@ public class Patrol : IState
     bool _isPaused;
     float randomTime;
 
-    public Patrol(BrawlerEnemy brawlerEnemy, EnemyMovementController movementController, EnemyCombatController combatController, Animator animator)
+    public Patrol(BrawlerEnemy brawlerEnemy, EnemyMovementController movementController, Animator animator)
     {
         _brawlerEnemy = brawlerEnemy;
         _movementController = movementController;
-        _combatController = combatController;
         _animator = animator;
     }
 
@@ -49,33 +47,6 @@ public class Patrol : IState
     public void OnExit()
     {
         _brawlerEnemy.ResetAnimator();
-    }
-
-    public bool CheckForPlayersInDetectionRange()
-    {
-        foreach (GameObject player in _combatController.players)
-        {
-            Vector3 directionToPlayer = player.transform.position - _combatController.transform.position;
-            float distanceToPlayer = directionToPlayer.magnitude;
-
-            if (distanceToPlayer <= _combatController.detectionRange)
-            {
-                float angleToPlayer = Vector3.Angle(_combatController.transform.forward, directionToPlayer);
-
-                if (angleToPlayer <= _combatController.fieldOfViewAngle / 2)
-                {
-                    Debug.Log("Player detected");
-                    _brawlerEnemy._target = player.GetComponent<PlayerCombatController>().transform;
-                    return true;
-                }
-            }
-            else
-            {
-                _brawlerEnemy._target = null;
-                return false;
-            }
-        }
-        return false;
     }
 
     private void WaitRandomTime()

@@ -41,6 +41,10 @@ public class CombatScript : MonoBehaviour
     float attackCooldown = 0.5f;
     float attackCooldownTimer = 0f;
     
+    public bool meleeEquipped = false;
+    public bool gunEquipped = false;
+    public bool junkEquipped;
+    
     [Header ("Object & Component References ")]
     [SerializeField] Vector3 reticleOffset;
     [SerializeField] GameObject bulletVisualsPrefab;
@@ -78,21 +82,63 @@ public class CombatScript : MonoBehaviour
         public int damageReceived;
         public float stunDuration;
         public float attackRange;
-        public EnemyCombatController enemyCombatController;
-        public PlayerCombatController playerCombatController;
+        public Transform target;
+        public Transform damageSource;
     }
 
-    public HitEventArgs BuildAttack(int damageReceived, float stunDuration, float attackRange, EnemyCombatController enemyCombatController, PlayerCombatController playerCombatController)
+    public HitEventArgs BuildAttack(int damageReceived, float stunDuration, float attackRange, Transform target, Transform damageSource)
     {
         HitEventArgs hitEventArgs;
 
         hitEventArgs.damageReceived = damageReceived;
         hitEventArgs.stunDuration = stunDuration;
         hitEventArgs.attackRange = attackRange;
-        hitEventArgs.enemyCombatController = enemyCombatController;
-        hitEventArgs.playerCombatController = playerCombatController;
+        hitEventArgs.target = target;
+        hitEventArgs.damageSource = damageSource;
 
         return hitEventArgs;
+    }
+
+    public void UpdateStatsBasedOnWeapon(WeaponScript weapon) //THIS NEEDS TO BE A WEAPON AND MUST BE VERIFIED
+    {
+        if(weapon != null)
+        {
+            attackDamage = weapon.damage;
+
+            switch(weapon.weaponType)
+            {
+                case WeaponScript.WeaponType.Melee:
+                {
+                    meleeEquipped = true;
+                    gunEquipped = false;
+
+                    meleeRange = weapon.weaponReach;
+                    meleeDuration = weapon.swingTime;
+                    break;
+                }
+
+                case WeaponScript.WeaponType.Gun:
+                {
+                    gunEquipped = true;
+                    gunAimAssistSize = weapon.weaponAimAssistValue;
+                    gunRateOfFireTime = 60f / weapon.rateOfFire;
+                    meleeEquipped = false;
+
+                    float animationSpeed = weapon.rateOfFire / 60f;
+                    animator.SetFloat("ShootSpeed", animationSpeed);
+                    break;
+                }
+            }
+        }
+
+        else
+        {
+            attackDamage = 1;
+            meleeEquipped = true;
+            gunEquipped = false;
+            meleeRange = punchRange;
+            meleeDuration = punchDuration;
+        }
     }
     
     public void Attack(AttackType attackType, float specificAttackCooldown, string animationName)
@@ -122,16 +168,13 @@ public class CombatScript : MonoBehaviour
 
     public void GetStunned(float stunTimer)
     {
+        Debug.Log("Stunned!!");
         isStunned = true;
         maxStunTimer = stunTimer;
     }
 
     public void StunCooldown()
     {
-        if(stunImmune)
-        {
-            isStunned = false;
-        }
         if(isStunned && currentStunTime == 0)
         {
             currentStunTime = maxStunTimer;
@@ -145,7 +188,6 @@ public class CombatScript : MonoBehaviour
                 isStunned = false;
             }
         }
-
     }
 
     public IEnumerator ILightMelee(string animationName)
@@ -184,7 +226,6 @@ public class CombatScript : MonoBehaviour
             playerController.isControlled = true;
         }
     }
-
 
     public void AttackCancel()
     {

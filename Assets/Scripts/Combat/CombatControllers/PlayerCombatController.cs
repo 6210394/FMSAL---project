@@ -21,11 +21,6 @@ public class PlayerCombatController : MonoBehaviour
     
     private bool isAiming = false;
     public bool isAttackingEnemy = false;
-
-    private bool meleeEquipped = false;
-    private bool gunEquipped = false;
-    private bool junkEquipped;
-
 #endregion
 
 #region Component References
@@ -137,18 +132,18 @@ public class PlayerCombatController : MonoBehaviour
             if(diogenicPlayerInventory.mainWeapon)
             {
                 diogenicPlayerInventory.ShowItemInHands(diogenicPlayerInventory.mainWeapon);
-                UpdateStatsBasedOnWeapon(diogenicPlayerInventory.mainWeapon);   
+                combatScript.UpdateStatsBasedOnWeapon(diogenicPlayerInventory.mainWeapon);   
             }
             else if (diogenicPlayerInventory.sidearm)
             {
                 diogenicPlayerInventory.ShowItemInHands(diogenicPlayerInventory.sidearm);
-                UpdateStatsBasedOnWeapon(diogenicPlayerInventory.sidearm);
+                combatScript.UpdateStatsBasedOnWeapon(diogenicPlayerInventory.sidearm);
             }
             else
             {
                 //maybe drop whatever the player is holding if it was a pickup
                 diogenicPlayerInventory.HideItemInHands();
-                UpdateStatsBasedOnWeapon(null);
+                combatScript.UpdateStatsBasedOnWeapon(null);
             }
         }
 
@@ -157,19 +152,19 @@ public class PlayerCombatController : MonoBehaviour
             if (diogenicPlayerInventory.sidearm)
             {
                 diogenicPlayerInventory.ShowItemInHands(diogenicPlayerInventory.sidearm);
-                UpdateStatsBasedOnWeapon(diogenicPlayerInventory.sidearm);
+                combatScript.UpdateStatsBasedOnWeapon(diogenicPlayerInventory.sidearm);
             }
 
             else if(diogenicPlayerInventory.mainWeapon)
             {
                 diogenicPlayerInventory.ShowItemInHands(diogenicPlayerInventory.mainWeapon);
-                UpdateStatsBasedOnWeapon(diogenicPlayerInventory.mainWeapon);   
+                combatScript.UpdateStatsBasedOnWeapon(diogenicPlayerInventory.mainWeapon);   
             }
             else
             {
                 //maybe drop whatever the player is holding if it was a pickup
                 diogenicPlayerInventory.HideItemInHands();
-                UpdateStatsBasedOnWeapon(null);
+                combatScript.UpdateStatsBasedOnWeapon(null);
             }
         }
 
@@ -187,7 +182,7 @@ public class PlayerCombatController : MonoBehaviour
 
     void PlayerPunch(float range)
     {
-        if(!meleeEquipped || !combatScript.attackIsAvailable)
+        if(!combatScript.meleeEquipped || !combatScript.attackIsAvailable)
         {
             return;
         }
@@ -234,7 +229,7 @@ public class PlayerCombatController : MonoBehaviour
 
     void PlayerShoot()
     {
-        if(!gunEquipped || !combatScript.attackIsAvailable)
+        if(!combatScript.gunEquipped || !combatScript.attackIsAvailable)
         {
             return;
         }
@@ -268,7 +263,7 @@ public class PlayerCombatController : MonoBehaviour
 
     void PlayerAim()
     {
-        if(!gunEquipped) //Can't aim without a gun OR A THROWABLE OBJECT -- TO ADJUST
+        if(!combatScript.gunEquipped) //Can't aim without a gun OR A THROWABLE OBJECT -- TO ADJUST
         {
             return;
         }
@@ -370,48 +365,71 @@ public class PlayerCombatController : MonoBehaviour
 
 #region Controller Functions
 
-    void UpdateStatsBasedOnWeapon(WeaponScript weapon) //THIS NEEDS TO BE A WEAPON AND MUST BE VERIFIED
+    public void OnTakeHit(CombatScript.HitEventArgs hitEventArgs)
     {
-        if(weapon != null)
+        if(hitEventArgs.target == transform)
         {
-            combatScript.attackDamage = weapon.damage;
-
-            switch(weapon.weaponType)
+            if(Vector3.Distance(hitEventArgs.target.position, hitEventArgs.damageSource.transform.position) > hitEventArgs.attackRange)
             {
-                case WeaponScript.WeaponType.Melee:
-                {
-                    meleeEquipped = true;
-                    gunEquipped = false;
+                Debug.Log("Too far");
+                return;
+            }
 
-                    combatScript.meleeRange = weapon.weaponReach;
-                    combatScript.meleeDuration = weapon.swingTime;
-                    break;
-                }
+            if(movementScript.isInvincible)
+            {
+                Debug.LogWarning("DODGED");
+                return;
+            }
+            Debug.Log("Took Damage");
 
-                case WeaponScript.WeaponType.Gun:
-                {
-                    gunEquipped = true;
-                    combatScript.gunAimAssistSize = weapon.weaponAimAssistValue;
-                    combatScript.gunRateOfFireTime = 60f / weapon.rateOfFire;
-                    Debug.Log(combatScript.gunRateOfFireTime);
-                    meleeEquipped = false;
+            playerMovementController.animator.SetTrigger("RecieveHit");
+            playerMovementController.movementScript.KnockBack(0.3f, 0.1f, hitEventArgs.damageSource.position);
 
-                    float animationSpeed = weapon.rateOfFire / 60f;
-                    combatScript.animator.SetFloat("ShootSpeed", animationSpeed);
-                    break;
-                }
+            combatScript.health -= hitEventArgs.damageReceived;
+
+            if(combatScript.health <= 0)
+            {
+                Die();
             }
         }
-
         else
         {
-            combatScript.attackDamage = 1;
-            meleeEquipped = true;
-            gunEquipped = false;
-            combatScript.meleeRange = combatScript.punchRange;
-            combatScript.meleeDuration = combatScript.punchDuration;
+            Debug.Log(name + ": I wasnt the target");
         }
     }
+
+    public void DealDamageEvent()
+    {
+        Debug.Log("Attack!");
+        if(combatScript.meleeEquipped)
+        {
+            if (currentLockedTarget == null)
+            {
+                return;
+            }
+            if(Vector3.Distance(transform.position, currentLockedTarget.gameObject.transform.position) > enemyDetection.autoLockOnRange)
+            {
+                return;
+            }
+
+            if(currentLockedTarget)
+            {
+                OnHit.Invoke(combatScript.BuildAttack(combatScript.attackDamage, combatScript.meleeStunDuration, combatScript.meleeRange, currentLockedTarget.transform, transform));
+            }
+            //punchParticle.PlayParticleAtPosition(punchPosition.position);
+        }
+
+        if(combatScript.gunEquipped)
+        {
+            Debug.Log("Shot fired!");
+            if(bulletHitTarget == null)
+            {
+                return;
+            }
+            OnHit.Invoke(combatScript.BuildAttack(combatScript.attackDamage, combatScript.gunStunDuration, 100, bulletHitTarget.transform, transform));
+        }
+    }
+
 
     void AdjustLockOnCamera()
     {   
@@ -440,38 +458,6 @@ public class PlayerCombatController : MonoBehaviour
             }
         }
     }
-
-    public void DealDamageEvent()
-    {
-        Debug.Log("Attack!");
-        if(meleeEquipped)
-        {
-            if (currentLockedTarget == null)
-            {
-                return;
-            }
-            if(Vector3.Distance(transform.position, currentLockedTarget.gameObject.transform.position) > enemyDetection.autoLockOnRange)
-            {
-                return;
-            }
-
-            if(currentLockedTarget)
-            {
-                OnHit.Invoke(combatScript.BuildAttack(combatScript.attackDamage, combatScript.meleeStunDuration, combatScript.meleeRange, currentLockedTarget, this));
-            }
-            //punchParticle.PlayParticleAtPosition(punchPosition.position);
-        }
-
-        if(gunEquipped)
-        {
-            Debug.Log("Shot fired!");
-            if(bulletHitTarget == null)
-            {
-                return;
-            }
-            OnHit.Invoke(combatScript.BuildAttack(combatScript.attackDamage, combatScript.gunStunDuration, 100, bulletHitTarget, this));
-        }
-    }
     
     float TargetDistance(Transform target)
     {
@@ -489,39 +475,6 @@ public class PlayerCombatController : MonoBehaviour
         else
         {
             return 100f/result;
-        }
-    }
-
-    public void OnTakeHit(CombatScript.HitEventArgs hitEventArgs)
-    {
-        if(hitEventArgs.playerCombatController == this)
-        {
-            if(Vector3.Distance(hitEventArgs.playerCombatController.transform.position, hitEventArgs.enemyCombatController.transform.position) > hitEventArgs.attackRange)
-            {
-                Debug.Log("Too far");
-                return;
-            }
-
-            if(movementScript.isInvincible)
-            {
-                Debug.LogWarning("DODGED");
-                return;
-            }
-            Debug.Log("Took Damage");
-
-            playerMovementController.animator.SetTrigger("RecieveHit");
-            playerMovementController.movementScript.KnockBack(0.3f, 0.1f);
-
-            combatScript.health -= hitEventArgs.damageReceived;
-
-            if(combatScript.health <= 0)
-            {
-                Die();
-            }
-        }
-        else
-        {
-            Debug.Log(name + ": I wasnt the target");
         }
     }
 

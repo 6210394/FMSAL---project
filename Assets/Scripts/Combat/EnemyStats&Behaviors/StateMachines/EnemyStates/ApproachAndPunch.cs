@@ -32,7 +32,6 @@ public class ApproachAndPunch : IState
 
     public Color GizmoColor()
     {
-        // Implement GizmoColor logic here
-        return Color.red; // Example return value
+        return Color.red;
     }
 }

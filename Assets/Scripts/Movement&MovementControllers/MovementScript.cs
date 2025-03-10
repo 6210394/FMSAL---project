@@ -42,6 +42,7 @@ public class MovementScript : MonoBehaviour
     void Start()
     {
         Initizialize();
+        sprintSpeed = currentMovementSpeed * 2;
     }
 
     void Update()
@@ -214,10 +215,10 @@ public class MovementScript : MonoBehaviour
         }
     }
 
-    public void KnockBack(float knockBackTime, float knockBackDelay)
+    public void KnockBack(float knockBackTime, float knockBackDelay, Vector3 knockBackOrigin)
     {
-        transform.DOMove(transform.position - (transform.forward / 2), knockBackTime).SetDelay(knockBackDelay);  
-
+        Vector3 knockBackDirection = (transform.position - knockBackOrigin).normalized;
+        transform.DOMove(transform.position + knockBackDirection / 2, knockBackTime).SetDelay(knockBackDelay);
     }
 
     public void FaceTowards(Vector3 orientation, float rotationSpeed)

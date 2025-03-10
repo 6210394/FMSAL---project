@@ -5,7 +5,6 @@ using UnityEngine.AI;
 public class EnemyMovementController : MonoBehaviour
 {
     [Header("Stats")]
-    public float moveSpeed = 1;
     public Vector3 givenMoveDirection;
     public Vector3 givenMoveDestination;
 
@@ -91,15 +90,13 @@ public class EnemyMovementController : MonoBehaviour
     public void EnemyCirclingMovement(Vector3 axisPoint, Vector3 direction)
     {
         //Set Animator values
-        Debug.Log("Circling...");
-        animator.SetBool("Strafe", direction == Vector3.right || direction == Vector3.left);
-        animator.SetFloat("StrafeDirection", direction.normalized.x, .2f, Time.deltaTime);
+        animator.SetBool("Strafe", direction.normalized == Vector3.right || direction.normalized == Vector3.left);
+        animator.SetFloat("StrafeDirection", direction.normalized.x);
 
         Vector3 dir = (axisPoint - transform.position).normalized;
         Vector3 pDir = Quaternion.AngleAxis(90, Vector3.up) * dir; //Vector perpendicular to direction
 
         Vector3 finalDirection = pDir * direction.normalized.x;
-        Debug.Log(finalDirection);
 
         movementScript.Move(finalDirection, false);
 

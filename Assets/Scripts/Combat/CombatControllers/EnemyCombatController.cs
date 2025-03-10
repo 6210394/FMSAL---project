@@ -11,22 +11,15 @@ public class EnemyCombatController : MonoBehaviour
     public bool seeksRetaliation = false;
 
     [Header("Stun Tolerance")]
-    public int maximumChainStun = 3;
-    private int currentChainStun = 0;
+    public int maximumChainStun = 2;
     
     [Header("Attack Options")]
-    public bool prefersShooting = false;
-    public bool prefersPunching = false;
     public float comfortRange = 5f;
-
     public float detectionRange = 15f;
     public float fieldOfViewAngle = -135f;
 
-    public float deathTime = 1f;
-
-    public bool isDead = false;
-
     [Header("Combat Booleans")]
+    public bool isDead = false;
     public bool isPreparingAttack = false;
     public bool isAvailableForEnemyManager = true;
 
@@ -48,19 +41,22 @@ public class EnemyCombatController : MonoBehaviour
     public Coroutine PrepareAttackCoroutine;
     public Coroutine DamageCoroutine;
 
-    public UnityEvent<EnemyCombatController> OnDamage;
-    public UnityEvent<EnemyCombatController> OnStopMoving;
-    public UnityEvent<EnemyCombatController> OnRetreat;
+    public UnityEvent<float, Transform> OnDamage; //stunTime
+    public UnityEvent OnDeath;
+
 
 
     [Header("Debug Tools")]
     public bool moveDebugBool = false;
 
+    void Awake()
+    {
+        Initialize();
+    }
 
     void Start()
     {
-       Initialize();
-
+        UpdatePlayerList();
     }
 
     void Update()
@@ -75,32 +71,24 @@ public class EnemyCombatController : MonoBehaviour
         
         combatScript = GetComponent<CombatScript>();
         characterController = GetComponent<CharacterController>();
+    }
 
+    void UpdatePlayerList()
+    {
         players = GameManager.instance.players;
-        foreach (GameObject player in players)
+        foreach(GameObject player in players)
         {
             playerEnemyDetections.Add(player.GetComponent<EnemyDetection>());
             PlayerCombatController playerCombat = player.GetComponent<PlayerCombatController>();
             playerCombat.OnHit.AddListener((a) => OnTakeHit(a));
         }
     }
-
-    void UpdatePlayerList()
-    {
-        Debug.Log("UpdatingPlayerList");
-        foreach(GameObject player in players)
-        {
-            PlayerCombatController playerCombat = player.GetComponent<PlayerCombatController>();
-            Debug.Log("Adding " + player + " OnHit");
-            playerCombat.OnHit.AddListener((a) => OnTakeHit(a));
-        }
-    }
     
     public void OnTakeHit(CombatScript.HitEventArgs hitEventArgs)
     {
-        if(hitEventArgs.enemyCombatController == this)
+        if(hitEventArgs.target == transform)
         {
-            if(Vector3.Distance(transform.position, hitEventArgs.playerCombatController.transform.position) > hitEventArgs.attackRange)
+            if(Vector3.Distance(transform.position, hitEventArgs.damageSource.position) > hitEventArgs.attackRange)
             {
                 return;
             }
@@ -109,27 +97,20 @@ public class EnemyCombatController : MonoBehaviour
                 Debug.Log("Player is in range!");
             }
 
-            //StopEnemyCoroutines();
-
-            if(Vector3.Distance(hitEventArgs.playerCombatController.transform.position, transform.position) <= detectionRange)
+            if(Vector3.Distance(hitEventArgs.damageSource.position, transform.position) <= detectionRange)
             {
-                target = hitEventArgs.playerCombatController;
+                if(hitEventArgs.damageSource.GetComponent<PlayerCombatController>())
+                {
+                    target = hitEventArgs.damageSource.GetComponent<PlayerCombatController>();
+                }
             }
-            animator.SetTrigger("RecieveHit");
-            enemyMovementController.movementScript.KnockBack(0.3f, 0.1f);
-            combatScript.GetStunned(hitEventArgs.stunDuration);
-            currentChainStun += 1;
+
+            OnDamage.Invoke(hitEventArgs.stunDuration, hitEventArgs.damageSource);
             combatScript.health -= hitEventArgs.damageReceived;
 
             if(combatScript.health <= 0)
             {
                 Die();
-            }
-
-            if(currentChainStun >= maximumChainStun && combatScript.debugCanAttack)
-            {
-                combatScript.stunImmune = true;
-                Retaliate();
             }
         }
     }
@@ -166,7 +147,7 @@ public class EnemyCombatController : MonoBehaviour
     public void DealDamageEvent()
     {
         if(!target.isAttackingEnemy && !target.movementScript.isDashing)
-            target.OnTakeHit(combatScript.BuildAttack(combatScript.attackDamage, combatScript.punchDuration,combatScript. punchRange, this, target));
+            target.OnTakeHit(combatScript.BuildAttack(combatScript.attackDamage, combatScript.punchDuration,combatScript. punchRange, transform, target.transform));
             PrepareAttackCoroutine = null;
     }
 
@@ -184,27 +165,21 @@ public class EnemyCombatController : MonoBehaviour
 
     void Die()
     {   
-        //StopEnemyCoroutines();
-
         isDead = true;
-        target = null;
-        enemyMovementController.movementScript.isAllowedToMove = false;
 
         foreach(EnemyDetection enemyDetection in playerEnemyDetections)
         {
             enemyDetection.SetCurrentTarget(null);
         }
 
-        int dieAnimAnex = Random.Range(1,4);
-        animator.SetFloat("deathIndex", dieAnimAnex);
-        animator.SetTrigger("Die");
+  
 
-        enemyManager.SetEnemyAvailiability(this, false);  
+        enemyManager.SetEnemyAvailiability(this, false);
+
     }
 
     public void OnDrawGizmos()
     {
-
         Vector3 leftRay = Quaternion.Euler(0, -fieldOfViewAngle / 2, 0) * transform.forward * detectionRange;
         Vector3 rightRay = Quaternion.Euler(0, fieldOfViewAngle / 2, 0) * transform.forward * detectionRange;
 
