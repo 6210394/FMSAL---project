@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8661229243928107996}
   - component: {fileID: 4345109750266240904}
+  - component: {fileID: 4327786530937481723}
   - component: {fileID: 5603946255351336252}
   - component: {fileID: 4776239741273295831}
   - component: {fileID: 6820935013679965740}
@@ -66,6 +67,24 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &4327786530937481723
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4544851032864408619}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7d83663090ae1649841b350aa9eeab8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _enemyStats: {fileID: 0}
+  isReadyToAttack: 0
+  _combatController: {fileID: 0}
+  _movementController: {fileID: 0}
+  _animator: {fileID: 0}
+  _target: {fileID: 0}
 --- !u!114 &5603946255351336252
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -88,7 +107,7 @@ MonoBehaviour:
   deathTime: 1
   isDead: 0
   isPreparingAttack: 0
-  isAvailableForEnemyManager: 1
+  isAvailableForEnemyManager: 0
   enemyMovementController: {fileID: 4776239741273295831}
   combatScript: {fileID: 0}
   players: []
@@ -121,8 +140,7 @@ MonoBehaviour:
   givenMoveDestination: {x: 0, y: 0, z: 0}
   isControlled: 1
   canSprint: 1
-  isRetreating: 0
-  isCircling: 0
+  doesPatrol: 1
   tiedPatrol: 1
   spawnPoint: {x: 0, y: 0, z: 0}
   patrolRangeFromSpawn: 10
@@ -153,6 +171,7 @@ MonoBehaviour:
   isDodging: 0
   isDashing: 0
   isInvincible: 0
+  animator: {fileID: 0}
   isAllowedToMove: 1
 --- !u!114 &2058122964224401961
 MonoBehaviour:

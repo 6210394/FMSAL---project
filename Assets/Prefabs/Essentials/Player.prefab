@@ -630,9 +630,9 @@ GameObject:
   - component: {fileID: 1102951906637046753}
   - component: {fileID: 5720523247777047060}
   - component: {fileID: 161812321840275169}
-  - component: {fileID: 7892101299078601583}
   - component: {fileID: 8507021317883215589}
   - component: {fileID: 3918215746344003973}
+  - component: {fileID: 7700586179343452143}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -737,14 +737,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97be122e5f6df464d8c8ef27e1cd7a73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  punchRange: 6
-  punchReach: 4
-  punchDuration: 0.8
-  punchStunDuration: 0.3
-  punchTargetDistanceOffset: 1
-  gunHipFireBulletAccuracyRange: 10
-  gunAimAssistSize: 1
-  gunRateOfFireTime: 140
+  detectionRange: 5
   isLockOnToggle: 0
   isAttackingEnemy: 0
   movementScript: {fileID: 0}
@@ -779,6 +772,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 3
   attackDamage: 1
+  punchRange: 3
+  punchReach: 4
+  punchDuration: 0.5
+  punchStunDuration: 0.3
+  meleeRange: 0
+  meleeReach: 4
+  meleeDuration: 0
+  meleeStunDuration: 0
+  punchTargetDistanceOffset: 1
+  gunHipFireBulletAccuracyRange: 10
+  gunAimAssistSize: 1
+  gunStunDuration: 0
+  gunRateOfFireTime: 140
   isStunned: 0
   stunImmune: 0
   attackIsAvailable: 1
@@ -788,7 +794,7 @@ MonoBehaviour:
   bulletSpawnOriginOffset: {fileID: 0}
   hitBoxReference: {fileID: 5935337852363439319, guid: c72a4029739e01f409ac8432902e65b6, type: 3}
   animator: {fileID: 3918215746344003973}
-  canAttack: 1
+  debugCanAttack: 1
 --- !u!114 &161812321840275169
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -813,29 +819,8 @@ MonoBehaviour:
   isDodging: 0
   isDashing: 0
   isInvincible: 0
+  animator: {fileID: 0}
   isAllowedToMove: 1
---- !u!114 &7892101299078601583
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6739474880526340487}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6920607f2aebc2c4e86e49cdeb316504, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  enemyManager: {fileID: 0}
-  playerCombatController: {fileID: 0}
-  layerMask:
-    serializedVersion: 2
-    m_Bits: 128
-  autoLockOnRange: 4
-  sphereCastAOESize: 3.11
-  inputDirection: {x: 0, y: 0, z: 0}
-  currentTarget: {fileID: 0}
-  cam: {fileID: 0}
 --- !u!143 &8507021317883215589
 CharacterController:
   m_ObjectHideFlags: 0
@@ -883,6 +868,28 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &7700586179343452143
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6739474880526340487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6920607f2aebc2c4e86e49cdeb316504, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyManager: {fileID: 0}
+  playerCombatController: {fileID: 1102951906637046753}
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 128
+  autoLockOnRange: 10
+  sphereCastAOESize: 3
+  inputDirection: {x: 0, y: 0, z: 0}
+  currentTarget: {fileID: 0}
+  cam: {fileID: 0}
 --- !u!1 &6949846103159818603
 GameObject:
   m_ObjectHideFlags: 0
