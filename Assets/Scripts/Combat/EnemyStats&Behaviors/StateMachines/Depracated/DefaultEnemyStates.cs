@@ -11,8 +11,7 @@ public class DefaultEnemyStates : EnemyStateMachineBlueprint
 
     void Start()
     {
-        enemyMovementController.SetPatrol();
-        enemyMovementController.SetCircling();
+
     }
 
     public override void Update()
@@ -67,7 +66,7 @@ public class DefaultEnemyStates : EnemyStateMachineBlueprint
             }
             case EVENT.UPDATE:
             {
-                if(!enemyCombatController.CheckForPlayersInDetectionRange())
+                if(/*!enemyCombatController.CheckForPlayersInDetectionRange()*/ 1>2)
                 {   
                     enemyMovementController.MoveEnemyUntilReached(enemyMovementController.givenMoveDestination, false);
 
@@ -128,7 +127,6 @@ public class DefaultEnemyStates : EnemyStateMachineBlueprint
                     {
                         transform.LookAt(enemyCombatController.target.transform);
                     }
-                    enemyMovementController.EnemyCirclingMovement(enemyCombatController.target.transform.position);
                 }
 
                 if(enemyCombatController.isPreparingAttack)
@@ -204,14 +202,15 @@ public class DefaultEnemyStates : EnemyStateMachineBlueprint
                 }
                 else
                 {
-                    enemyMovementController.isRetreating = true;
                 }
 
+                /*
                 if(enemyMovementController.isRetreating)
                 {
                     SwitchToNextState(STATE.RETREATING);
                     SwitchToNextEvent(EVENT.ENTER);
                 }
+                */
                 break;
             }
             case EVENT.EXIT:
@@ -236,21 +235,22 @@ public class DefaultEnemyStates : EnemyStateMachineBlueprint
                         break;
                     }
                 }
-                enemyMovementController.isRetreating = true;
+                //enemyMovementController.isRetreating = true;
                 SwitchToNextEvent(EVENT.UPDATE);
                 break;
             }
             case EVENT.UPDATE:
             {
-                if(!enemyMovementController.IsRetreating())
+                /*if(!enemyMovementController.IsRetreating())
                 {
                     SwitchToNextEvent(EVENT.EXIT);
                 }
                 else
                 {
                     enemyMovementController.RetreatAwayUntilDistance(enemyCombatController.comfortRange, enemyCombatController.target.transform.position);
-                }
+                }*/
                 break;
+                
             }
             case EVENT.EXIT:
             {

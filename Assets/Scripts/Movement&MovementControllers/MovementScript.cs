@@ -32,6 +32,9 @@ public class MovementScript : MonoBehaviour
 
     public bool isInvincible = false;
 
+    [Header("Component References")]
+    public Animator animator;
+
     [Header("Ultimate Bool")]
     public bool isAllowedToMove = true;
 
@@ -55,6 +58,7 @@ public class MovementScript : MonoBehaviour
     {
         currentMovementSpeed = normalSpeed;
         characterController = GetComponent<CharacterController>();
+        animator = GetComponent<Animator>();
     }
 
     public void Move(Vector3 moveDirection, bool isSprinting)
@@ -77,7 +81,10 @@ public class MovementScript : MonoBehaviour
         {
             isMoving = false;
             currentMovementSpeed = 0;
-        }   
+        }
+
+        animator.SetFloat("Speed", currentMovementSpeed);
+        animator.SetBool("Sprinting", isSprinting);
     }
 
     public void TweenToTarget(Vector3 target, float moveDuration, float moveTowardsTargetOffset)

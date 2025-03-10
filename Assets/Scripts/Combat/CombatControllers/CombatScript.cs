@@ -202,7 +202,6 @@ public class CombatScript : MonoBehaviour
     {
         if (isAttacking && attackCooldownTimer <= 0)
         {
-            Debug.Log("Cooldown started!");
             attackCooldownTimer = attackCooldown;
         }
 
@@ -215,7 +214,6 @@ public class CombatScript : MonoBehaviour
             {
                 attackCooldownTimer = 0;
                 attackIsAvailable = true;
-                Debug.Log("Attack available!");
             }
         }
     }

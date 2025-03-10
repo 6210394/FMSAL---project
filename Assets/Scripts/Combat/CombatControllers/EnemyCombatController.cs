@@ -35,7 +35,7 @@ public class EnemyCombatController : MonoBehaviour
     private Rigidbody rb;
 
     //References
-    private EnemyManager enemyManager;
+    private DepractedEnemyManager enemyManager;
     public EnemyMovementController enemyMovementController;
     public CombatScript combatScript;
     private CharacterController characterController;
@@ -109,7 +109,7 @@ public class EnemyCombatController : MonoBehaviour
                 Debug.Log("Player is in range!");
             }
 
-            StopEnemyCoroutines();
+            //StopEnemyCoroutines();
 
             if(Vector3.Distance(hitEventArgs.playerCombatController.transform.position, transform.position) <= detectionRange)
             {
@@ -139,8 +139,8 @@ public class EnemyCombatController : MonoBehaviour
         isAvailableForEnemyManager = false;
         Attack();
     }
-    
 
+    /*
     void StopEnemyCoroutines()
     {
         Debug.Log("Stopping enemy coroutines!");
@@ -161,6 +161,7 @@ public class EnemyCombatController : MonoBehaviour
         }
 
     }
+    */
 
     public void DealDamageEvent()
     {
@@ -181,36 +182,9 @@ public class EnemyCombatController : MonoBehaviour
         }
     }
 
-    public bool CheckForPlayersInDetectionRange()
-    {
-        foreach (GameObject player in players)
-        {
-            Vector3 directionToPlayer = player.transform.position - transform.position;
-            float distanceToPlayer = directionToPlayer.magnitude;
-
-            if (distanceToPlayer <= detectionRange)
-            {
-                float angleToPlayer = Vector3.Angle(transform.forward, directionToPlayer);
-
-                if (angleToPlayer <= fieldOfViewAngle / 2)
-                {
-                    Debug.Log("Player detected");
-                    target = player.GetComponent<PlayerCombatController>();
-                    return true;
-                }
-            }
-            else
-            {
-                target = null;
-                return false;
-            }
-        }
-        return false;
-    }
-
     void Die()
     {   
-        StopEnemyCoroutines();
+        //StopEnemyCoroutines();
 
         isDead = true;
         target = null;
@@ -250,7 +224,6 @@ public class EnemyCombatController : MonoBehaviour
     {
         return isPreparingAttack;
     }
-
 
     #endregion
 

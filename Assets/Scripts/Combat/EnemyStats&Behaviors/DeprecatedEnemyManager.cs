@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyManager : MonoBehaviour
+public class DepractedEnemyManager : MonoBehaviour
 {
     private EnemyStateMachineBlueprint[] enemies;
     public EnemyStruct[] allEnemies;
@@ -33,24 +33,6 @@ public class EnemyManager : MonoBehaviour
         
     }
 
-    public void Update()
-    {
-        
-    }
-
-    EnemyStateMachineBlueprint CheckRetaliation()
-    {
-        foreach(EnemyStruct enemy in allEnemies)
-        {
-            EnemyCombatController enemyCombatController = enemy.enemyStateMachine.enemyCombatController;
-            if(enemyCombatController.seeksRetaliation)
-            {
-                return enemy.enemyStateMachine;
-            }
-        }
-        return null;
-    }
-
     public void StartAI()
     {
         AI_Loop_Coroutine = StartCoroutine(AI_Loop(null));
@@ -63,7 +45,6 @@ public class EnemyManager : MonoBehaviour
             StopCoroutine(AI_Loop(null));
             yield break;
         }
-
         
         yield return new WaitForSeconds(Random.Range(.5f,4f));
 

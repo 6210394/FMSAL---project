@@ -32,7 +32,7 @@ public class PlayerCombatController : MonoBehaviour
     public MovementScript movementScript;
     private PlayerMovementController playerMovementController;
     private CombatScript combatScript;
-    private EnemyManager enemyManager;
+    private DepractedEnemyManager enemyManager;
     private EnemyDetection enemyDetection;
     private DiogenicPlayerInventory diogenicPlayerInventory;
 

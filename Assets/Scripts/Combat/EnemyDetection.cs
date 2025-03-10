@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class EnemyDetection : MonoBehaviour
 {
-    [SerializeField] private EnemyManager enemyManager;
+    [SerializeField] private DepractedEnemyManager enemyManager;
 
     public PlayerCombatController playerCombatController;
 
@@ -52,7 +52,6 @@ public class EnemyDetection : MonoBehaviour
                 float angle = Vector3.Angle(inputDirection, toTarget);
                 if (angle > 80f)
                 {
-                    Debug.Log("Looking away!");
                     currentTarget = null;
                 }
             }
