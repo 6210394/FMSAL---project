@@ -51,11 +51,12 @@ public class EnemyCombatController : MonoBehaviour
 
     void Awake()
     {
-        Initialize();
     }
 
     void Start()
     {
+        GameManager.onPlayersListed.AddListener(() => UpdatePlayerList());
+        Initialize();
         UpdatePlayerList();
     }
 
@@ -75,6 +76,7 @@ public class EnemyCombatController : MonoBehaviour
 
     void UpdatePlayerList()
     {
+        Debug.Log("getting players!");
         players = GameManager.instance.players;
         foreach(GameObject player in players)
         {
@@ -88,7 +90,9 @@ public class EnemyCombatController : MonoBehaviour
     {
         if(hitEventArgs.target == transform)
         {
-            if(Vector3.Distance(transform.position, hitEventArgs.damageSource.position) > hitEventArgs.attackRange)
+            Debug.Log("isTarget");
+
+            if (Vector3.Distance(transform.position, hitEventArgs.damageSource.position) > hitEventArgs.attackRange)
             {
                 return;
             }

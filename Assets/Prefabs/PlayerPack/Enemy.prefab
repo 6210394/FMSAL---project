@@ -34,7 +34,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1, z: 2.78}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.80555, y: 0.80555, z: 0.80555}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7941122265602266684}
@@ -80,7 +80,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _enemyStats: {fileID: 0}
-  isReadyToAttack: 0
+  _isReadyToAttack: 0
+  _hasTakenHit: 0
+  _damageSource: {x: 0, y: 0, z: 0}
+  _stunDuration: 0
+  _stunChainRecoveryRate: 0
   _combatController: {fileID: 0}
   _movementController: {fileID: 0}
   _animator: {fileID: 0}
@@ -99,16 +103,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   seeksRetaliation: 0
   maximumChainStun: 2
-  prefersShooting: 0
-  prefersPunching: 1
   comfortRange: 5
   detectionRange: 10
   fieldOfViewAngle: 135
-  deathTime: 1
   isDead: 0
   isPreparingAttack: 0
   isAvailableForEnemyManager: 0
-  enemyMovementController: {fileID: 4776239741273295831}
+  enemyMovementController: {fileID: 0}
   combatScript: {fileID: 0}
   players: []
   playerEnemyDetections: []
@@ -116,10 +117,7 @@ MonoBehaviour:
   OnDamage:
     m_PersistentCalls:
       m_Calls: []
-  OnStopMoving:
-    m_PersistentCalls:
-      m_Calls: []
-  OnRetreat:
+  OnDeath:
     m_PersistentCalls:
       m_Calls: []
   moveDebugBool: 1
@@ -135,7 +133,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6de8946289073ec4ba510581854b7216, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 1
   givenMoveDirection: {x: 0, y: 0, z: 0}
   givenMoveDestination: {x: 0, y: 0, z: 0}
   isControlled: 1
@@ -204,10 +201,12 @@ MonoBehaviour:
   stunImmune: 0
   attackIsAvailable: 1
   isAttacking: 0
+  meleeEquipped: 0
+  gunEquipped: 0
+  junkEquipped: 0
   reticleOffset: {x: 0, y: 0, z: 0}
   bulletVisualsPrefab: {fileID: 0}
   bulletSpawnOriginOffset: {fileID: 0}
-  hitBoxReference: {fileID: 0}
   animator: {fileID: 6659547010701238330}
   debugCanAttack: 0
 --- !u!143 &6548890165488695915

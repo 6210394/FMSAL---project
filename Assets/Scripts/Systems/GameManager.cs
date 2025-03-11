@@ -6,7 +6,6 @@ using UnityEngine.Events;
 
 public class GameManager : MonoBehaviour, IDataPersistence
 {
-
 #region Singleton
     public static GameManager instance;
     void Awake()
@@ -20,7 +19,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         {
             Destroy(gameObject);
         }
-    }
+   }
 #endregion
 
     public string gameOverScene = "MainMenu";
@@ -82,8 +81,8 @@ public class GameManager : MonoBehaviour, IDataPersistence
         {
             interactEnabled = true;
             hasFailedQuota = false;
-            RegisterPlayers();
         }
+        RegisterPlayers();
     }
 
     public void RegisterPlayers()

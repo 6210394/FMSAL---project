@@ -23,14 +23,12 @@ public class BrawlerEnemy : MonoBehaviour
 
     public Transform _target;
 
-    void Awake()
+    private void Start()
     {
         _combatController = GetComponent<EnemyCombatController>();
         _movementController = GetComponent<EnemyMovementController>();
         _animator = GetComponent<Animator>();
         _stateMachine = new StateMachine();
-
-        _combatController.OnDamage.AddListener((stunTime, damageSource) => OnTakeHit(stunTime, damageSource));
 
         //Create the states that will compose my AI
         var takeDamage = new TakeDamage(this, _movementController, _combatController, _animator);
@@ -47,6 +45,9 @@ public class BrawlerEnemy : MonoBehaviour
         At(takeDamage, circlingPlayer, PlayerInDetectionRange());
 
         _stateMachine.AddAnyTransition(takeDamage, TookHit());
+        
+        _combatController.OnDamage.AddListener((stunTime, damageSource) => OnTakeHit(stunTime, damageSource));
+
 
         //Begin at Patrol
         _stateMachine.SetState(patrol);
@@ -99,6 +100,7 @@ public class BrawlerEnemy : MonoBehaviour
             if (distanceToPlayer <= _combatController.detectionRange)
             {
                 float angleToPlayer = Vector3.Angle(_combatController.transform.forward, directionToPlayer);
+
 
                 if (angleToPlayer <= _combatController.fieldOfViewAngle / 2)
                 {

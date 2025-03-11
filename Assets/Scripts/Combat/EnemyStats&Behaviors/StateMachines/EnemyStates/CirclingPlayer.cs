@@ -66,7 +66,7 @@ public class CirclingPlayer : IState
 
     private bool IsTooClose()
     {
-        if(Vector3.Distance(_brawlerEnemy._target.position, _movementController.transform.position) < 4)
+        if(Vector3.Distance(_brawlerEnemy._target.position, _movementController.transform.position) < 2)
         {
             return true;
         }

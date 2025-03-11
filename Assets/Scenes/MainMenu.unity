@@ -181,7 +181,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Metric Gym
+  m_text: 'Combat Gym
+
+'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -494,8 +496,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'DISCLAIMER: Combat does not work in the build but works in Unity. Probably
-    failed initialization.'
+  m_text: 'DISCLAIMER: Combat does not work in the level.
+
+    I don''t know why
+    :b'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -946,7 +950,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52bd55b69c01f2f4393541629cd99fbc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneName: MetricGym
+  sceneName: CombatGym
   gameManagerObject: {fileID: 1012001260}
 --- !u!114 &792593669
 MonoBehaviour:

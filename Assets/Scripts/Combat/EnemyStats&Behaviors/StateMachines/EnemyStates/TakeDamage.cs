@@ -40,7 +40,7 @@ public class TakeDamage : IState
             _brawlerEnemy.Death();
             return;
         }
-
+       
         _animator.SetTrigger("RecieveHit");
         _movementController.movementScript.KnockBack(0.3f, 0.1f, _brawlerEnemy._damageSource);
         if(!_combatController.combatScript.stunImmune)
