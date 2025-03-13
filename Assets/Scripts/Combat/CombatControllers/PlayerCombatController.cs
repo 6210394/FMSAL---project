@@ -367,7 +367,7 @@ public class PlayerCombatController : MonoBehaviour
 
     public void OnTakeHit(CombatScript.HitEventArgs hitEventArgs)
     {
-        if(hitEventArgs.target == transform)
+        if(transform == hitEventArgs.target)
         {
             if(Vector3.Distance(hitEventArgs.target.position, hitEventArgs.damageSource.transform.position) > hitEventArgs.attackRange)
             {

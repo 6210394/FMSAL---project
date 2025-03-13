@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class CirclingPlayer : IState
 {
-    BrawlerEnemy _brawlerEnemy;
+    EnemyBlueprint _brawlerEnemy;
 
     private EnemyMovementController _movementController;
     private EnemyCombatController _combatController;
@@ -13,7 +13,7 @@ public class CirclingPlayer : IState
     float _randomTime;
     float _randomTimeTimer;
 
-    public CirclingPlayer(BrawlerEnemy brawlerEnemy, EnemyMovementController movementController, EnemyCombatController combatController, Animator animator)
+    public CirclingPlayer(EnemyBlueprint brawlerEnemy, EnemyMovementController movementController, EnemyCombatController combatController, Animator animator)
     {
         _movementController = movementController;
         _combatController = combatController;
@@ -28,18 +28,20 @@ public class CirclingPlayer : IState
         {
             if(IsTooClose())
             {
+                _brawlerEnemy._isReadyToAttack = false;
                 _movementController.MoveEnemyInDirection(Vector3.back, false);
                 _movementController.transform.LookAt(_brawlerEnemy._target);
                 return;
             }
             if(IsInComfortRange())
             {
+                _brawlerEnemy._isReadyToAttack = true;
                 _movementController.EnemyCirclingMovement(_brawlerEnemy._target.position, _perpendicularDirection);
             }
             
             else
-            {
-                Debug.Log("MOVIN OVER TO YA");
+            {              
+                _brawlerEnemy._isReadyToAttack = false;
                 _animator.SetBool("Strafe", false);
                 Vector3 moveDir = (_brawlerEnemy._target.position - _movementController.transform.position).normalized;
                 _movementController.MoveEnemyInDirection(moveDir, true);
@@ -66,7 +68,7 @@ public class CirclingPlayer : IState
 
     private bool IsTooClose()
     {
-        if(Vector3.Distance(_brawlerEnemy._target.position, _movementController.transform.position) < 2)
+        if(Vector3.Distance(_brawlerEnemy._target.position, _movementController.transform.position) < 1.5f)
         {
             return true;
         }

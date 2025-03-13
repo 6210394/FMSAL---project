@@ -36,7 +36,7 @@ public class EnemyCombatController : MonoBehaviour
     [Header("Player References")]
     public List<GameObject> players = new List<GameObject>();
     public List<EnemyDetection> playerEnemyDetections = new List<EnemyDetection>();
-    public PlayerCombatController target;
+    public Transform target;
 
     public Coroutine PrepareAttackCoroutine;
     public Coroutine DamageCoroutine;
@@ -103,9 +103,9 @@ public class EnemyCombatController : MonoBehaviour
 
             if(Vector3.Distance(hitEventArgs.damageSource.position, transform.position) <= detectionRange)
             {
-                if(hitEventArgs.damageSource.GetComponent<PlayerCombatController>())
+                if(hitEventArgs.damageSource)
                 {
-                    target = hitEventArgs.damageSource.GetComponent<PlayerCombatController>();
+                    target = hitEventArgs.damageSource;
                 }
             }
 
@@ -150,9 +150,9 @@ public class EnemyCombatController : MonoBehaviour
 
     public void DealDamageEvent()
     {
-        if(!target.isAttackingEnemy && !target.movementScript.isDashing)
-            target.OnTakeHit(combatScript.BuildAttack(combatScript.attackDamage, combatScript.punchDuration,combatScript. punchRange, transform, target.transform));
-            PrepareAttackCoroutine = null;
+        Debug.Log(target);
+        target.SendMessage("OnTakeHit", combatScript.BuildAttack(combatScript.attackDamage, combatScript.punchDuration,combatScript. punchRange, target.transform, transform));
+        PrepareAttackCoroutine = null;
     }
 
     public void Attack()
@@ -175,8 +175,6 @@ public class EnemyCombatController : MonoBehaviour
         {
             enemyDetection.SetCurrentTarget(null);
         }
-
-  
 
         enemyManager.SetEnemyAvailiability(this, false);
 

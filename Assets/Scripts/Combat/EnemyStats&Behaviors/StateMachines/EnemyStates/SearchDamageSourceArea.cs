@@ -2,23 +2,30 @@ using UnityEngine;
 
 public class SearchDamageSourceArea : IState
 {
-    private BrawlerEnemy _brawlerEnemy;
+    private EnemyBlueprint _brawlerEnemy;
     private EnemyMovementController _movementController;
 
     private Vector3 _searchPosition;
     private bool _hasArrived = false;
 
-    public SearchDamageSourceArea(BrawlerEnemy brawlerEnemy, EnemyMovementController movementController, Vector3 damageSource)
+    bool _searching;
+    float _maxSearchTime = 4f;
+    float _currentSearchTime = 0f;
+    bool _timerReachedMax = false;
+
+    public SearchDamageSourceArea(EnemyBlueprint brawlerEnemy, EnemyMovementController movementController)
     {
         _brawlerEnemy = brawlerEnemy;
         _movementController = movementController;
-        _searchPosition = damageSource + Random.insideUnitSphere * 5f;
     }
 
     public void OnEnter()
     {
-        _searchPosition.y = _brawlerEnemy._damageSource.y; // Keep the same height
+        _movementController.transform.LookAt(_brawlerEnemy._damageSource);
+        _searchPosition = _brawlerEnemy._damageSource + Random.insideUnitSphere * 2;
+
         _hasArrived = false;
+        _timerReachedMax = false;
     }
 
     public void OnExit()
@@ -29,12 +36,32 @@ public class SearchDamageSourceArea : IState
     {
         if (_hasArrived)
         {
+            _brawlerEnemy.ResetAnimator();
+            SearchTimer();
             return;
         }
         else
         {
             MoveToSearchPosition();
         }
+    }
+
+    public void SearchTimer()
+    {
+        if (!_timerReachedMax)
+        {
+            _currentSearchTime += Time.deltaTime;
+            if (_currentSearchTime > _maxSearchTime)
+            {
+                _timerReachedMax = true;
+                _currentSearchTime = 0f;
+            }
+        }
+    }
+
+    public bool HasTimerReachedMax()
+    {
+        return _timerReachedMax;
     }
 
     private void MoveToSearchPosition()

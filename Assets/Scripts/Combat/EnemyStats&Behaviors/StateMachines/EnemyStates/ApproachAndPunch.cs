@@ -5,9 +5,12 @@ public class ApproachAndPunch : IState
     private EnemyMovementController _movementController;
     private EnemyCombatController _combatController;
     private Animator _animator;
-    private BrawlerEnemy _brawlerEnemy;
+    private EnemyBlueprint _brawlerEnemy;
 
-    public ApproachAndPunch(BrawlerEnemy brawlerEnemy, EnemyMovementController movementController, EnemyCombatController combatController, Animator animator)
+    bool hasAttacked = false;
+    bool completedAttack;
+
+    public ApproachAndPunch(EnemyBlueprint brawlerEnemy, EnemyMovementController movementController, EnemyCombatController combatController, Animator animator)
     {
         _movementController = movementController;
         _combatController = combatController;
@@ -17,17 +20,48 @@ public class ApproachAndPunch : IState
 
     public void Tick()
     {
-        // Implement Tick logic here
+        if(!completedAttack)
+        {
+            if(!HasTarget())
+            {
+                return;
+            }
+            
+            if(Vector3.Distance(_movementController.transform.position, _brawlerEnemy._target.transform.position) > 1)
+            {
+                Vector3 moveDir = (_brawlerEnemy._target.position - _movementController.transform.position).normalized;
+                _movementController.MoveEnemyInDirection(moveDir, true);
+            }
+            else if (!hasAttacked)
+            {
+                hasAttacked = true;
+                _animator.SetTrigger("Punch");
+            }
+        }
     }
 
     public void OnEnter()
     {
-        // Implement OnEnter logic here
+        completedAttack = false;
     }
 
     public void OnExit()
     {
-        // Implement OnExit logic here
+        completedAttack = true;
+    }
+
+    public bool HasTarget()
+    {
+        if(_brawlerEnemy._target)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    void CompleteAttack()
+    {
+        completedAttack = true;
     }
 
     public Color GizmoColor()

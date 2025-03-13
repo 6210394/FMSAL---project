@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class TakeDamage : IState
 {
-    BrawlerEnemy _brawlerEnemy;
+    EnemyBlueprint _brawlerEnemy;
 
     private EnemyMovementController _movementController;
     private EnemyCombatController _combatController;
@@ -10,7 +10,7 @@ public class TakeDamage : IState
 
     int currentChainStun = 0;
 
-    public TakeDamage(BrawlerEnemy brawlerEnemy, EnemyMovementController movementController, EnemyCombatController combatController, Animator animator)
+    public TakeDamage(EnemyBlueprint brawlerEnemy, EnemyMovementController movementController, EnemyCombatController combatController, Animator animator)
     {
         _movementController = movementController;
         _combatController = combatController;
