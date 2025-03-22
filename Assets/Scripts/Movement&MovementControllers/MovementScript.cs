@@ -28,15 +28,19 @@ public class MovementScript : MonoBehaviour
     public float maxDodgeCooldown = 0.5f;
     float dodgeCooldownRemaining = 0;
     public bool isDodging = false;
-    public bool isDashing = false;
 
-    public bool isInvincible = false;
+    public bool isInvincibleFromDodge = false;
 
     [Header("Component References")]
     public Animator animator;
+    public Rigidbody rb;
+
+    [Header("Coroutines")]
+    Coroutine TweenCoroutine;
+    Coroutine DodgeCoroutine;
 
     [Header("Ultimate Bool")]
-    public bool isAllowedToMove = true;
+    public bool ultimateCanMove = true;
 
 
     void Start()
@@ -60,23 +64,36 @@ public class MovementScript : MonoBehaviour
         currentMovementSpeed = normalSpeed;
         characterController = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
+        rb = GetComponent<Rigidbody>();
+    }
+
+    public void StopMovementCoroutines()
+    {
+        StopCoroutine(TweenCoroutine);
+        TweenCoroutine = null;
+
+        StopCoroutine(DodgeCoroutine);
+        DodgeCoroutine = null;
     }
 
     public void Move(Vector3 moveDirection, bool isSprinting)
     {
-        if(isAllowedToMove)
+        if(ultimateCanMove && TweenCoroutine == null)
         {
             SprintCheckAndSpeedSetup(isSprinting);
             if(moveDirection != Vector3.zero)
             {
                 characterController.Move(moveDirection * currentMovementSpeed * Time.deltaTime);
                 isMoving = true;
+
+                bool isWalkingBack = Vector3.Dot(transform.forward, moveDirection) < 0;
+                animator.SetBool("WalkBack", isWalkingBack);
             }
             else
             {
                 isMoving = false;
                 currentMovementSpeed = 0;
-            }   
+            }
         }
         else
         {
@@ -84,18 +101,66 @@ public class MovementScript : MonoBehaviour
             currentMovementSpeed = 0;
         }
 
+
         animator.SetFloat("Speed", currentMovementSpeed);
         animator.SetBool("Sprinting", isSprinting);
     }
 
-    public void TweenToTarget(Vector3 target, float moveDuration, float moveTowardsTargetOffset)
+    public void TweenToPosition(Vector3 target, float moveDuration, float moveTowardsTargetOffset)
     {
-        if(isAllowedToMove)
+        if(TweenCoroutine == null)
         {
-            //transform.DOLookAt(target, .2f);
             Vector3 targetPosition = TargetOffset(target, moveTowardsTargetOffset);
-            transform.DOMove(targetPosition, moveDuration);
+            TweenCoroutine = StartCoroutine(ILerpToPosition(targetPosition, moveDuration, moveTowardsTargetOffset));
         }
+    }
+
+    public void LerpToTransform(Transform target, float moveDuration, float moveTowardsTargetOffset)
+    {
+        if(TweenCoroutine == null)
+        {
+            TweenCoroutine = StartCoroutine(ILerpToTransform(target, moveDuration, moveTowardsTargetOffset));
+        }
+    }
+
+    private IEnumerator ILerpToPosition(Vector3 target, float moveDuration, float moveTowardsTargetOffset)
+    {
+        Vector3 startPosition = transform.position;
+        Vector3 targetPosition = TargetOffset(target, moveTowardsTargetOffset);
+        float distance = Vector3.Distance(startPosition, targetPosition);
+        float speed = distance / moveDuration;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < moveDuration)
+        {
+            float t = (speed * elapsedTime) / distance;
+            transform.position = Vector3.Lerp(startPosition, targetPosition, t);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.position = targetPosition;
+        TweenCoroutine = null;
+    }
+
+    private IEnumerator ILerpToTransform(Transform target, float moveDuration, float moveTowardsTargetOffset)
+    {
+        Vector3 startPosition = transform.position;
+        Vector3 targetPosition = TargetOffset(target.position, moveTowardsTargetOffset);
+        float distance = Vector3.Distance(startPosition, targetPosition);
+        float speed = distance / moveDuration;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < moveDuration)
+        {
+            float t = (speed * elapsedTime) / distance;
+            transform.position = Vector3.Lerp(startPosition, targetPosition, t);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.position = targetPosition;
+        TweenCoroutine = null;
     }
 
     Vector3 TargetOffset(Vector3 target, float offsetDistance)
@@ -137,37 +202,18 @@ public class MovementScript : MonoBehaviour
 
     public void DodgeInvincibilityFrame()
     {
-        isInvincible = !isInvincible;
-    }
-
-    public void Dash(Vector3 dodgeDirection, float dodgeCooldownLength)
-    {
-        if(isAllowedToMove)
-        {
-            maxDodgeCooldown = dodgeCooldownLength;
-
-            isDashing = true;
-            
-            transform.DOMove(transform.position + (dodgeDirection * dodgeForce), dodgeMoveDuration);
-        }
+        isInvincibleFromDodge = !isInvincibleFromDodge;
     }
 
     public void DodgeWithTarget(Vector3 dodgeDirection, float dodgeCooldownLength, Transform lockedTarget)
     {   
-        if(isAllowedToMove)
+        if(ultimateCanMove && DodgeCoroutine == null)
         {
-             maxDodgeCooldown = dodgeCooldownLength;
+            maxDodgeCooldown = dodgeCooldownLength;
 
             isDodging = true;
-            
-            if(dodgeDirection.z < 0)
-            {
-                Dash(dodgeDirection, dodgeCooldownLength);
-            }
-            else
-            {
-                StartCoroutine(DodgeAround(lockedTarget, dodgeDirection, 5, dodgeMoveDuration));
-            }
+
+            DodgeCoroutine = StartCoroutine(DodgeAround(lockedTarget, dodgeDirection, 5, dodgeMoveDuration));
         }
     }
 
@@ -191,13 +237,14 @@ public class MovementScript : MonoBehaviour
             offset += offset.normalized * currentDodgeAwayDistance;
 
             transform.position = axisPoint.position + offset;
+            DodgeCoroutine = null;
             yield return null;
         }
     }
 
     void DodgeTimer()
     {
-        if (isDodging && !isDashing && dodgeCooldownRemaining <= 0)
+        if (isDodging && dodgeCooldownRemaining <= 0)
         {
             dodgeCooldownRemaining = maxDodgeCooldown;
         }
@@ -210,7 +257,6 @@ public class MovementScript : MonoBehaviour
             {
                 dodgeCooldownRemaining = 0;
                 isDodging = false;
-                isDashing = false;
             }
         }
     }

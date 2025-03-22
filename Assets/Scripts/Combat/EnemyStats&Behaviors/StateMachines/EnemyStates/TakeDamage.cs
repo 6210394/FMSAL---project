@@ -46,7 +46,7 @@ public class TakeDamage : IState
         if(!_combatController.combatScript.stunImmune)
         {
             currentChainStun += 1;
-            _combatController.combatScript.GetStunned(_brawlerEnemy._stunDuration);
+            _combatController.combatScript.Stun(_brawlerEnemy._stunDuration);
         }
 
         Retaliate();
@@ -55,7 +55,7 @@ public class TakeDamage : IState
 
     public bool Retaliate()
     {
-        if(currentChainStun >= _combatController.maximumChainStun && _combatController.combatScript.debugCanAttack)
+        if(currentChainStun >= _combatController.maximumChainStun && _combatController.combatScript.ultimateCanAttack)
         {
             _combatController.combatScript.stunImmune = true;
             return true;

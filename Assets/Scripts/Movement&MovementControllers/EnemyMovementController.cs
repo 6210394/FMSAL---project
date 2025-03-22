@@ -11,7 +11,6 @@ public class EnemyMovementController : MonoBehaviour
     [Header("Booleans")]
     public bool isControlled = true;
     public bool canSprint = true;
-    bool isSprintingAnim;
 
     [Header("Patrol Options and Detection")]
     [Tooltip ("If true, the enemy will patrol around its spawn point. Otherwise, it will wander freely.")]
@@ -24,12 +23,7 @@ public class EnemyMovementController : MonoBehaviour
     public Animator animator;
 
     public MovementScript movementScript;
-    private Rigidbody rb;
     [SerializeField] NavMeshAgent navMeshAgent;
-
-    public Coroutine RetreatCoroutine;
-    public Coroutine PatrolDirectionCoroutine;
-    public Coroutine CircleDirectionCoroutine;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -40,30 +34,15 @@ public class EnemyMovementController : MonoBehaviour
         spawnPoint = transform.position;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     #region Enemy Movement
 
     public void MoveEnemyUntilReached(Vector3 desiredPositionFromOrigin, bool isSprinting)
     {   
         if(Vector3.Distance(transform.position, desiredPositionFromOrigin) > 0.5f)
         {
-            Debug.Log("moving to destination");
             Vector3 moveDir = (desiredPositionFromOrigin - transform.position).normalized;
             MoveEnemyInDirection(moveDir, isSprinting);
         }
-    }
-
-    public Vector3 GenerateRandomDirection()
-    {
-        float randomX = Random.Range(-1f, 1f);
-        float randomZ = Random.Range(-1f, 1f);
-        Vector3 randomDirection = new Vector3(randomX, 0, randomZ).normalized;
-        return randomDirection;
     }
 
     public void MoveEnemyInDirection(Vector3 targetDirection, bool isSprinting)
@@ -72,19 +51,6 @@ public class EnemyMovementController : MonoBehaviour
         movementScript.Move(moveDir, isSprinting);
         moveDir.y = 0;
         transform.LookAt(moveDir + transform.position);
-    }
-
-    public void RetreatAwayUntilDistance(float targetDistance, Vector3 axisOfRetreat)
-    {
-        if(Vector3.Distance(axisOfRetreat, transform.position) <= targetDistance)
-        {
-            transform.LookAt(axisOfRetreat);
-            movementScript.Move(-transform.forward, false);
-        }
-        else if(Vector3.Distance(axisOfRetreat, transform.position) >= targetDistance)
-        {
-            return;
-        }
     }
 
     public void EnemyCirclingMovement(Vector3 axisPoint, Vector3 direction)
@@ -104,38 +70,9 @@ public class EnemyMovementController : MonoBehaviour
         transform.LookAt(axisPoint);
     }
 
-    public IEnumerator IGenerateCirclingDirection()
-    {
-        switch(Random.Range(1,4))
-        {
-            case 1:
-            {
-                givenMoveDirection = new Vector3(1,0,0);
-                break;
-            }
-            case 2:
-            {
-                givenMoveDirection = new Vector3(-1,0,0);
-                break;
-            }
-            case 3:
-            {
-                givenMoveDirection = new Vector3(0,0,0);
-                break;
-            }
-            default:
-            {
-                givenMoveDirection = new Vector3(0,0,0);
-                break;
-            }
-        }
-        yield return new WaitForSeconds(3);
-        CircleDirectionCoroutine = StartCoroutine(IGenerateCirclingDirection());
-    }
-    
     public void StopMoving()
     {
-        movementScript.isAllowedToMove = false;
+        movementScript.ultimateCanMove = false;
         givenMoveDirection = Vector3.zero;
     }
     

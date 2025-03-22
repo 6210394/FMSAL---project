@@ -28,42 +28,23 @@ public class EnemyCombatController : MonoBehaviour
     private Rigidbody rb;
 
     //References
-    private DepractedEnemyManager enemyManager;
+    private EnemyManager enemyManager;
     public EnemyMovementController enemyMovementController;
     public CombatScript combatScript;
-    private CharacterController characterController;
 
     [Header("Player References")]
     public List<GameObject> players = new List<GameObject>();
     public List<EnemyDetection> playerEnemyDetections = new List<EnemyDetection>();
     public Transform target;
 
-    public Coroutine PrepareAttackCoroutine;
-    public Coroutine DamageCoroutine;
-
     public UnityEvent<float, Transform> OnDamage; //stunTime
+    public UnityEvent OnHit;
     public UnityEvent OnDeath;
-
 
 
     [Header("Debug Tools")]
     public bool moveDebugBool = false;
 
-    void Awake()
-    {
-    }
-
-    void Start()
-    {
-        GameManager.onPlayersListed.AddListener(() => UpdatePlayerList());
-        Initialize();
-        UpdatePlayerList();
-    }
-
-    void Update()
-    {
-        
-    }
 
     void Initialize()
     {
@@ -71,24 +52,11 @@ public class EnemyCombatController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         
         combatScript = GetComponent<CombatScript>();
-        characterController = GetComponent<CharacterController>();
-    }
-
-    void UpdatePlayerList()
-    {
-        Debug.Log("getting players!");
-        players = GameManager.instance.players;
-        foreach(GameObject player in players)
-        {
-            playerEnemyDetections.Add(player.GetComponent<EnemyDetection>());
-            PlayerCombatController playerCombat = player.GetComponent<PlayerCombatController>();
-            playerCombat.OnHit.AddListener((a) => OnTakeHit(a));
-        }
     }
     
     public void OnTakeHit(CombatScript.HitEventArgs hitEventArgs)
     {
-        if(hitEventArgs.target == transform)
+        if(hitEventArgs.damageSource != transform)
         {
             Debug.Log("isTarget");
 
@@ -150,20 +118,20 @@ public class EnemyCombatController : MonoBehaviour
 
     public void DealDamageEvent()
     {
-        Debug.Log(target);
-        target.SendMessage("OnTakeHit", combatScript.BuildAttack(combatScript.attackDamage, combatScript.punchDuration,combatScript. punchRange, target.transform, transform));
-        PrepareAttackCoroutine = null;
+        target.SendMessage("OnTakeHit", combatScript.BuildAttack(combatScript.attackDamage, combatScript.meleeStunDuration, combatScript.meleeRange, transform));
+        OnHit.Invoke();
     }
 
     public void Attack()
     {
-        if(combatScript.debugCanAttack)
+        if(combatScript.ultimateCanAttack)
         {
             isPreparingAttack = true;
         }
         else
         {
             isPreparingAttack = false;
+            Debug.Log(this + " CAN'T ATTACK BECAUSE OF DEBUG");
         }
     }
 

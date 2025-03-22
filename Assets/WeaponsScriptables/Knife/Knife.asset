@@ -21,8 +21,11 @@ MonoBehaviour:
   weaponType: 0
   damage: 1
   stunTime: 0.2
-  swingTime: 0.8
+  Hurtbox: {fileID: 5491870160663342997, guid: ff527eb14cfeb4c47a4d084ba9ecc81d, type: 3}
+  swingTime: 0.7
   weaponReach: 4
+  weaponRange: 2
+  weaponTargetOffset: 0.6
   rateOfFire: 0
   weaponAimAssistValue: 0
   reloadSpeed: 0

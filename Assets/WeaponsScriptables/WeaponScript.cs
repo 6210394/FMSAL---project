@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "HoldableItem", menuName = "Scriptable Objects/Weapon")]
@@ -15,9 +16,15 @@ public class WeaponScript : IObjectType
         public int damage;
         public float stunTime;
     [Header("Melee Weapon")]
+
         //Melee
         public float swingTime;
         public float weaponReach;
+        public float weaponRange;
+        public float weaponTargetOffset;
+
+        public List<AttackData> listOfAttacks;
+
     [Header("Ranged Weapon")]
         //Guns
         public float rateOfFire; //RPM - Rounds per minute, example: 140RPM

@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class CombatScript : MonoBehaviour
 {
-    public enum AttackType
+    public enum CombatActionType
     {
-        LightMelee, HeavyMelee, Shoot, Slash
+        LightMelee, HeavyMelee, Shoot, Slash, Parry
     }
 
     [Header ("Stats")]
@@ -15,15 +15,19 @@ public class CombatScript : MonoBehaviour
     public int attackDamage = 1;
 
     [Header("Attack Values")]
-    public float punchRange = 3f; //Range withing which the melee hits
-    public float punchReach = 4f; //Range within which the attack will tween
-    public float punchDuration = 0.5f; //Duration of the attack
-    public float punchStunDuration = 0.3f; //Duration of the stun
+
     public float meleeRange;
     public float meleeReach;
     public float meleeDuration;
     public float meleeStunDuration;
-    public float punchTargetDistanceOffset = 2f;
+    public float targetDistanceOffset = 1f;
+
+    public float punchRange = 3f; //Range withing which the melee hits
+    public float punchReach = 4f; //Range within which the attack will tween
+    public float punchDuration = 0.5f; //Duration of the attack
+    public float punchStunDuration = 0.3f; //Duration of the stun
+    public float punchTargetDistanceOffset = 1f;
+
     [Space]
     public float gunHipFireBulletAccuracyRange = 10f;
     public float gunAimAssistSize = 1f;
@@ -31,10 +35,15 @@ public class CombatScript : MonoBehaviour
     public float gunRateOfFireTime = 140f; //in round per minute
 
     [Header ("States")]
+
+    //Stun & Resistance
     public bool isStunned = false;
     public bool stunImmune = false;
-    float maxStunTimer;
-    float currentStunTime;
+
+    //Parrying & Animation Lock
+    bool isParrying = false;
+    bool inParryWindow = false;
+
     [Space]
     public bool attackIsAvailable = true;
     public bool isAttacking = false;
@@ -47,31 +56,36 @@ public class CombatScript : MonoBehaviour
     
     [Header ("Object & Component References ")]
     [SerializeField] Vector3 reticleOffset;
+    public DiogenicInventory diogenicInventory;
     [SerializeField] GameObject bulletVisualsPrefab;
     [SerializeField] Transform bulletSpawnOriginOffset;
 
     [Space]
-    private PlayerMovementController playerController;
     public Animator animator;
 
-    [Header ("Debug")]
-    [SerializeField] public bool debugCanAttack = false; //debug variable
+        private List<GameObject> currentHurtboxReferences; //attack type, hurtbox
+
+
+    [Header ("Coroutines")]
+    public Coroutine CombatActionCoroutine;
+    public Coroutine stunCoroutine;
+
+    [SerializeField] public bool ultimateCanAttack = false; //debug variable
 
 
     public void Start()
     {
         attackCooldownTimer = 0;
-        playerController = GetComponent<PlayerMovementController>();
+        diogenicInventory = GetComponent<DiogenicInventory>();
         //animator = GetComponent<Animator>();
     }
     
     void Update()
     {
         AttackCooldownCountdown();
-        StunCooldown();
     }
 
-    public void ProcessAttackList(Dictionary<AttackType, int> stringOfAttacks)
+    public void ProcessAttackList(Dictionary<CombatActionType, int> stringOfAttacks)
     {
         //
     }
@@ -81,21 +95,104 @@ public class CombatScript : MonoBehaviour
         public int damageReceived;
         public float stunDuration;
         public float attackRange;
-        public Transform target;
         public Transform damageSource;
     }
 
-    public HitEventArgs BuildAttack(int damageReceived, float stunDuration, float attackRange, Transform target, Transform damageSource)
+    public HitEventArgs BuildAttack(int damageReceived, float stunDuration, float attackRange, Transform damageSource)
     {
         HitEventArgs hitEventArgs;
 
         hitEventArgs.damageReceived = damageReceived;
         hitEventArgs.stunDuration = stunDuration;
         hitEventArgs.attackRange = attackRange;
-        hitEventArgs.target = target;
         hitEventArgs.damageSource = damageSource;
 
         return hitEventArgs;
+    }
+
+    public GameObject BuildHurtbox(Transform parent, HitEventArgs attackInformation, GameObject hurtBox)
+    {
+        GameObject hurtboxInstance = Instantiate(hurtBox, parent);
+        hurtboxInstance.GetComponent<HurtboxScript>()._hitEventArgs = attackInformation;
+        hurtboxInstance.transform.localPosition = Vector3.zero;
+        hurtboxInstance.transform.localRotation = Quaternion.identity;
+        return hurtboxInstance;
+    }
+
+        public void CreateHurtbox()
+    {
+        CombatScript.HitEventArgs hitEventArgs = BuildAttack(attackDamage, meleeStunDuration, meleeRange, transform);
+        currentHurtboxReferences.Add(BuildHurtbox(diogenicInventory.handAnchor.transform, hitEventArgs, gameObject));
+    }
+
+    public void DestroyHurtbox(int index)
+    {
+        Destroy(currentHurtboxReferences[index]);
+        currentHurtboxReferences[index] = null;
+    }
+
+    public void ClearHurtboxes()
+    {
+        foreach(GameObject gameObject in currentHurtboxReferences)
+        {
+            Destroy(gameObject);
+        }
+        currentHurtboxReferences = null;
+    }
+
+    public void SwitchWeapons(int slot)
+    {
+        if(slot == 1)
+        {
+            if(diogenicInventory.mainWeapon)
+            {
+                diogenicInventory.ShowItemInHands(diogenicInventory.mainWeapon);
+                UpdateStatsBasedOnWeapon(diogenicInventory.mainWeapon);   
+            }
+            else if (diogenicInventory.sidearm)
+            {
+                diogenicInventory.ShowItemInHands(diogenicInventory.sidearm);
+                UpdateStatsBasedOnWeapon(diogenicInventory.sidearm);
+            }
+            else
+            {
+                //maybe drop whatever the player is holding if it was a pickup
+                diogenicInventory.HideItemInHands();
+                UpdateStatsBasedOnWeapon(null);
+            }
+        }
+
+        if(slot == 2)
+        {
+            if (diogenicInventory.sidearm)
+            {
+                diogenicInventory.ShowItemInHands(diogenicInventory.sidearm);
+                UpdateStatsBasedOnWeapon(diogenicInventory.sidearm);
+            }
+
+            else if(diogenicInventory.mainWeapon)
+            {
+                diogenicInventory.ShowItemInHands(diogenicInventory.mainWeapon);
+                UpdateStatsBasedOnWeapon(diogenicInventory.mainWeapon);   
+            }
+            else
+            {
+                //maybe drop whatever the player is holding if it was a pickup
+                diogenicInventory.HideItemInHands();
+                UpdateStatsBasedOnWeapon(null);
+            }
+        }
+
+        /*
+        if(gunEquipped)
+        {
+            enemyDetection.autoLockOnRange = 10f;
+        }
+        else
+        {
+            enemyDetection.autoLockOnRange = 5f;
+        }
+        */
     }
 
     public void UpdateStatsBasedOnWeapon(WeaponScript weapon) //THIS NEEDS TO BE A WEAPON AND MUST BE VERIFIED
@@ -111,8 +208,14 @@ public class CombatScript : MonoBehaviour
                     meleeEquipped = true;
                     gunEquipped = false;
 
-                    meleeRange = weapon.weaponReach;
+                    meleeRange = weapon.weaponRange;
                     meleeDuration = weapon.swingTime;
+                    meleeStunDuration = weapon.stunTime;
+                    meleeReach = weapon.weaponReach;
+                    targetDistanceOffset = weapon.weaponTargetOffset;
+
+                    float animationSpeed = 1f / (meleeDuration * 1.2f);
+                    animator.SetFloat("MeleeSpeed", animationSpeed);
                     break;
                 }
 
@@ -133,108 +236,95 @@ public class CombatScript : MonoBehaviour
         else
         {
             attackDamage = 1;
-            meleeEquipped = true;
-            gunEquipped = false;
             meleeRange = punchRange;
             meleeDuration = punchDuration;
+            meleeStunDuration = punchStunDuration;
+            meleeReach = punchReach;
+            targetDistanceOffset = punchTargetDistanceOffset;
+            meleeEquipped = true;
+            gunEquipped = false;
         }
     }
-    
-    public void Attack(AttackType attackType, float specificAttackCooldown, string animationName)
+
+    public void Attack(CombatActionType attackType, float specificAttackCooldown, string animationName)
     {
-        if(!isStunned && debugCanAttack)
+        if(!isStunned && ultimateCanAttack)
         {
             attackCooldown = specificAttackCooldown;
             switch(attackType)
             {
-                case AttackType.LightMelee:
+                case CombatActionType.LightMelee:
                 {
-                    StartCoroutine(ILightMelee(animationName));
+                    if(CombatActionCoroutine != null) //action override is allowed
+                    {
+                        StopCoroutine(CombatActionCoroutine);
+                    }
+                    CombatActionCoroutine = StartCoroutine(ILightMelee(animationName));
                     break;
                 }
-                case AttackType.Shoot:
+                case CombatActionType.Shoot:
                 {
-                    StartCoroutine(IShoot(animationName));
+                    if(CombatActionCoroutine != null) //action override is allowed
+                    {
+                        StopCoroutine(CombatActionCoroutine);
+                    }
+                    CombatActionCoroutine = StartCoroutine(IShoot(animationName));
+                    break;
+                }
+                case CombatActionType.Parry:
+                {
+                    if(CombatActionCoroutine == null) //action override is not allowed
+                    {
+                        StopCoroutine(CombatActionCoroutine);
+                    }
+                    CombatActionCoroutine = StartCoroutine(IParry(animationName));
                     break;
                 }
             }
         }
-        else if (!debugCanAttack)
+        else if (!ultimateCanAttack)
         {
             Debug.LogWarning("debugCanAttack is set to false!!");
         }
     }
 
-    public void GetStunned(float stunTimer)
-    {
-        Debug.Log("Stunned!!");
-        isStunned = true;
-        maxStunTimer = stunTimer;
-    }
-
-    public void StunCooldown()
-    {
-        if(isStunned && currentStunTime == 0)
-        {
-            currentStunTime = maxStunTimer;
-        }
-        if(currentStunTime > 0)
-        {
-            currentStunTime -= Time.deltaTime;
-            if(currentStunTime <= 0)
-            {
-                currentStunTime = 0;
-                isStunned = false;
-            }
-        }
-    }
-
     public IEnumerator ILightMelee(string animationName)
     {
-        if(playerController != null)
-        {
-            playerController.isControlled = false;
-        }
         isAttacking = true;
+        attackIsAvailable = false;
 
         animator.SetTrigger(animationName);
-        yield return new WaitForSeconds(attackCooldown);
+        yield return new WaitUntil(() => attackIsAvailable = true);
         
         isAttacking = false;
-
-        if(playerController != null)
-        {
-            playerController.isControlled = true;
-        }
+        yield return new WaitForSeconds(0.7f);
     }
 
     public IEnumerator IShoot(string animationName)
     {
-        if(playerController != null)
-        {
-            playerController.isControlled = false;
-        }
         isAttacking = true;
 
         animator.SetTrigger(animationName);
-        yield return new WaitForSeconds(attackCooldown);
+        yield return new WaitUntil(() => attackIsAvailable = true);
 
         isAttacking = false;
-        if(playerController != null)
-        {
-            playerController.isControlled = true;
-        }
+    }
+
+    public IEnumerator IParry(string animationName)
+    {
+        animator.SetTrigger(animationName);
+        isParrying = true;
+        yield return new WaitForEndOfFrame();
+
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        yield return new WaitWhile(() => stateInfo.normalizedTime < 1.0f);
+        isParrying = false;
     }
 
     public void AttackCancel()
     {
-        StopAllCoroutines();
         isAttacking = false;
         attackIsAvailable = true;
-        if(playerController != null)
-        {
-            playerController.isControlled = true;
-        }
         //give control back to the player/enemy that is trying to move
     }
 
@@ -245,7 +335,7 @@ public class CombatScript : MonoBehaviour
             attackCooldownTimer = attackCooldown;
         }
 
-        if (attackCooldownTimer >= 0)
+        if (attackCooldownTimer > 0)
         {
             attackIsAvailable = false;
             attackCooldownTimer -= Time.deltaTime;
@@ -254,8 +344,19 @@ public class CombatScript : MonoBehaviour
             {
                 attackCooldownTimer = 0;
                 attackIsAvailable = true;
+                Debug.LogWarning("Attack Cooldown Over!");
             }
         }
+    }
+
+    public void Parry()
+    {
+        isParrying = !isParrying;
+    }
+
+    public void Stun(float time)
+    {
+        stunCoroutine = StartCoroutine(IStunned(time));
     }
 
     public IEnumerator IStunned(float time)

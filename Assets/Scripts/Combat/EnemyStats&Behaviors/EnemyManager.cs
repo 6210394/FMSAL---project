@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DepractedEnemyManager : MonoBehaviour
+public class EnemyManager : MonoBehaviour
 {
-    private EnemyStateMachineBlueprint[] enemies;
+    private EnemyBlueprint[] enemies;
     public EnemyStruct[] allEnemies;
     private List<int> enemyIndexes;
 
@@ -15,7 +15,7 @@ public class DepractedEnemyManager : MonoBehaviour
     
     void Start()
     {
-        enemies = GetComponentsInChildren<EnemyStateMachineBlueprint>();
+        enemies = GetComponentsInChildren<EnemyBlueprint>();
 
         allEnemies = new EnemyStruct[enemies.Length];
 
@@ -38,7 +38,7 @@ public class DepractedEnemyManager : MonoBehaviour
         AI_Loop_Coroutine = StartCoroutine(AI_Loop(null));
     }
 
-    IEnumerator AI_Loop(EnemyStateMachineBlueprint enemy)
+    IEnumerator AI_Loop(EnemyBlueprint enemy)
     {
         if (AliveEnemyCount() == 0)
         {
@@ -48,7 +48,7 @@ public class DepractedEnemyManager : MonoBehaviour
         
         yield return new WaitForSeconds(Random.Range(.5f,4f));
 
-        EnemyStateMachineBlueprint attackingEnemy;
+        EnemyBlueprint attackingEnemy;
 
         attackingEnemy = RandomEnemyExcludingOne(enemy);
 
@@ -58,14 +58,19 @@ public class DepractedEnemyManager : MonoBehaviour
         if (attackingEnemy == null)
             yield break;
             
-        yield return new WaitUntil(() => attackingEnemy.currentState == EnemyStateMachineBlueprint.STATE.CIRCLING);
-        yield return new WaitUntil(() => attackingEnemy.enemyCombatController.combatScript.isStunned == false);
-
-        attackingEnemy.enemyCombatController.Attack();
+        yield return new WaitUntil(() => attackingEnemy._isReadyToAttack);
+        Debug.Log(attackingEnemy + " Is Ready to Attack!");
         
-        yield return new WaitUntil(() => attackingEnemy.enemyCombatController.IsPreparingAttack() == false);
+        if(attackingEnemy._combatController.combatScript.isStunned)
+        {
+           //yield break; 
+        }
 
-        yield return new WaitForSeconds(Random.Range(0, 2));
+        attackingEnemy._combatController.Attack();
+        
+        yield return new WaitUntil(() => attackingEnemy._combatController.IsPreparingAttack() == false);
+
+        yield return new WaitForSeconds(Random.Range(2, 4));
 
         if (AliveEnemyCount() > 0)
             AI_Loop_Coroutine = StartCoroutine(AI_Loop(attackingEnemy));
@@ -73,7 +78,7 @@ public class DepractedEnemyManager : MonoBehaviour
     
 
 
-    public EnemyStateMachineBlueprint RandomEnemy()
+    public EnemyBlueprint RandomEnemy()
     {
         enemyIndexes = new List<int>();
 
@@ -86,14 +91,14 @@ public class DepractedEnemyManager : MonoBehaviour
         if (enemyIndexes.Count == 0)
             return null;
 
-        EnemyStateMachineBlueprint randomEnemy;
+        EnemyBlueprint randomEnemy;
         int randomIndex = Random.Range(0, enemyIndexes.Count);
         randomEnemy = allEnemies[enemyIndexes[randomIndex]].enemyStateMachine;
 
         return randomEnemy;
     }
 
-    public EnemyStateMachineBlueprint RandomEnemyExcludingOne(EnemyStateMachineBlueprint exclude)
+    public EnemyBlueprint RandomEnemyExcludingOne(EnemyBlueprint exclude)
     {
         enemyIndexes = new List<int>();
 
@@ -106,7 +111,7 @@ public class DepractedEnemyManager : MonoBehaviour
         if (enemyIndexes.Count == 0)
             return null;
 
-        EnemyStateMachineBlueprint randomEnemy;
+        EnemyBlueprint randomEnemy;
         int randomIndex = Random.Range(0, enemyIndexes.Count);
         randomEnemy = allEnemies[enemyIndexes[randomIndex]].enemyStateMachine;
 
@@ -162,6 +167,6 @@ public class DepractedEnemyManager : MonoBehaviour
 [System.Serializable]
 public struct EnemyStruct
 {
-    public EnemyStateMachineBlueprint enemyStateMachine;
+    public EnemyBlueprint enemyStateMachine;
     public bool enemyAvailability;
 }

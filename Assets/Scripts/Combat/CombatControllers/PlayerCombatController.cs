@@ -4,16 +4,22 @@ using DG.Tweening;
 using Unity.Cinemachine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 
 
 [RequireComponent(typeof(CombatScript))]
 [RequireComponent(typeof(PlayerMovementController))]
 public class PlayerCombatController : MonoBehaviour
 {
+    enum CameraType 
+    {
+        Default, Aim, Focus
+    }
+
 #region Variables & States
 
+    public int currentAnimationComboChain = 0;
     public float detectionRange = 5;
-
     private EnemyCombatController bulletHitTarget;
     
     [Header("States")]
@@ -24,12 +30,10 @@ public class PlayerCombatController : MonoBehaviour
 #endregion
 
 #region Component References
-    public MovementScript movementScript;
     private PlayerMovementController playerMovementController;
     private CombatScript combatScript;
-    private DepractedEnemyManager enemyManager;
+    private EnemyManager enemyManager;
     private EnemyDetection enemyDetection;
-    private DiogenicPlayerInventory diogenicPlayerInventory;
 
     public Image crosshairReference;
     public Transform barrelAnchorReference;
@@ -42,35 +46,41 @@ public class PlayerCombatController : MonoBehaviour
     [SerializeField] private CinemachineCamera targetCamera;
     [SerializeField] private CinemachineCamera aimCamera;
 
-    [Header("Target References")]
+    [Header("Combat References")]
     public EnemyCombatController currentLockedTarget;
     public EnemyCombatController lastTarget;
+
+
 #endregion
 
     [Header("Player Combat Events")]
     public UnityEvent<CombatScript.HitEventArgs> OnHit;
+    public UnityEvent OnTakeDamage;
     public UnityEvent<EnemyCombatController> OnTrajectory;
 
     [Header("Debug")]
     public bool debugDeadBoolean = false;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void Awake()
     {
         enemyDetection = FindFirstObjectByType<EnemyDetection>();
         combatScript = GetComponent<CombatScript>();
-        movementScript = GetComponent<MovementScript>();
         playerMovementController = GetComponent<PlayerMovementController>();
-        diogenicPlayerInventory = GetComponent<DiogenicPlayerInventory>();
+    }
 
+    void Start()
+    {
         playerCamera = GameObject.Find("DefaultPlayerCamera").GetComponent<CinemachineCamera>();
         targetCamera = GameObject.Find("TargetCamera").GetComponent<CinemachineCamera>();
         aimCamera = GameObject.Find("ThirdPersonAimCamera").GetComponent<CinemachineCamera>();
+
         playerLayermask = LayerMask.GetMask("Player");
+
+        //CHANGE THIS TO SUPPLY OUR OWN CROSSHAIR BASED ON THE WEAPON HELD
+        crosshairReference = GameObject.Find("Crosshair").GetComponent<Image>();
         crosshairReference.enabled = false;
     }
 
-    // Update is called once per frame
     void Update()
     {
         if(!combatScript.isAttacking) //Between Attack Actions
@@ -97,16 +107,24 @@ public class PlayerCombatController : MonoBehaviour
         
         if(Input.GetKey(KeyCode.Mouse0)) //Attack Command
         {
-            if(playerMovementController.isControlled && !playerMovementController.movementScript.isDodging)
+            if(!playerMovementController.movementScript.isDodging)
             {
-                if(isAiming)
+                if(combatScript.diogenicInventory.currentHeldWeapon.weaponType == WeaponScript.WeaponType.Gun)
                 {
                     PlayerShoot();
                 }
-                else
+                else if (combatScript.diogenicInventory.currentHeldWeapon.weaponType == WeaponScript.WeaponType.Melee)
                 {
-                    PlayerPunch(combatScript.meleeRange);
+                    PlayerMelee();
                 }
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            if(!combatScript.isAttacking)
+            {
+                PlayerParry();
             }
         }
             
@@ -120,8 +138,6 @@ public class PlayerCombatController : MonoBehaviour
 
     void SwitchWeapons()
     {
-        //PLACEHOLDER FOR WHEN THE WEAPON SWITCHING IS IMPLEMENTED
-
         if(isAiming)
         {
             return;
@@ -129,43 +145,12 @@ public class PlayerCombatController : MonoBehaviour
 
         if(Input.GetKeyDown("1"))
         {
-            if(diogenicPlayerInventory.mainWeapon)
-            {
-                diogenicPlayerInventory.ShowItemInHands(diogenicPlayerInventory.mainWeapon);
-                combatScript.UpdateStatsBasedOnWeapon(diogenicPlayerInventory.mainWeapon);   
-            }
-            else if (diogenicPlayerInventory.sidearm)
-            {
-                diogenicPlayerInventory.ShowItemInHands(diogenicPlayerInventory.sidearm);
-                combatScript.UpdateStatsBasedOnWeapon(diogenicPlayerInventory.sidearm);
-            }
-            else
-            {
-                //maybe drop whatever the player is holding if it was a pickup
-                diogenicPlayerInventory.HideItemInHands();
-                combatScript.UpdateStatsBasedOnWeapon(null);
-            }
+            combatScript.SwitchWeapons(1);
         }
 
         if(Input.GetKeyDown("2"))
         {
-            if (diogenicPlayerInventory.sidearm)
-            {
-                diogenicPlayerInventory.ShowItemInHands(diogenicPlayerInventory.sidearm);
-                combatScript.UpdateStatsBasedOnWeapon(diogenicPlayerInventory.sidearm);
-            }
-
-            else if(diogenicPlayerInventory.mainWeapon)
-            {
-                diogenicPlayerInventory.ShowItemInHands(diogenicPlayerInventory.mainWeapon);
-                combatScript.UpdateStatsBasedOnWeapon(diogenicPlayerInventory.mainWeapon);   
-            }
-            else
-            {
-                //maybe drop whatever the player is holding if it was a pickup
-                diogenicPlayerInventory.HideItemInHands();
-                combatScript.UpdateStatsBasedOnWeapon(null);
-            }
+            combatScript.SwitchWeapons(2);
         }
 
         /*
@@ -180,51 +165,55 @@ public class PlayerCombatController : MonoBehaviour
         */
     }
 
-    void PlayerPunch(float range)
+    void PlayerMelee()
     {
         if(!combatScript.meleeEquipped || !combatScript.attackIsAvailable)
         {
             return;
         }
-               
-        combatScript.Attack(CombatScript.AttackType.LightMelee, combatScript.meleeDuration, "Punch");
-        if(currentLockedTarget != null)
+
+        string animationTriggerName; //default animation trigger name
+        if(currentAnimationComboChain <= combatScript.diogenicInventory.currentHeldWeapon.listOfAttacks.Count)
         {
-            transform.LookAt(currentLockedTarget.transform.position);
-            if(TargetDistance(currentLockedTarget.transform) < range)
-            {
-                playerMovementController.movementScript.TweenToTarget(currentLockedTarget.gameObject.transform.position, combatScript.meleeDuration/1.75f, combatScript.punchTargetDistanceOffset);
-            }
+            animationTriggerName = combatScript.diogenicInventory.currentHeldWeapon.listOfAttacks[currentAnimationComboChain].animationTriggerName;
         }
         else
         {
-            var camera = Camera.main;
-            var forward = camera.transform.forward;
-            var right = camera.transform.right;
-
-            forward.y = 0f; // Keep the direction horizontal
-            forward.Normalize();
-            right.y = 0f;
-            right.Normalize();
-
-            Vector3 inputDirection = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).normalized;
-            Vector3 direction = (forward * inputDirection.z + right * inputDirection.x).normalized;
-
-            if (inputDirection != Vector3.zero)
-            {
-                direction = direction * 1f; // Move 1 meter in the input direction
-            }
-            else
-            {
-                direction = forward; // Default push towards the camera direction
-            }
-
-            transform.LookAt(transform.position + direction);
-            Debug.Log(inputDirection);
-
-            playerMovementController.movementScript.TweenToTarget(transform.position + direction * 1.5f, 0.5f, 0);
-                //playerMovementController.movementScript.TweenToTarget(direction.normalized * 1.5f, 0.5f, 0);
+            Debug.Log("Combo restart");
+            currentAnimationComboChain = 0;
+            animationTriggerName = combatScript.diogenicInventory.currentHeldWeapon.listOfAttacks[currentAnimationComboChain].animationTriggerName;
         }
+
+        #region Camera Reference
+        var camera = Camera.main;
+        var forward = camera.transform.forward;
+        var right = camera.transform.right;
+
+        forward.y = 0f; // Keep the direction horizontal
+        forward.Normalize();
+        right.y = 0f;
+        right.Normalize();
+
+        Vector3 inputDirection = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).normalized;
+        #endregion
+
+        Vector3 direction = (forward * inputDirection.z + right * inputDirection.x).normalized;
+
+        if (inputDirection != Vector3.zero)
+        {
+            direction = direction * 1f; // Move 1 meter in the input direction
+        }
+        else
+        {
+            direction = forward; // Default push towards the camera direction
+        }
+
+        transform.LookAt(transform.position + direction);
+
+        combatScript.Attack(CombatScript.CombatActionType.LightMelee, combatScript.meleeDuration, animationTriggerName);
+        playerMovementController.movementScript.TweenToPosition(transform.position + direction * 1.5f, 0.2f, 0);
+        
+        currentAnimationComboChain += 1;
     }
 
     void PlayerShoot()
@@ -258,7 +247,7 @@ public class PlayerCombatController : MonoBehaviour
             }
         }      
         
-        combatScript.Attack(CombatScript.AttackType.Shoot, combatScript.gunRateOfFireTime, "Shoot"); //change later to be a variable for different guns
+        combatScript.Attack(CombatScript.CombatActionType.Shoot, combatScript.gunRateOfFireTime, "Shoot"); //change later to be a variable for different guns
     }
 
     void PlayerAim()
@@ -278,10 +267,8 @@ public class PlayerCombatController : MonoBehaviour
                 playerMovementController.canSprint = false;
                 isLockOnToggle = false;
                 enemyDetection.SetCurrentTarget(null);
-                
-                aimCamera.Priority = 1;
-                playerCamera.Priority = 0;
-                targetCamera.Priority = 0;
+
+                SwitchCamera(CameraType.Aim);
 
                 combatScript.animator.SetTrigger("enterAim");
                 combatScript.animator.SetBool("isAiming", true);
@@ -294,9 +281,7 @@ public class PlayerCombatController : MonoBehaviour
             playerMovementController.canSprint = true;
             crosshairReference.enabled = false;
 
-            playerCamera.Priority = 1;
-            
-            aimCamera.Priority = 0;
+            SwitchCamera(CameraType.Default);
 
             combatScript.animator.SetBool("isAiming", false);
         }
@@ -331,7 +316,7 @@ public class PlayerCombatController : MonoBehaviour
 
     void PlayerFaceTarget()
     {
-        if(isLockOnToggle && !isAiming && !movementScript.isDashing && !movementScript.isSprinting)
+        if(isLockOnToggle && !isAiming && !playerMovementController.movementScript.isSprinting)
         {
            transform.DOLookAt(currentLockedTarget.transform.position, 0.1f);
         }
@@ -354,32 +339,73 @@ public class PlayerCombatController : MonoBehaviour
             {
                 playerMovementController.movementScript.DodgeWithTarget(inputDirection, 0.5f, currentLockedTarget.transform);
             }
-            else
-            {
-                playerMovementController.movementScript.Dash(inputDirection,0.5f);
-            }
         }
     }
 
+    void PlayerParry()
+    {
+        combatScript.Attack(CombatScript.CombatActionType.Parry, 0, "ParryTrigger");
+    }
 #endregion
 
 #region Controller Functions
 
+    private void RemoveControl()
+    {
+        combatScript.ultimateCanAttack = false;
+        playerMovementController.movementScript.ultimateCanMove = false;
+    }
+
+    private void GiveControl()
+    {
+        combatScript.ultimateCanAttack = true;
+        playerMovementController.movementScript.ultimateCanMove = true;
+    }
+
+
+    void SwitchCamera(CameraType cameraType)
+    {
+        CinemachineShake.Instance.ResetCameraShake();
+
+        switch(cameraType)
+        {
+            case CameraType.Default:
+            {
+                CinemachineShake.Instance.cinemachineCamera = playerCamera;
+                playerCamera.Priority = 1;
+                targetCamera.Priority = 0;
+                aimCamera.Priority = 0;
+                break;
+            }
+            case CameraType.Aim:
+            {
+                CinemachineShake.Instance.cinemachineCamera = aimCamera;
+                aimCamera.Priority = 1;
+                playerCamera.Priority = 0;
+                targetCamera.Priority = 0;
+                break;
+            }
+            case CameraType.Focus:
+            {
+                CinemachineShake.Instance.cinemachineCamera = targetCamera;
+                targetCamera.Priority = 1;
+                aimCamera.Priority = 0;
+                playerCamera.Priority = 0;
+                break;
+            }
+        }
+    }
+
     public void OnTakeHit(CombatScript.HitEventArgs hitEventArgs)
     {
-        if(transform == hitEventArgs.target)
+        if(transform != hitEventArgs.damageSource)
         {
-            if(Vector3.Distance(hitEventArgs.target.position, hitEventArgs.damageSource.transform.position) > hitEventArgs.attackRange)
-            {
-                Debug.Log("Too far");
-                return;
-            }
-
-            if(movementScript.isInvincible)
+            if(playerMovementController.movementScript.isInvincibleFromDodge)
             {
                 Debug.LogWarning("DODGED");
                 return;
             }
+
             Debug.Log("Took Damage");
 
             playerMovementController.animator.SetTrigger("RecieveHit");
@@ -398,9 +424,11 @@ public class PlayerCombatController : MonoBehaviour
         }
     }
 
+    /*
     public void DealDamageEvent()
     {
         Debug.Log("Attack!");
+        GiveControl();
         if(combatScript.meleeEquipped)
         {
             if (currentLockedTarget == null)
@@ -429,7 +457,7 @@ public class PlayerCombatController : MonoBehaviour
             OnHit.Invoke(combatScript.BuildAttack(combatScript.attackDamage, combatScript.gunStunDuration, 100, bulletHitTarget.transform, transform));
         }
     }
-
+    */
 
     void AdjustLockOnCamera()
     {   
@@ -443,8 +471,7 @@ public class PlayerCombatController : MonoBehaviour
                 {
                     cinemachineTargetGroup.AddMember(currentLockedTarget.transform, 1, 2);
                 }
-                playerCamera.enabled = false;
-                targetCamera.enabled = true;
+                SwitchCamera(CameraType.Focus);
             }
             else
             {
@@ -453,8 +480,7 @@ public class PlayerCombatController : MonoBehaviour
                     cinemachineTargetGroup.RemoveMember(lastTarget.transform);
                 }
                 isLockOnToggle = false;
-                playerCamera.enabled = true;
-                targetCamera.enabled = false;
+                SwitchCamera(CameraType.Default);
             }
         }
     }
@@ -476,13 +502,6 @@ public class PlayerCombatController : MonoBehaviour
         {
             return 100f/result;
         }
-    }
-
-    public IEnumerator IDamageRecievedCoroutine()
-    {
-        playerMovementController.isControlled = false;
-        yield return new WaitForSeconds(1f);
-        playerMovementController.isControlled = true;
     }
 
     void Die()

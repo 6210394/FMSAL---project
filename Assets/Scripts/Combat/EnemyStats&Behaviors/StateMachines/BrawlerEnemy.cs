@@ -1,13 +1,8 @@
 using System;
-using System.Collections;
 using UnityEngine;
-
-[RequireComponent(typeof (EnemyCombatController))]
-[RequireComponent(typeof (EnemyMovementController))]
 
 public class BrawlerEnemy : EnemyBlueprint
 {
-
     protected override void Start()
     {
         base.Start();
@@ -18,39 +13,51 @@ public class BrawlerEnemy : EnemyBlueprint
         var circlingPlayer = new CirclingPlayer(this, _movementController, _combatController, _animator);
         var approachAndPunch = new ApproachAndPunch(this, _movementController, _combatController, _animator);
         var searchDamageSourceArea = new SearchDamageSourceArea(this, _movementController);
+        var retreat = new Retreat(this, _movementController, _animator);
 
         //Create the transitions with their condition
         At(patrol, circlingPlayer, PlayerInDetectionRange());
-        At(circlingPlayer, approachAndPunch, ReadyToPunch());
+        At(circlingPlayer, approachAndPunch, PreparingAttack());
         At(takeDamage, approachAndPunch, Retaliate());
         At(takeDamage, searchDamageSourceArea, OutOfHit());
         At(searchDamageSourceArea, circlingPlayer, PlayerInDetectionRange());
         At(searchDamageSourceArea, patrol, FinishedSearching());
-        At(circlingPlayer, approachAndPunch, ReadyToPunch());
+        At(circlingPlayer, approachAndPunch, PreparingAttack());
+        At(retreat, circlingPlayer, FinishedRetreating());
 
         _stateMachine.AddAnyTransition(takeDamage, TookHit());
+        _stateMachine.AddAnyTransition(retreat,WantsToRetreat());
         
         _combatController.OnDamage.AddListener((stunTime, damageSource) => OnTakeHit(stunTime, damageSource));
+        _combatController.OnHit.AddListener(approachAndPunch.CompleteAttack);
+        _combatController.OnHit.AddListener(() => RetreatAfterHit());
 
         //Begin at Patrol
         _stateMachine.SetState(patrol);
 
         void At(IState to, IState from, Func<bool> condition) => _stateMachine.AddTransition(to, from, condition);
         Func<bool> PlayerInDetectionRange() => () => CheckForPlayersInDetectionRange();
-        Func<bool> ReadyToPunch() => () => _isReadyToAttack == true;
+        Func<bool> PreparingAttack() => () => _combatController.isPreparingAttack == true;
         Func<bool> TookHit() => () => _hasTakenHit;
         Func<bool> OutOfHit() => () => !_hasTakenHit;
         Func<bool> Retaliate() => () => takeDamage.Retaliate();
         Func<bool> FinishedSearching() => () => searchDamageSourceArea.HasTimerReachedMax();
+        Func<bool> WantsToRetreat() => () => wantsToRetreat;
+        Func<bool> FinishedRetreating() => () => retreat.HasRetreated();
     }
 
     // Update is called once per frame
     void Update()
     {
         if(_stateMachine != null)
-        {
+        {            
             _stateMachine.Tick();
         }
+    }
+
+    private void RetreatAfterHit()
+    {
+        wantsToRetreat = true;
     }
 
     private void OnDrawGizmos()
@@ -59,10 +66,6 @@ public class BrawlerEnemy : EnemyBlueprint
         {
             Gizmos.color = _stateMachine.GetGizmoColor();
             Gizmos.DrawSphere(transform.position + Vector3.up * 3, 0.5f);
-        }
-        else
-        {
-            Debug.Log("No state machine!");
         }
     }
 }

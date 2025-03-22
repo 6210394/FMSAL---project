@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class EnemyDetection : MonoBehaviour
 {
-    [SerializeField] private DepractedEnemyManager enemyManager;
+    [SerializeField] private EnemyManager enemyManager;
 
     public PlayerCombatController playerCombatController;
 

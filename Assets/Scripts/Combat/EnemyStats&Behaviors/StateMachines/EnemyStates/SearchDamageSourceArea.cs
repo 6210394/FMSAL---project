@@ -21,7 +21,6 @@ public class SearchDamageSourceArea : IState
 
     public void OnEnter()
     {
-        _movementController.transform.LookAt(_brawlerEnemy._damageSource);
         _searchPosition = _brawlerEnemy._damageSource + Random.insideUnitSphere * 2;
 
         _hasArrived = false;
@@ -42,6 +41,7 @@ public class SearchDamageSourceArea : IState
         }
         else
         {
+            _movementController.transform.LookAt(_brawlerEnemy._damageSource);
             MoveToSearchPosition();
         }
     }

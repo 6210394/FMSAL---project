@@ -85,6 +85,7 @@ MonoBehaviour:
   _damageSource: {x: 0, y: 0, z: 0}
   _stunDuration: 0
   _stunChainRecoveryRate: 0
+  wantsToRetreat: 0
   _combatController: {fileID: 0}
   _movementController: {fileID: 0}
   _animator: {fileID: 0}
@@ -115,6 +116,9 @@ MonoBehaviour:
   playerEnemyDetections: []
   target: {fileID: 0}
   OnDamage:
+    m_PersistentCalls:
+      m_Calls: []
+  OnHit:
     m_PersistentCalls:
       m_Calls: []
   OnDeath:
@@ -208,7 +212,7 @@ MonoBehaviour:
   bulletVisualsPrefab: {fileID: 0}
   bulletSpawnOriginOffset: {fileID: 0}
   animator: {fileID: 6659547010701238330}
-  debugCanAttack: 0
+  debugCanAttack: 1
 --- !u!143 &6548890165488695915
 CharacterController:
   m_ObjectHideFlags: 0

@@ -21,9 +21,12 @@ MonoBehaviour:
   weaponType: 1
   damage: 2
   stunTime: 0
+  Hurtbox: {fileID: 0}
   swingTime: 0
   weaponReach: 0
-  rateOfFire: 200
+  weaponRange: 0
+  weaponTargetOffset: 0
+  rateOfFire: 600
   weaponAimAssistValue: 0.7
   reloadSpeed: 0
   maxAmmo: 24

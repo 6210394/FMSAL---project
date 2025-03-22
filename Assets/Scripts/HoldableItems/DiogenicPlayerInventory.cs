@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class DiogenicPlayerInventory : MonoBehaviour
+public class DiogenicInventory : MonoBehaviour
 {
     [Header("Booleans")]
     public bool canDropItem;
@@ -9,28 +9,18 @@ public class DiogenicPlayerInventory : MonoBehaviour
     public GameObject handAnchor;
 
     [Header("Hand Slots")]
+    public WeaponScript currentHeldWeapon;
+    public IObjectType currentHeldObject;
+
     public IObjectType mainHeldObject;
     public IObjectType secondaryHeldItem;
     [Space]
     public WeaponScript mainWeapon;
     public WeaponScript sidearm;
 
-
     GameObject instantiatedVisual;
 
-    public static DiogenicPlayerInventory instance;
-
-    void Awake()
-    {
-        if(instance == null)
-        {
-            instance = this;
-        }
-        else
-        {
-            Destroy(this);
-        }
-    }
+    
 
     void RecieveObject(WeaponScript weapon)
     {
@@ -55,7 +45,6 @@ public class DiogenicPlayerInventory : MonoBehaviour
     {
         HideItemInHands();
 
-        Debug.Log("Creating" + objectType.name);
         instantiatedVisual = new GameObject("HeldItem");
         instantiatedVisual.transform.SetParent(handAnchor.transform);
         instantiatedVisual.transform.localPosition = -objectType.grabPoint;
@@ -68,6 +57,17 @@ public class DiogenicPlayerInventory : MonoBehaviour
         meshRenderer.material = objectType.itemMaterial;
 
         instantiatedVisual.transform.localScale *= objectType.scale;
+
+        if(objectType is WeaponScript)
+        {
+            currentHeldWeapon = (WeaponScript)objectType;
+            currentHeldObject = null;
+        }
+        else
+        {
+            currentHeldObject = objectType;
+            currentHeldWeapon = null;
+        }
     }
 
     public void HideItemInHands()
@@ -76,6 +76,7 @@ public class DiogenicPlayerInventory : MonoBehaviour
         {
             Destroy(instantiatedVisual);
             instantiatedVisual = null;
+            currentHeldWeapon = null;
         }
     }
 }

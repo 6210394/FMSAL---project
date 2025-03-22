@@ -11,12 +11,10 @@ public class PlayerMovementController : MonoBehaviour
     public bool canSprint = true;
     bool isSprintingAnim;
 
-
     [Header("Field Of View & Speed Values")]
     public float normalFOV = 60f;
     public float sprintingFOV;
     public float playerRotationSpeed = 5f;
-
 
     [Header("Component References")]
     public GameObject backupCamera;
@@ -106,12 +104,14 @@ public class PlayerMovementController : MonoBehaviour
         moveDirection = moveDirection.normalized;
         animator.SetFloat("StrafeDirection", moveDirection.z);
 
-
-        if (moveDirection != Vector3.zero && !Input.GetMouseButton(1))
+        if(!movementScript.isDodging)
         {
-            movementScript.FaceTowards(moveDirection, playerRotationSpeed);
+            if (moveDirection != Vector3.zero && !Input.GetMouseButton(1))
+            {
+                movementScript.FaceTowards(moveDirection, playerRotationSpeed);
+            }
+            movementScript.Move(moveDirection, isSprinting);
         }
-        movementScript.Move(moveDirection, isSprinting);
     }
 
     void DebugTools()

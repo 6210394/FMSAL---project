@@ -1,14 +1,18 @@
 using UnityEngine;
 
+[RequireComponent(typeof (EnemyCombatController))]
+[RequireComponent(typeof (EnemyMovementController))]
 public class EnemyBlueprint : MonoBehaviour
 {
     public EnemyStats _enemyStats;
-    public bool _isReadyToAttack = false; //Will be set to True by the Enemy Manager
+    public bool _isReadyToAttack = false; //indicates that the player is available for attacking to the EnemyManager
     
     public bool _hasTakenHit = false;
     public Vector3 _damageSource;
     public float _stunDuration = 0;
     public float _stunChainRecoveryRate;
+
+    public bool wantsToRetreat = false;
 
     public EnemyCombatController _combatController;
     public EnemyMovementController _movementController;

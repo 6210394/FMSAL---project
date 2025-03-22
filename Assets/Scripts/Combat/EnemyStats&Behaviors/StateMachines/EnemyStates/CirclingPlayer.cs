@@ -29,7 +29,8 @@ public class CirclingPlayer : IState
             if(IsTooClose())
             {
                 _brawlerEnemy._isReadyToAttack = false;
-                _movementController.MoveEnemyInDirection(Vector3.back, false);
+                Vector3 retreatDirection = -_movementController.transform.forward; // Move backwards locally
+                _movementController.MoveEnemyInDirection(retreatDirection, false);
                 _movementController.transform.LookAt(_brawlerEnemy._target);
                 return;
             }
@@ -38,9 +39,8 @@ public class CirclingPlayer : IState
                 _brawlerEnemy._isReadyToAttack = true;
                 _movementController.EnemyCirclingMovement(_brawlerEnemy._target.position, _perpendicularDirection);
             }
-            
             else
-            {              
+            {   
                 _brawlerEnemy._isReadyToAttack = false;
                 _animator.SetBool("Strafe", false);
                 Vector3 moveDir = (_brawlerEnemy._target.position - _movementController.transform.position).normalized;
@@ -106,16 +106,14 @@ public class CirclingPlayer : IState
 
     private void ChangeDirection()
     {
-        /* FOR WHEN WE HAVE A VISUAL DIFFERENCE BETWEEN CHILLING VS AWARE
         float randomChance = Random.Range(1, 11);
 
-         
-        if(randomChance >= 9)
+        if(randomChance > 2)
         {
             _perpendicularDirection = Vector3.zero;
             return;
         }
-        if(randomChance >= 4)
+        if(randomChance == 2)
         {
             _perpendicularDirection = Vector3.right;
             return;
@@ -124,21 +122,6 @@ public class CirclingPlayer : IState
         {
             _perpendicularDirection = Vector3.left;
             return;
-        }
-        */
-
-        switch(Random.Range(0,2))
-        {
-            case 0:
-            {
-                _perpendicularDirection = Vector3.right;
-                break;
-            }
-            case 1:
-            {
-                _perpendicularDirection = Vector3.left;
-                break;
-            }
         }
     }
 

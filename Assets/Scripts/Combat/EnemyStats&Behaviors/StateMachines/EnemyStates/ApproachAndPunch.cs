@@ -18,6 +18,11 @@ public class ApproachAndPunch : IState
         _brawlerEnemy = brawlerEnemy;
     }
 
+    private void Start()
+    {
+        _combatController.OnHit.AddListener(CompleteAttack);
+    }
+
     public void Tick()
     {
         if(!completedAttack)
@@ -47,7 +52,7 @@ public class ApproachAndPunch : IState
 
     public void OnExit()
     {
-        completedAttack = true;
+        CompleteAttack();
     }
 
     public bool HasTarget()
@@ -59,9 +64,11 @@ public class ApproachAndPunch : IState
         return false;
     }
 
-    void CompleteAttack()
+    public void CompleteAttack() //THIS ISNT BEING TRIGGERED BY THE EVENT. IDK WHY.
     {
         completedAttack = true;
+        hasAttacked = false;
+        _combatController.isPreparingAttack = false;
     }
 
     public Color GizmoColor()
