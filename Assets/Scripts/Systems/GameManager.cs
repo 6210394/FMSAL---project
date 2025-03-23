@@ -52,7 +52,7 @@ public class GameManager : MonoBehaviour, IDataPersistence
         RegisterPlayers();
         SceneManager.sceneLoaded += OnSceneLoaded;
         LevelManager.onMissionInitialize.AddListener(RegisterPlayers);
-        Debug.Log(players.Count);
+        Debug.Log(players.Count + " players in the scene.");
     }
 
     // Update is called once per frame

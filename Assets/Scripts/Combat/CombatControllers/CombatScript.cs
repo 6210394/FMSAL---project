@@ -45,6 +45,7 @@ public class CombatScript : MonoBehaviour
     bool inParryWindow = false;
 
     [Space]
+    public int currentAnimationComboChain = 0;
     public bool attackIsAvailable = true;
     public bool isAttacking = false;
     float attackCooldown = 0.5f;
@@ -110,19 +111,33 @@ public class CombatScript : MonoBehaviour
         return hitEventArgs;
     }
 
-    public GameObject BuildHurtbox(Transform parent, HitEventArgs attackInformation, GameObject hurtBox)
+    public GameObject BuildHurtbox(Transform parent, HitEventArgs attackInformation, GameObject hurtBox, int hurtboxIndex)
     {
-        GameObject hurtboxInstance = Instantiate(hurtBox, parent);
-        hurtboxInstance.GetComponent<HurtboxScript>()._hitEventArgs = attackInformation;
-        hurtboxInstance.transform.localPosition = Vector3.zero;
-        hurtboxInstance.transform.localRotation = Quaternion.identity;
-        return hurtboxInstance;
+        if(diogenicInventory.currentHeldWeapon.listOfAttacks.Count - 1 <= currentAnimationComboChain)
+        {
+            GameObject hurtboxInstance = Instantiate(hurtBox, parent);
+            hurtboxInstance.GetComponent<HurtboxScript>()._hitEventArgs = attackInformation;
+
+            hurtboxInstance.transform.localPosition = diogenicInventory.currentHeldWeapon.listOfAttacks[currentAnimationComboChain].hurtboxes[hurtboxIndex].hurtboxOffset;
+            hurtboxInstance.transform.localRotation = diogenicInventory.currentHeldWeapon.listOfAttacks[currentAnimationComboChain].hurtboxes[hurtboxIndex].hurtboxRotationOffset;
+
+            return hurtboxInstance;
+        }
+        else
+        {
+            Debug.LogError("The Combo index is too high! It is bigger than the list of attacks!");
+            return null;
+        }
     }
 
-        public void CreateHurtbox()
+    public void CreateHurtbox(int hurtboxIndex)
     {
-        CombatScript.HitEventArgs hitEventArgs = BuildAttack(attackDamage, meleeStunDuration, meleeRange, transform);
-        currentHurtboxReferences.Add(BuildHurtbox(diogenicInventory.handAnchor.transform, hitEventArgs, gameObject));
+        HitEventArgs hitEventArgs = BuildAttack(attackDamage, meleeStunDuration, meleeRange, transform);
+        GameObject hurtBox = BuildHurtbox(diogenicInventory.handAnchor.transform, hitEventArgs, gameObject, hurtboxIndex);
+        if(hurtBox != null)
+        {
+            currentHurtboxReferences.Add(hurtBox); //CHANGE THIS TO USE THE PROVIDED PARENT IN THE ATTACK DATA
+        }
     }
 
     public void DestroyHurtbox(int index)
@@ -246,11 +261,25 @@ public class CombatScript : MonoBehaviour
         }
     }
 
-    public void Attack(CombatActionType attackType, float specificAttackCooldown, string animationName)
+    public void Attack(CombatActionType attackType, float specificAttackCooldown)
     {
         if(!isStunned && ultimateCanAttack)
         {
             attackCooldown = specificAttackCooldown;
+            Debug.Log(diogenicInventory.currentHeldWeapon.listOfAttacks.Count + " attacks available for this weapon.");
+
+            string animationTriggerName; //default animation trigger name
+            if(currentAnimationComboChain <= diogenicInventory.currentHeldWeapon.listOfAttacks.Count - 1)
+            {
+                animationTriggerName = diogenicInventory.currentHeldWeapon.listOfAttacks[currentAnimationComboChain].animationTriggerName;
+            }
+            else
+            {
+                Debug.Log("Combo restart");
+                currentAnimationComboChain = 0;
+                animationTriggerName = diogenicInventory.currentHeldWeapon.listOfAttacks[currentAnimationComboChain].animationTriggerName;
+            }
+
             switch(attackType)
             {
                 case CombatActionType.LightMelee:
@@ -259,7 +288,7 @@ public class CombatScript : MonoBehaviour
                     {
                         StopCoroutine(CombatActionCoroutine);
                     }
-                    CombatActionCoroutine = StartCoroutine(ILightMelee(animationName));
+                    CombatActionCoroutine = StartCoroutine(ILightMelee(animationTriggerName));
                     break;
                 }
                 case CombatActionType.Shoot:
@@ -268,7 +297,7 @@ public class CombatScript : MonoBehaviour
                     {
                         StopCoroutine(CombatActionCoroutine);
                     }
-                    CombatActionCoroutine = StartCoroutine(IShoot(animationName));
+                    CombatActionCoroutine = StartCoroutine(IShoot(animationTriggerName));
                     break;
                 }
                 case CombatActionType.Parry:
@@ -277,10 +306,14 @@ public class CombatScript : MonoBehaviour
                     {
                         StopCoroutine(CombatActionCoroutine);
                     }
-                    CombatActionCoroutine = StartCoroutine(IParry(animationName));
+                    CombatActionCoroutine = StartCoroutine(IParry(animationTriggerName));
                     break;
                 }
             }
+
+            animator.SetInteger("ComboValue", currentAnimationComboChain);
+            //currentAnimationComboChain += 1;
+            Debug.Log(currentAnimationComboChain);
         }
         else if (!ultimateCanAttack)
         {

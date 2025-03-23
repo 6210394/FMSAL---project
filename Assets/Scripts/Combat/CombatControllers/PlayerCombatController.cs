@@ -18,7 +18,6 @@ public class PlayerCombatController : MonoBehaviour
 
 #region Variables & States
 
-    public int currentAnimationComboChain = 0;
     public float detectionRange = 5;
     private EnemyCombatController bulletHitTarget;
     
@@ -49,7 +48,6 @@ public class PlayerCombatController : MonoBehaviour
     [Header("Combat References")]
     public EnemyCombatController currentLockedTarget;
     public EnemyCombatController lastTarget;
-
 
 #endregion
 
@@ -172,18 +170,6 @@ public class PlayerCombatController : MonoBehaviour
             return;
         }
 
-        string animationTriggerName; //default animation trigger name
-        if(currentAnimationComboChain <= combatScript.diogenicInventory.currentHeldWeapon.listOfAttacks.Count)
-        {
-            animationTriggerName = combatScript.diogenicInventory.currentHeldWeapon.listOfAttacks[currentAnimationComboChain].animationTriggerName;
-        }
-        else
-        {
-            Debug.Log("Combo restart");
-            currentAnimationComboChain = 0;
-            animationTriggerName = combatScript.diogenicInventory.currentHeldWeapon.listOfAttacks[currentAnimationComboChain].animationTriggerName;
-        }
-
         #region Camera Reference
         var camera = Camera.main;
         var forward = camera.transform.forward;
@@ -210,10 +196,9 @@ public class PlayerCombatController : MonoBehaviour
 
         transform.LookAt(transform.position + direction);
 
-        combatScript.Attack(CombatScript.CombatActionType.LightMelee, combatScript.meleeDuration, animationTriggerName);
+
+        combatScript.Attack(CombatScript.CombatActionType.LightMelee, combatScript.meleeDuration);
         playerMovementController.movementScript.TweenToPosition(transform.position + direction * 1.5f, 0.2f, 0);
-        
-        currentAnimationComboChain += 1;
     }
 
     void PlayerShoot()
@@ -247,7 +232,7 @@ public class PlayerCombatController : MonoBehaviour
             }
         }      
         
-        combatScript.Attack(CombatScript.CombatActionType.Shoot, combatScript.gunRateOfFireTime, "Shoot"); //change later to be a variable for different guns
+        combatScript.Attack(CombatScript.CombatActionType.Shoot, combatScript.gunRateOfFireTime); //change later to be a variable for different guns
     }
 
     void PlayerAim()
@@ -344,7 +329,7 @@ public class PlayerCombatController : MonoBehaviour
 
     void PlayerParry()
     {
-        combatScript.Attack(CombatScript.CombatActionType.Parry, 0, "ParryTrigger");
+        combatScript.Attack(CombatScript.CombatActionType.Parry, 0);
     }
 #endregion
 
