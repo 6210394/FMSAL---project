@@ -23,7 +23,7 @@ public class WeaponScript : IObjectType
         public float weaponRange;
         public float weaponTargetOffset;
 
-        public List<AttackData> listOfAttacks;
+        public List<AttackAnimationData> listOfAttacks;
 
     [Header("Ranged Weapon")]
         //Guns

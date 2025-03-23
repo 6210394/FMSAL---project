@@ -43,9 +43,10 @@ public class CombatScript : MonoBehaviour
     //Parrying & Animation Lock
     bool isParrying = false;
     bool inParryWindow = false;
-
     [Space]
     public int currentAnimationComboChain = 0;
+    public int upcomingAnimationComboChain = 0;
+    [Space]
     public bool attackIsAvailable = true;
     public bool isAttacking = false;
     float attackCooldown = 0.5f;
@@ -64,12 +65,12 @@ public class CombatScript : MonoBehaviour
     [Space]
     public Animator animator;
 
-        private List<GameObject> currentHurtboxReferences; //attack type, hurtbox
+    public List<GameObject> currentHurtboxReferences;
 
 
     [Header ("Coroutines")]
     public Coroutine CombatActionCoroutine;
-    public Coroutine stunCoroutine;
+    public Coroutine StunCoroutine;
 
     [SerializeField] public bool ultimateCanAttack = false; //debug variable
 
@@ -113,13 +114,14 @@ public class CombatScript : MonoBehaviour
 
     public GameObject BuildHurtbox(Transform parent, HitEventArgs attackInformation, GameObject hurtBox, int hurtboxIndex)
     {
-        if(diogenicInventory.currentHeldWeapon.listOfAttacks.Count - 1 <= currentAnimationComboChain)
+        if(currentAnimationComboChain <= diogenicInventory.currentHeldWeapon.listOfAttacks.Count - 1)
         {
             GameObject hurtboxInstance = Instantiate(hurtBox, parent);
             hurtboxInstance.GetComponent<HurtboxScript>()._hitEventArgs = attackInformation;
 
             hurtboxInstance.transform.localPosition = diogenicInventory.currentHeldWeapon.listOfAttacks[currentAnimationComboChain].hurtboxes[hurtboxIndex].hurtboxOffset;
             hurtboxInstance.transform.localRotation = diogenicInventory.currentHeldWeapon.listOfAttacks[currentAnimationComboChain].hurtboxes[hurtboxIndex].hurtboxRotationOffset;
+            hurtboxInstance.transform.localScale = diogenicInventory.currentHeldWeapon.listOfAttacks[currentAnimationComboChain].hurtboxes[hurtboxIndex].hurtboxScale;
 
             return hurtboxInstance;
         }
@@ -133,10 +135,18 @@ public class CombatScript : MonoBehaviour
     public void CreateHurtbox(int hurtboxIndex)
     {
         HitEventArgs hitEventArgs = BuildAttack(attackDamage, meleeStunDuration, meleeRange, transform);
-        GameObject hurtBox = BuildHurtbox(diogenicInventory.handAnchor.transform, hitEventArgs, gameObject, hurtboxIndex);
+        
+
+        GameObject hurtBox = BuildHurtbox(diogenicInventory.handAnchor.transform, hitEventArgs, diogenicInventory.currentHeldWeapon.listOfAttacks[currentAnimationComboChain].hurtboxes[hurtboxIndex].hurtboxGameobject, hurtboxIndex);
+
+        //CHANGE THIS TO USE THE PROVIDED PARENT IN THE ATTACK DATA
         if(hurtBox != null)
         {
-            currentHurtboxReferences.Add(hurtBox); //CHANGE THIS TO USE THE PROVIDED PARENT IN THE ATTACK DATA
+            currentHurtboxReferences.Add(hurtBox);
+        }
+        else
+        {
+            Debug.Log("Hurtbox reference is null!");
         }
     }
 
@@ -152,7 +162,7 @@ public class CombatScript : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        currentHurtboxReferences = null;
+        currentHurtboxReferences.Clear();
     }
 
     public void SwitchWeapons(int slot)
@@ -266,7 +276,8 @@ public class CombatScript : MonoBehaviour
         if(!isStunned && ultimateCanAttack)
         {
             attackCooldown = specificAttackCooldown;
-            Debug.Log(diogenicInventory.currentHeldWeapon.listOfAttacks.Count + " attacks available for this weapon.");
+
+            currentAnimationComboChain = upcomingAnimationComboChain;
 
             string animationTriggerName; //default animation trigger name
             if(currentAnimationComboChain <= diogenicInventory.currentHeldWeapon.listOfAttacks.Count - 1)
@@ -275,8 +286,8 @@ public class CombatScript : MonoBehaviour
             }
             else
             {
-                Debug.Log("Combo restart");
                 currentAnimationComboChain = 0;
+                upcomingAnimationComboChain = 0;
                 animationTriggerName = diogenicInventory.currentHeldWeapon.listOfAttacks[currentAnimationComboChain].animationTriggerName;
             }
 
@@ -311,9 +322,6 @@ public class CombatScript : MonoBehaviour
                 }
             }
 
-            animator.SetInteger("ComboValue", currentAnimationComboChain);
-            //currentAnimationComboChain += 1;
-            Debug.Log(currentAnimationComboChain);
         }
         else if (!ultimateCanAttack)
         {
@@ -326,11 +334,17 @@ public class CombatScript : MonoBehaviour
         isAttacking = true;
         attackIsAvailable = false;
 
+        animator.SetInteger("ComboValue", currentAnimationComboChain);
         animator.SetTrigger(animationName);
         yield return new WaitUntil(() => attackIsAvailable = true);
-        
         isAttacking = false;
+
+        upcomingAnimationComboChain += 1;
+        
         yield return new WaitForSeconds(0.7f);
+        currentAnimationComboChain = 0;
+        upcomingAnimationComboChain = 0;
+        animator.SetInteger("ComboValue", currentAnimationComboChain);
     }
 
     public IEnumerator IShoot(string animationName)
@@ -341,6 +355,11 @@ public class CombatScript : MonoBehaviour
         yield return new WaitUntil(() => attackIsAvailable = true);
 
         isAttacking = false;
+    }
+
+    public void HitScan(HealthScript healthScript)
+    {
+        
     }
 
     public IEnumerator IParry(string animationName)
@@ -389,7 +408,7 @@ public class CombatScript : MonoBehaviour
 
     public void Stun(float time)
     {
-        stunCoroutine = StartCoroutine(IStunned(time));
+        StunCoroutine = StartCoroutine(IStunned(time));
     }
 
     public IEnumerator IStunned(float time)

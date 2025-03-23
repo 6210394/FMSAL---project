@@ -10,23 +10,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9e0212878c032064dbd073d61ffbd55e, type: 3}
-  m_Name: Gun
+  m_Name: Handgun
   m_EditorClassIdentifier: 
   grabPoint: {x: 0.05, y: 0, z: 0.1}
   itemMesh: {fileID: 2941274158721294118, guid: e33a9df6f07b2704bbd54968f5530520, type: 3}
   itemMaterial: {fileID: 2100000, guid: c8d56cfdd2163f3488d1961f876d455c, type: 2}
   scale: 100
-  rotation: {x: -10, y: 0, z: 270}
+  rotation: {x: 0, y: -10, z: 0}
   isThrowable: 1
   weaponType: 1
   damage: 2
   stunTime: 0
-  Hurtbox: {fileID: 0}
   swingTime: 0
   weaponReach: 0
   weaponRange: 0
   weaponTargetOffset: 0
-  rateOfFire: 600
+  listOfAttacks:
+  - {fileID: 11400000, guid: dbae54b41b55e3349b8c059c5fc5c0ae, type: 2}
+  rateOfFire: 180
   weaponAimAssistValue: 0.7
   reloadSpeed: 0
   maxAmmo: 24

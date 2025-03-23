@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "AttackhurtboxData", menuName = "Scriptable Objects/AttackHurtboxData")]
-public class AttackData : ScriptableObject
+[CreateAssetMenu(fileName = "AttackAnimationData", menuName = "Scriptable Objects/AttackAnimationData")]
+public class AttackAnimationData : ScriptableObject
 {
     //This serves to give moves their specific hitboxes. Different hitboxes can be created by the animation using their index.
 
@@ -17,5 +17,6 @@ public class AttackData : ScriptableObject
 
         public Vector3 hurtboxOffset;
         public Quaternion hurtboxRotationOffset;
+        public Vector3 hurtboxScale;
     }
 }

@@ -5,6 +5,9 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
 
+
+[RequireComponent(typeof(CombatScript))]
+[RequireComponent(typeof(EnemyMovementController))]
 public class EnemyCombatController : MonoBehaviour
 {
     [Header("States")]
@@ -22,10 +25,6 @@ public class EnemyCombatController : MonoBehaviour
     public bool isDead = false;
     public bool isPreparingAttack = false;
     public bool isAvailableForEnemyManager = true;
-
-    //Animations
-    Animator animator;
-    private Rigidbody rb;
 
     //References
     private EnemyManager enemyManager;
@@ -45,13 +44,15 @@ public class EnemyCombatController : MonoBehaviour
     [Header("Debug Tools")]
     public bool moveDebugBool = false;
 
+    void Awake()
+    {
+        Initialize();
+    }
 
     void Initialize()
     {
-        animator = GetComponentInChildren<Animator>();
-        rb = GetComponent<Rigidbody>();
-        
         combatScript = GetComponent<CombatScript>();
+        enemyMovementController = GetComponent<EnemyMovementController>();
     }
     
     public void OnTakeHit(CombatScript.HitEventArgs hitEventArgs)
@@ -85,6 +86,10 @@ public class EnemyCombatController : MonoBehaviour
                 Die();
             }
         }
+        else
+        {
+            Debug.Log(gameObject + ": I am the source");
+        }
     }
 
     public void Retaliate()
@@ -92,29 +97,6 @@ public class EnemyCombatController : MonoBehaviour
         isAvailableForEnemyManager = false;
         Attack();
     }
-
-    /*
-    void StopEnemyCoroutines()
-    {
-        Debug.Log("Stopping enemy coroutines!");
-        if (enemyMovementController.isRetreating)
-        {
-            if (enemyMovementController.RetreatCoroutine != null)
-                StopCoroutine(enemyMovementController.RetreatCoroutine);
-                enemyMovementController.isRetreating = false;
-        }
-
-        if (PrepareAttackCoroutine != null)
-            StopCoroutine(PrepareAttackCoroutine);
-            isPreparingAttack = false;
-
-        if (enemyMovementController.PatrolDirectionCoroutine != null)
-        {
-            StopCoroutine(enemyMovementController.PatrolDirectionCoroutine);
-        }
-
-    }
-    */
 
     public void DealDamageEvent()
     {

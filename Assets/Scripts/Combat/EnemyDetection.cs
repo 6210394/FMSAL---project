@@ -60,39 +60,37 @@ public class EnemyDetection : MonoBehaviour
 
     public void TargetLock(Vector3 inputDirection)
     {
-            
-            GameObject closestTarget = null;
-            RaycastHit[] info = Physics.SphereCastAll(transform.position, sphereCastAOESize, inputDirection, autoLockOnRange, layerMask);
+        GameObject closestTarget = null;
+        RaycastHit[] info = Physics.SphereCastAll(transform.position, sphereCastAOESize, inputDirection, autoLockOnRange, layerMask);
 
-            if (info.Length > 0)
+        if (info.Length > 0)
+        {
+            foreach(RaycastHit hit in info)
             {
-                foreach(RaycastHit hit in info)
+                if(hit.collider.gameObject.GetComponent<EnemyCombatController>())
                 {
-                    if(hit.collider.gameObject.GetComponent<EnemyCombatController>())
+                    if(!closestTarget)
                     {
-                        if(!closestTarget)
+                        closestTarget = hit.collider.gameObject;
+                    }
+                    else
+                    {
+                        if(Vector3.Distance(transform.position, closestTarget.gameObject.transform.position) > Vector3.Distance(transform.position, hit.collider.gameObject.transform.position))
                         {
                             closestTarget = hit.collider.gameObject;
                         }
-                        else
-                        {
-                            if(Vector3.Distance(transform.position, closestTarget.gameObject.transform.position) > Vector3.Distance(transform.position, hit.collider.gameObject.transform.position))
-                            {
-                                closestTarget = hit.collider.gameObject;
-                            }
-                        }
                     }
                 }
+            }
 
-                if(closestTarget.transform.GetComponent<EnemyCombatController>().IsAttackable())
-                currentTarget = closestTarget.transform.GetComponent<EnemyCombatController>();
-            }
-            
-            
-            if (currentTarget != null && Vector3.Distance(transform.position, currentTarget.transform.position) > autoLockOnRange*1.5f)
-            {   
-                currentTarget = null;
-            }
+            if(closestTarget.GetComponent<EnemyCombatController>().IsAttackable())
+            currentTarget = closestTarget.transform.GetComponent<EnemyCombatController>();
+        }
+        
+        if (currentTarget != null && Vector3.Distance(transform.position, currentTarget.transform.position) > autoLockOnRange*1.5f)
+        {   
+            currentTarget = null;
+        }
     }
 
     public EnemyCombatController CurrentTarget()

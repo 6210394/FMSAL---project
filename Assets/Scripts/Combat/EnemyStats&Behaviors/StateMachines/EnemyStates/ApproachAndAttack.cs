@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class ApproachAndPunch : IState
+public class ApproachAndAttack : IState
 {
     private EnemyMovementController _movementController;
     private EnemyCombatController _combatController;
@@ -10,7 +10,7 @@ public class ApproachAndPunch : IState
     bool hasAttacked = false;
     bool completedAttack;
 
-    public ApproachAndPunch(EnemyBlueprint brawlerEnemy, EnemyMovementController movementController, EnemyCombatController combatController, Animator animator)
+    public ApproachAndAttack(EnemyBlueprint brawlerEnemy, EnemyMovementController movementController, EnemyCombatController combatController, Animator animator)
     {
         _movementController = movementController;
         _combatController = combatController;
@@ -40,7 +40,7 @@ public class ApproachAndPunch : IState
             else if (!hasAttacked)
             {
                 hasAttacked = true;
-                _animator.SetTrigger("Punch");
+                _combatController.combatScript.Attack(CombatScript.CombatActionType.LightMelee, 0);
             }
         }
     }
@@ -64,10 +64,11 @@ public class ApproachAndPunch : IState
         return false;
     }
 
-    public void CompleteAttack() //THIS ISNT BEING TRIGGERED BY THE EVENT. IDK WHY.
+    public void CompleteAttack()
     {
         completedAttack = true;
         hasAttacked = false;
+        _combatController.isAvailableForEnemyManager = true;
         _combatController.isPreparingAttack = false;
     }
 

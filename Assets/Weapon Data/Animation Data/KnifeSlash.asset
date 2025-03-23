@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 93e9692e95007ff46b874ca37c9c3c7a, type: 3}
-  m_Name: KnifeSlash1
+  m_Name: KnifeSlash
   m_EditorClassIdentifier: 
   animationTriggerName: Slash
   hurtboxes:
-  - parentBone: {fileID: 0}
-    hurtboxGameobject: {fileID: 5491870160663342997, guid: ff527eb14cfeb4c47a4d084ba9ecc81d, type: 3}
-    hurtboxOffset: {x: 0, y: 0, z: 0}
-    hurtboxRotationOffset: {x: 0, y: 0, z: 0, w: 0}
+  - hurtboxGameobject: {fileID: 5491870160663342997, guid: ff527eb14cfeb4c47a4d084ba9ecc81d, type: 3}
+    hurtboxOffset: {x: 0.22, y: 0, z: -0.1}
+    hurtboxRotationOffset: {x: 0, y: 0, z: 0.70710677, w: 0.70710677}
+    hurtboxScale: {x: 0.78, y: 0.78, z: 0.78}

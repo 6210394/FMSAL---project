@@ -26,11 +26,15 @@ public class EnemyMovementController : MonoBehaviour
     [SerializeField] NavMeshAgent navMeshAgent;
 
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void Awake()
     {
         movementScript = GetComponent<MovementScript>();
         animator = GetComponent<Animator>();
+    }
+
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
         spawnPoint = transform.position;
     }
 

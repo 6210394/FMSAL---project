@@ -3,9 +3,6 @@ using UnityEngine.Events;
 using DG.Tweening;
 using Unity.Cinemachine;
 using UnityEngine.UI;
-using System.Collections;
-using System.Collections.Generic;
-
 
 [RequireComponent(typeof(CombatScript))]
 [RequireComponent(typeof(PlayerMovementController))]
@@ -405,7 +402,7 @@ public class PlayerCombatController : MonoBehaviour
         }
         else
         {
-            Debug.Log(name + ": I wasnt the target");
+            Debug.Log(name + ": I am the source");
         }
     }
 
@@ -439,7 +436,7 @@ public class PlayerCombatController : MonoBehaviour
             {
                 return;
             }
-            OnHit.Invoke(combatScript.BuildAttack(combatScript.attackDamage, combatScript.gunStunDuration, 100, bulletHitTarget.transform, transform));
+            OnHit.Invoke(combatScript.BuildAttack(combatScript.attackDamage, combatScript.gunStunDuration, 100, transform));
         }
     }
     */

@@ -11,25 +11,25 @@ public class BrawlerEnemy : EnemyBlueprint
         var takeDamage = new TakeDamage(this, _movementController, _combatController, _animator);
         var patrol = new Patrol(this, _movementController, _animator);
         var circlingPlayer = new CirclingPlayer(this, _movementController, _combatController, _animator);
-        var approachAndPunch = new ApproachAndPunch(this, _movementController, _combatController, _animator);
+        var approachAndAttack = new ApproachAndAttack(this, _movementController, _combatController, _animator);
         var searchDamageSourceArea = new SearchDamageSourceArea(this, _movementController);
         var retreat = new Retreat(this, _movementController, _animator);
 
         //Create the transitions with their condition
         At(patrol, circlingPlayer, PlayerInDetectionRange());
-        At(circlingPlayer, approachAndPunch, PreparingAttack());
-        At(takeDamage, approachAndPunch, Retaliate());
+        At(circlingPlayer, approachAndAttack, PreparingAttack());
+        At(takeDamage, approachAndAttack, Retaliate());
         At(takeDamage, searchDamageSourceArea, OutOfHit());
         At(searchDamageSourceArea, circlingPlayer, PlayerInDetectionRange());
         At(searchDamageSourceArea, patrol, FinishedSearching());
-        At(circlingPlayer, approachAndPunch, PreparingAttack());
+        At(circlingPlayer, approachAndAttack, PreparingAttack());
         At(retreat, circlingPlayer, FinishedRetreating());
 
         _stateMachine.AddAnyTransition(takeDamage, TookHit());
         _stateMachine.AddAnyTransition(retreat,WantsToRetreat());
         
         _combatController.OnDamage.AddListener((stunTime, damageSource) => OnTakeHit(stunTime, damageSource));
-        _combatController.OnHit.AddListener(approachAndPunch.CompleteAttack);
+        _combatController.OnHit.AddListener(approachAndAttack.CompleteAttack);
         _combatController.OnHit.AddListener(() => RetreatAfterHit());
 
         //Begin at Patrol

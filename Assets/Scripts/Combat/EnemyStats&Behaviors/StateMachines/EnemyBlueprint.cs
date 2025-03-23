@@ -22,13 +22,19 @@ public class EnemyBlueprint : MonoBehaviour
 
     public Transform _target;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    protected virtual void Start()
+    void Awake()
     {
         _combatController = GetComponent<EnemyCombatController>();
         _movementController = GetComponent<EnemyMovementController>();
         _animator = GetComponent<Animator>();
+    }
+
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    protected virtual void Start()
+    {
         _stateMachine = new StateMachine();
+
+        _combatController.combatScript.SwitchWeapons(1);
     }
     
     public void ResetAnimator()

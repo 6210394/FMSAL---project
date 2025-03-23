@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e0212878c032064dbd073d61ffbd55e, type: 3}
   m_Name: Knife
   m_EditorClassIdentifier: 
-  grabPoint: {x: 0.1, y: 0.05, z: 0.15}
+  grabPoint: {x: -0.04, y: -0.25, z: 0.31}
   itemMesh: {fileID: 4898376589914736847, guid: 3d0d3f22b628a2943a392aad8e92d3c6, type: 3}
   itemMaterial: {fileID: 2100000, guid: c719e38f25a9480abd2480ab621a2949, type: 2}
   scale: 100
-  rotation: {x: -20, y: 20, z: 90}
+  rotation: {x: 0, y: -15, z: 0}
   isThrowable: 1
   weaponType: 0
   damage: 1
@@ -26,6 +26,7 @@ MonoBehaviour:
   weaponRange: 2
   weaponTargetOffset: 0.6
   listOfAttacks:
+  - {fileID: 11400000, guid: 1d780a5f47268904f914e620bab7339b, type: 2}
   - {fileID: 11400000, guid: 1d780a5f47268904f914e620bab7339b, type: 2}
   rateOfFire: 0
   weaponAimAssistValue: 0

@@ -6,6 +6,11 @@ public class HurtboxScript : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        SendMessageUpwards("OnTakeHit", _hitEventArgs);
+        if(other.GetComponent<HealthScript>() != null)
+        {
+            
+        }
+        SendMessage("OnTakeHit", _hitEventArgs);
+        Debug.Log(_hitEventArgs.damageSource);
     }
 }
