@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class TakeDamage : IState
 {
-    EnemyBlueprint _brawlerEnemy;
+    EnemyBlueprint _enemyStates;
 
     private EnemyMovementController _movementController;
     private EnemyCombatController _combatController;
@@ -10,12 +10,12 @@ public class TakeDamage : IState
 
     int currentChainStun = 0;
 
-    public TakeDamage(EnemyBlueprint brawlerEnemy, EnemyMovementController movementController, EnemyCombatController combatController, Animator animator)
+    public TakeDamage(EnemyBlueprint enemyStates, EnemyMovementController movementController, EnemyCombatController combatController, Animator animator)
     {
         _movementController = movementController;
         _combatController = combatController;
         _animator = animator;
-        _brawlerEnemy = brawlerEnemy;
+        _enemyStates = enemyStates;
     }
 
     public void OnEnter()
@@ -37,20 +37,23 @@ public class TakeDamage : IState
     {
         if(_combatController.isDead)
         {
-            _brawlerEnemy.Death();
+            _enemyStates.Death();
             return;
         }
        
         _animator.SetTrigger("RecieveHit");
-        _movementController.movementScript.KnockBack(0.3f, 0.1f, _brawlerEnemy._damageSource);
+        if(_enemyStates._damageSource != null)
+        {
+            _movementController.movementScript.KnockBack(0.3f, 0.1f, _enemyStates._damageSource);
+        }
         if(!_combatController.combatScript.stunImmune)
         {
             currentChainStun += 1;
-            _combatController.combatScript.Stun(_brawlerEnemy._stunDuration);
+            _combatController.combatScript.Stun(_enemyStates._stunDuration);
         }
 
         Retaliate();
-        _brawlerEnemy._hasTakenHit = false;
+        _enemyStates._hasTakenHit = false;
     }
 
     public bool Retaliate()

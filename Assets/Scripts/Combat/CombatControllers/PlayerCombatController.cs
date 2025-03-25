@@ -3,6 +3,7 @@ using UnityEngine.Events;
 using DG.Tweening;
 using Unity.Cinemachine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(CombatScript))]
 [RequireComponent(typeof(PlayerMovementController))]
@@ -43,6 +44,7 @@ public class PlayerCombatController : MonoBehaviour
     [SerializeField] private CinemachineCamera aimCamera;
 
     [Header("Combat References")]
+    private Queue<CombatScript.CombatActionType> attackQueue = new Queue<CombatScript.CombatActionType>();
     public EnemyCombatController currentLockedTarget;
     public EnemyCombatController lastTarget;
 
@@ -50,8 +52,6 @@ public class PlayerCombatController : MonoBehaviour
 
     [Header("Player Combat Events")]
     public UnityEvent<CombatScript.HitEventArgs> OnHit;
-    public UnityEvent OnTakeDamage;
-    public UnityEvent<EnemyCombatController> OnTrajectory;
 
     [Header("Debug")]
     public bool debugDeadBoolean = false;
@@ -74,21 +74,18 @@ public class PlayerCombatController : MonoBehaviour
         //CHANGE THIS TO SUPPLY OUR OWN CROSSHAIR BASED ON THE WEAPON HELD
         crosshairReference = GameObject.Find("Crosshair").GetComponent<Image>();
         crosshairReference.enabled = false;
+
+        combatScript.healthScript.OnTakeDamage.AddListener((CombatScript.HitEventArgs hitEventArgs) => OnTakeHit(hitEventArgs));
+        combatScript.healthScript.OnDeath.AddListener(Die);
     }
 
     void Update()
-    {
-        if(!combatScript.isAttacking) //Between Attack Actions
-        {
-            if(currentLockedTarget != enemyDetection.CurrentTarget())
-            {
-                lastTarget = currentLockedTarget;
-                currentLockedTarget = enemyDetection.CurrentTarget();
-            }
-            SwitchWeapons();
-        }
+    {      
+        StatusCheck();
 
         AdjustLockOnCamera();
+
+        ProcessAttackQueue();
 
         PlayerAim();
         //or
@@ -96,11 +93,10 @@ public class PlayerCombatController : MonoBehaviour
 
         PlayerDodge();
 
-
         //Process player inputs
         PlayerLockOn();
         
-        if(Input.GetKey(KeyCode.Mouse0)) //Attack Command
+        if(Input.GetKeyDown(KeyCode.Mouse0)) //Attack Command
         {
             if(!playerMovementController.movementScript.isDodging)
             {
@@ -110,7 +106,7 @@ public class PlayerCombatController : MonoBehaviour
                 }
                 else if (combatScript.diogenicInventory.currentHeldWeapon.weaponType == WeaponScript.WeaponType.Melee)
                 {
-                    PlayerMelee();
+                    QueueAttack(CombatScript.CombatActionType.LightMelee);
                 }
             }
         }
@@ -131,6 +127,30 @@ public class PlayerCombatController : MonoBehaviour
 
 #region Player Actions
 
+    void StatusCheck()
+    {
+        if(!combatScript.isAttacking)
+        {
+            GiveControl();
+
+            if(currentLockedTarget != enemyDetection.CurrentTarget())
+            {
+                lastTarget = currentLockedTarget;
+                currentLockedTarget = enemyDetection.CurrentTarget();
+            }
+            SwitchWeapons();
+        }
+    }
+
+    void QueueAttack(CombatScript.CombatActionType attackType)
+    {
+        if (attackQueue.Count == 0)
+        {
+            Debug.Log("Attack queued");
+            attackQueue.Enqueue(attackType);
+        }
+    }
+
     void SwitchWeapons()
     {
         if(isAiming)
@@ -147,17 +167,6 @@ public class PlayerCombatController : MonoBehaviour
         {
             combatScript.SwitchWeapons(2);
         }
-
-        /*
-        if(gunEquipped)
-        {
-            enemyDetection.autoLockOnRange = 10f;
-        }
-        else
-        {
-            enemyDetection.autoLockOnRange = 5f;
-        }
-        */
     }
 
     void PlayerMelee()
@@ -172,7 +181,7 @@ public class PlayerCombatController : MonoBehaviour
         var forward = camera.transform.forward;
         var right = camera.transform.right;
 
-        forward.y = 0f; // Keep the direction horizontal
+        forward.y = 0f;
         forward.Normalize();
         right.y = 0f;
         right.Normalize();
@@ -180,22 +189,31 @@ public class PlayerCombatController : MonoBehaviour
         Vector3 inputDirection = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).normalized;
         #endregion
 
-        Vector3 direction = (forward * inputDirection.z + right * inputDirection.x).normalized;
-
-        if (inputDirection != Vector3.zero)
+        if(currentLockedTarget)
         {
-            direction = direction * 1f; // Move 1 meter in the input direction
+            transform.LookAt(currentLockedTarget.transform.position);
+            if(TargetDistance(currentLockedTarget.transform) < combatScript.meleeReach)
+            {
+                playerMovementController.movementScript.LerpToTransform(currentLockedTarget.gameObject.transform, combatScript.meleeDuration/1.75f, combatScript.punchTargetDistanceOffset);
+            }
+        }
+
+        Vector3 direction;
+
+        if (inputDirection == Vector3.zero)
+        {
+            Debug.Log("asdasdad");
+            direction = (forward + right).normalized; // Default push towards the camera direction
         }
         else
         {
-            direction = forward; // Default push towards the camera direction
+            direction = (forward * inputDirection.z + right * inputDirection.x).normalized;
         }
 
         transform.LookAt(transform.position + direction);
 
-
+        RemoveControl();
         combatScript.Attack(CombatScript.CombatActionType.LightMelee, combatScript.meleeDuration);
-        playerMovementController.movementScript.TweenToPosition(transform.position + direction * 1.5f, 0.2f, 0);
     }
 
     void PlayerShoot()
@@ -334,16 +352,22 @@ public class PlayerCombatController : MonoBehaviour
 
     private void RemoveControl()
     {
-        combatScript.ultimateCanAttack = false;
         playerMovementController.movementScript.ultimateCanMove = false;
     }
 
     private void GiveControl()
     {
-        combatScript.ultimateCanAttack = true;
         playerMovementController.movementScript.ultimateCanMove = true;
     }
 
+    void ProcessAttackQueue()
+    {
+        if (combatScript.attackIsAvailable && attackQueue.Count > 0)
+        {
+            var nextAttack = attackQueue.Dequeue();
+            combatScript.Attack(nextAttack, combatScript.GetAttackCooldown(nextAttack));
+        }
+    }
 
     void SwitchCamera(CameraType cameraType)
     {
@@ -380,29 +404,17 @@ public class PlayerCombatController : MonoBehaviour
 
     public void OnTakeHit(CombatScript.HitEventArgs hitEventArgs)
     {
-        if(transform != hitEventArgs.damageSource)
+        
+        if(playerMovementController.movementScript.isInvincibleFromDodge)
         {
-            if(playerMovementController.movementScript.isInvincibleFromDodge)
-            {
-                Debug.LogWarning("DODGED");
-                return;
-            }
-
-            Debug.Log("Took Damage");
-
-            playerMovementController.animator.SetTrigger("RecieveHit");
-            playerMovementController.movementScript.KnockBack(0.3f, 0.1f, hitEventArgs.damageSource.position);
-
-            combatScript.health -= hitEventArgs.damageReceived;
-
-            if(combatScript.health <= 0)
-            {
-                Die();
-            }
+            Debug.LogWarning("DODGED");
+            return;
         }
-        else
+
+        playerMovementController.animator.SetTrigger("RecieveHit");
+        if(hitEventArgs.damageSource != null)
         {
-            Debug.Log(name + ": I am the source");
+            playerMovementController.movementScript.KnockBack(0.3f, 0.1f, hitEventArgs.damageSource.position);
         }
     }
 
@@ -490,6 +502,10 @@ public class PlayerCombatController : MonoBehaviour
     {
         Debug.Log("Player got knocked out");
         debugDeadBoolean = true;
+
+        int dieAnimAnex = UnityEngine.Random.Range(1,4);
+        combatScript.animator.SetFloat("deathIndex", dieAnimAnex);
+        combatScript.animator.SetTrigger("Die");
     }
 #endregion
 

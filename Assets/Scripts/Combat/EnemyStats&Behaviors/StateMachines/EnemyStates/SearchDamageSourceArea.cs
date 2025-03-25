@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class SearchDamageSourceArea : IState
 {
-    private EnemyBlueprint _brawlerEnemy;
+    private EnemyBlueprint _enemyStates;
     private EnemyMovementController _movementController;
 
     private Vector3 _searchPosition;
@@ -13,15 +13,15 @@ public class SearchDamageSourceArea : IState
     float _currentSearchTime = 0f;
     bool _timerReachedMax = false;
 
-    public SearchDamageSourceArea(EnemyBlueprint brawlerEnemy, EnemyMovementController movementController)
+    public SearchDamageSourceArea(EnemyBlueprint enemyStates, EnemyMovementController movementController)
     {
-        _brawlerEnemy = brawlerEnemy;
+        _enemyStates = enemyStates;
         _movementController = movementController;
     }
 
     public void OnEnter()
     {
-        _searchPosition = _brawlerEnemy._damageSource + Random.insideUnitSphere * 2;
+        _searchPosition = _enemyStates._damageSource + Random.insideUnitSphere * 2;
 
         _hasArrived = false;
         _timerReachedMax = false;
@@ -35,13 +35,13 @@ public class SearchDamageSourceArea : IState
     {
         if (_hasArrived)
         {
-            _brawlerEnemy.ResetAnimator();
+            _enemyStates.ResetAnimator();
             SearchTimer();
             return;
         }
         else
         {
-            _movementController.transform.LookAt(_brawlerEnemy._damageSource);
+            _movementController.transform.LookAt(_enemyStates._damageSource);
             MoveToSearchPosition();
         }
     }

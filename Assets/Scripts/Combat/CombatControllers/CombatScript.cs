@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class CombatScript : MonoBehaviour
 {
@@ -11,18 +12,15 @@ public class CombatScript : MonoBehaviour
     }
 
     [Header ("Stats")]
-    public int health = 3;
     public int attackDamage = 1;
 
     [Header("Attack Values")]
 
-    public float meleeRange;
     public float meleeReach;
     public float meleeDuration;
     public float meleeStunDuration;
     public float targetDistanceOffset = 1f;
 
-    public float punchRange = 3f; //Range withing which the melee hits
     public float punchReach = 4f; //Range within which the attack will tween
     public float punchDuration = 0.5f; //Duration of the attack
     public float punchStunDuration = 0.3f; //Duration of the stun
@@ -57,8 +55,10 @@ public class CombatScript : MonoBehaviour
     public bool junkEquipped;
     
     [Header ("Object & Component References ")]
-    [SerializeField] Vector3 reticleOffset;
+    public HealthScript healthScript;
     public DiogenicInventory diogenicInventory;
+
+    [SerializeField] Vector3 reticleOffset;
     [SerializeField] GameObject bulletVisualsPrefab;
     [SerializeField] Transform bulletSpawnOriginOffset;
 
@@ -67,6 +67,7 @@ public class CombatScript : MonoBehaviour
 
     public List<GameObject> currentHurtboxReferences;
 
+    public UnityEvent OnAttackCompleted;
 
     [Header ("Coroutines")]
     public Coroutine CombatActionCoroutine;
@@ -74,11 +75,15 @@ public class CombatScript : MonoBehaviour
 
     [SerializeField] public bool ultimateCanAttack = false; //debug variable
 
+    void Awake()
+    {
+        diogenicInventory = GetComponent<DiogenicInventory>();
+        healthScript = GetComponent<HealthScript>();
+    }
 
     public void Start()
     {
         attackCooldownTimer = 0;
-        diogenicInventory = GetComponent<DiogenicInventory>();
         //animator = GetComponent<Animator>();
     }
     
@@ -96,17 +101,15 @@ public class CombatScript : MonoBehaviour
     {
         public int damageReceived;
         public float stunDuration;
-        public float attackRange;
         public Transform damageSource;
     }
 
-    public HitEventArgs BuildAttack(int damageReceived, float stunDuration, float attackRange, Transform damageSource)
+    public HitEventArgs BuildAttack(int damageReceived, float stunDuration, Transform damageSource)
     {
         HitEventArgs hitEventArgs;
 
         hitEventArgs.damageReceived = damageReceived;
         hitEventArgs.stunDuration = stunDuration;
-        hitEventArgs.attackRange = attackRange;
         hitEventArgs.damageSource = damageSource;
 
         return hitEventArgs;
@@ -134,7 +137,7 @@ public class CombatScript : MonoBehaviour
 
     public void CreateHurtbox(int hurtboxIndex)
     {
-        HitEventArgs hitEventArgs = BuildAttack(attackDamage, meleeStunDuration, meleeRange, transform);
+        HitEventArgs hitEventArgs = BuildAttack(attackDamage, meleeStunDuration, transform);
         
 
         GameObject hurtBox = BuildHurtbox(diogenicInventory.handAnchor.transform, hitEventArgs, diogenicInventory.currentHeldWeapon.listOfAttacks[currentAnimationComboChain].hurtboxes[hurtboxIndex].hurtboxGameobject, hurtboxIndex);
@@ -233,7 +236,6 @@ public class CombatScript : MonoBehaviour
                     meleeEquipped = true;
                     gunEquipped = false;
 
-                    meleeRange = weapon.weaponRange;
                     meleeDuration = weapon.swingTime;
                     meleeStunDuration = weapon.stunTime;
                     meleeReach = weapon.weaponReach;
@@ -261,7 +263,6 @@ public class CombatScript : MonoBehaviour
         else
         {
             attackDamage = 1;
-            meleeRange = punchRange;
             meleeDuration = punchDuration;
             meleeStunDuration = punchStunDuration;
             meleeReach = punchReach;
@@ -273,7 +274,7 @@ public class CombatScript : MonoBehaviour
 
     public void Attack(CombatActionType attackType, float specificAttackCooldown)
     {
-        if(!isStunned && ultimateCanAttack)
+        if(!isStunned && attackIsAvailable && ultimateCanAttack)
         {
             attackCooldown = specificAttackCooldown;
 
@@ -336,15 +337,16 @@ public class CombatScript : MonoBehaviour
 
         animator.SetInteger("ComboValue", currentAnimationComboChain);
         animator.SetTrigger(animationName);
-        yield return new WaitUntil(() => attackIsAvailable = true);
-        isAttacking = false;
+        yield return new WaitUntil(() => attackIsAvailable = true); //wait for the attack cooldown to be over
 
         upcomingAnimationComboChain += 1;
         
-        yield return new WaitForSeconds(0.7f);
+        yield return new WaitForSeconds(1f);
         currentAnimationComboChain = 0;
         upcomingAnimationComboChain = 0;
         animator.SetInteger("ComboValue", currentAnimationComboChain);
+        isAttacking = false;
+        OnAttackCompleted.Invoke();
     }
 
     public IEnumerator IShoot(string animationName)
@@ -355,6 +357,7 @@ public class CombatScript : MonoBehaviour
         yield return new WaitUntil(() => attackIsAvailable = true);
 
         isAttacking = false;
+        OnAttackCompleted.Invoke();
     }
 
     public void HitScan(HealthScript healthScript)
@@ -398,6 +401,21 @@ public class CombatScript : MonoBehaviour
                 attackIsAvailable = true;
                 Debug.LogWarning("Attack Cooldown Over!");
             }
+        }
+    }
+
+    public float GetAttackCooldown(CombatActionType attackType)
+    {
+        switch (attackType)
+        {
+            case CombatActionType.LightMelee:
+                return meleeDuration;
+            case CombatActionType.Shoot:
+                return gunRateOfFireTime;
+            case CombatActionType.Parry:
+                return 0; // Adjust as needed
+            default:
+                return 0.5f; // Default cooldown
         }
     }
 

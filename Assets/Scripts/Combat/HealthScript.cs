@@ -6,8 +6,8 @@ public class HealthScript : MonoBehaviour
     public int currentHealth;
     public int maxHealth = 3;
 
-    UnityEvent OnTakeDamage;
-    UnityEvent OnDeath;
+    public UnityEvent<CombatScript.HitEventArgs> OnTakeDamage;
+    public UnityEvent OnDeath;
 
     // Start is called before the first frame update
     void Start()
@@ -19,20 +19,35 @@ public class HealthScript : MonoBehaviour
     void Update()
     {
 
+        if(Input.GetKeyDown(KeyCode.V))
+        {
+            CombatScript.HitEventArgs hitEventArgs;
+            hitEventArgs.damageSource = null;
+            hitEventArgs.damageReceived = 1;
+            hitEventArgs.stunDuration = 0;
+            TakeDamage(hitEventArgs);
+        }
     }
 
     // Method to take damage
-    public void TakeDamage(int damage)
+    public void TakeDamage(CombatScript.HitEventArgs hitEventArgs)
     {
-        currentHealth -= damage;
-        if (currentHealth <= 0)
+        if(transform != hitEventArgs.damageSource)
         {
-            currentHealth = 0;
-            Die();
-        }
+            currentHealth -= hitEventArgs.damageReceived;
+            if (currentHealth <= 0)
+            {
+                currentHealth = 0;
+                Die();
+            }
+            else
+            {
+                OnTakeDamage.Invoke(hitEventArgs);
+            }
+        }        
         else
         {
-            OnTakeDamage.Invoke();
+            Debug.Log(name + ": I am the source");
         }
     }
 

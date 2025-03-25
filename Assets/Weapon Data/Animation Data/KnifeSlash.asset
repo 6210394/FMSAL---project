@@ -17,4 +17,4 @@ MonoBehaviour:
   - hurtboxGameobject: {fileID: 5491870160663342997, guid: ff527eb14cfeb4c47a4d084ba9ecc81d, type: 3}
     hurtboxOffset: {x: 0.22, y: 0, z: -0.1}
     hurtboxRotationOffset: {x: 0, y: 0, z: 0.70710677, w: 0.70710677}
-    hurtboxScale: {x: 0.78, y: 0.78, z: 0.78}
+    hurtboxScale: {x: 3, y: 3, z: 3}

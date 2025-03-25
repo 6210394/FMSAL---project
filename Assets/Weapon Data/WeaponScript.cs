@@ -10,6 +10,7 @@ public class WeaponScript : IObjectType
 
         public bool isThrowable;
         public WeaponType weaponType;
+        public GameObject particleEffects;
 
     [Header("Weapon Stats")]
     
@@ -20,7 +21,6 @@ public class WeaponScript : IObjectType
         //Melee
         public float swingTime;
         public float weaponReach;
-        public float weaponRange;
         public float weaponTargetOffset;
 
         public List<AttackAnimationData> listOfAttacks;

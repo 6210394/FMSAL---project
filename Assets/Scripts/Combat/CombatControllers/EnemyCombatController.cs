@@ -36,59 +36,30 @@ public class EnemyCombatController : MonoBehaviour
     public List<EnemyDetection> playerEnemyDetections = new List<EnemyDetection>();
     public Transform target;
 
-    public UnityEvent<float, Transform> OnDamage; //stunTime
-    public UnityEvent OnHit;
-    public UnityEvent OnDeath;
-
-
     [Header("Debug Tools")]
     public bool moveDebugBool = false;
 
     void Awake()
     {
-        Initialize();
-    }
-
-    void Initialize()
-    {
         combatScript = GetComponent<CombatScript>();
         enemyMovementController = GetComponent<EnemyMovementController>();
+    }
+
+    void Start()
+    {
+        enemyManager = FindFirstObjectByType<EnemyManager>();
+        combatScript.healthScript.OnTakeDamage.AddListener((CombatScript.HitEventArgs hitEventArgs) => OnTakeHit(hitEventArgs));
+        combatScript.healthScript.OnDeath.AddListener(Die);
     }
     
     public void OnTakeHit(CombatScript.HitEventArgs hitEventArgs)
     {
-        if(hitEventArgs.damageSource != transform)
+        if(Vector3.Distance(hitEventArgs.damageSource.position, transform.position) <= detectionRange)
         {
-            Debug.Log("isTarget");
-
-            if (Vector3.Distance(transform.position, hitEventArgs.damageSource.position) > hitEventArgs.attackRange)
+            if(hitEventArgs.damageSource)
             {
-                return;
+                target = hitEventArgs.damageSource;
             }
-            else
-            {
-                Debug.Log("Player is in range!");
-            }
-
-            if(Vector3.Distance(hitEventArgs.damageSource.position, transform.position) <= detectionRange)
-            {
-                if(hitEventArgs.damageSource)
-                {
-                    target = hitEventArgs.damageSource;
-                }
-            }
-
-            OnDamage.Invoke(hitEventArgs.stunDuration, hitEventArgs.damageSource);
-            combatScript.health -= hitEventArgs.damageReceived;
-
-            if(combatScript.health <= 0)
-            {
-                Die();
-            }
-        }
-        else
-        {
-            Debug.Log(gameObject + ": I am the source");
         }
     }
 
@@ -98,11 +69,13 @@ public class EnemyCombatController : MonoBehaviour
         Attack();
     }
 
+    /*
     public void DealDamageEvent()
     {
-        target.SendMessage("OnTakeHit", combatScript.BuildAttack(combatScript.attackDamage, combatScript.meleeStunDuration, combatScript.meleeRange, transform));
+        target.SendMessage("OnTakeHit", combatScript.BuildAttack(combatScript.attackDamage, combatScript.meleeStunDuration, transform));
         OnHit.Invoke();
     }
+    */
 
     public void Attack()
     {
@@ -127,7 +100,6 @@ public class EnemyCombatController : MonoBehaviour
         }
 
         enemyManager.SetEnemyAvailiability(this, false);
-
     }
 
     public void OnDrawGizmos()
@@ -144,7 +116,7 @@ public class EnemyCombatController : MonoBehaviour
 
     public bool IsAttackable()
     {
-        return combatScript.health > 0;
+        return combatScript.healthScript.currentHealth > 0;
     }
 
     public bool IsPreparingAttack()

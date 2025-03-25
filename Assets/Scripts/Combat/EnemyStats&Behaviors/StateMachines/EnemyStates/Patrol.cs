@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Patrol : IState
 {
-    EnemyBlueprint _brawlerEnemy;
+    EnemyBlueprint _enemyStates;
 
     private EnemyMovementController _movementController;
     private Animator _animator;
@@ -15,9 +15,9 @@ public class Patrol : IState
     bool _isPaused;
     float randomTime;
 
-    public Patrol(EnemyBlueprint brawlerEnemy, EnemyMovementController movementController, Animator animator)
+    public Patrol(EnemyBlueprint enemyStates, EnemyMovementController movementController, Animator animator)
     {
-        _brawlerEnemy = brawlerEnemy;
+        _enemyStates = enemyStates;
         _movementController = movementController;
         _animator = animator;
     }
@@ -46,7 +46,7 @@ public class Patrol : IState
 
     public void OnExit()
     {
-        _brawlerEnemy.ResetAnimator();
+        _enemyStates.ResetAnimator();
     }
 
     private void WaitRandomTime()

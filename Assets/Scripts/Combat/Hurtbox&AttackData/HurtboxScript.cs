@@ -8,9 +8,11 @@ public class HurtboxScript : MonoBehaviour
     {
         if(other.GetComponent<HealthScript>() != null)
         {
-            
+            other.GetComponent<HealthScript>().TakeDamage(_hitEventArgs);
         }
-        SendMessage("OnTakeHit", _hitEventArgs);
-        Debug.Log(_hitEventArgs.damageSource);
+        else
+        {
+            Debug.Log(this + " has not health script!!");
+        }
     }
 }

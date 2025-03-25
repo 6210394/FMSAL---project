@@ -5,22 +5,17 @@ public class ApproachAndAttack : IState
     private EnemyMovementController _movementController;
     private EnemyCombatController _combatController;
     private Animator _animator;
-    private EnemyBlueprint _brawlerEnemy;
+    private EnemyBlueprint _enemyStates;
 
     bool hasAttacked = false;
     bool completedAttack;
 
-    public ApproachAndAttack(EnemyBlueprint brawlerEnemy, EnemyMovementController movementController, EnemyCombatController combatController, Animator animator)
+    public ApproachAndAttack(EnemyBlueprint enemyStates, EnemyMovementController movementController, EnemyCombatController combatController, Animator animator)
     {
         _movementController = movementController;
         _combatController = combatController;
         _animator = animator;
-        _brawlerEnemy = brawlerEnemy;
-    }
-
-    private void Start()
-    {
-        _combatController.OnHit.AddListener(CompleteAttack);
+        _enemyStates = enemyStates;
     }
 
     public void Tick()
@@ -32,15 +27,22 @@ public class ApproachAndAttack : IState
                 return;
             }
             
-            if(Vector3.Distance(_movementController.transform.position, _brawlerEnemy._target.transform.position) > 1)
+            if(Vector3.Distance(_movementController.transform.position, _enemyStates._target.transform.position) > 1)
             {
-                Vector3 moveDir = (_brawlerEnemy._target.position - _movementController.transform.position).normalized;
+                Vector3 moveDir = (_enemyStates._target.position - _movementController.transform.position).normalized;
                 _movementController.MoveEnemyInDirection(moveDir, true);
             }
             else if (!hasAttacked)
             {
                 hasAttacked = true;
                 _combatController.combatScript.Attack(CombatScript.CombatActionType.LightMelee, 0);
+            }
+            else
+            {
+                if(!_combatController.combatScript.attackIsAvailable)
+                {
+                    CompleteAttack();
+                }
             }
         }
     }
@@ -57,7 +59,7 @@ public class ApproachAndAttack : IState
 
     public bool HasTarget()
     {
-        if(_brawlerEnemy._target)
+        if(_enemyStates._target)
         {
             return true;
         }

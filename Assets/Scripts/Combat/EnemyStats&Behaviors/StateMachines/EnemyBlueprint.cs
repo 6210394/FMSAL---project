@@ -52,7 +52,7 @@ public class EnemyBlueprint : MonoBehaviour
 
     public void Death()
     {
-        int dieAnimAnex = UnityEngine.Random.Range(1,4);
+        int dieAnimAnex = Random.Range(1,4);
         _animator.SetFloat("deathIndex", dieAnimAnex);
         _animator.SetTrigger("Die");
         _stateMachine = null;

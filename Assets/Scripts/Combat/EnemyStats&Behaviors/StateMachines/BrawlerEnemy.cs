@@ -26,11 +26,10 @@ public class BrawlerEnemy : EnemyBlueprint
         At(retreat, circlingPlayer, FinishedRetreating());
 
         _stateMachine.AddAnyTransition(takeDamage, TookHit());
-        _stateMachine.AddAnyTransition(retreat,WantsToRetreat());
+        _stateMachine.AddAnyTransition(retreat, WantsToRetreat());
         
-        _combatController.OnDamage.AddListener((stunTime, damageSource) => OnTakeHit(stunTime, damageSource));
-        _combatController.OnHit.AddListener(approachAndAttack.CompleteAttack);
-        _combatController.OnHit.AddListener(() => RetreatAfterHit());
+        _combatController.combatScript.healthScript.OnTakeDamage.AddListener((CombatScript.HitEventArgs hitEventArgs) => OnTakeHit(hitEventArgs.stunDuration, hitEventArgs.damageSource));
+        _combatController.combatScript.OnAttackCompleted.AddListener(RetreatAfterHit);
 
         //Begin at Patrol
         _stateMachine.SetState(patrol);

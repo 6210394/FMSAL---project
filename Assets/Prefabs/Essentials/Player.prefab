@@ -24,9 +24,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 676170088959192611}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.0141856, y: -0.013999825, z: 0.7019091, w: 0.7119876}
-  m_LocalPosition: {x: -0.07802119, y: 0.46713847, z: 0.15035999}
-  m_LocalScale: {x: 3.2258067, y: 3.225808, z: 3.2258053}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2121509666407928676}
@@ -626,8 +626,8 @@ GameObject:
   - component: {fileID: 4170848390567775362}
   - component: {fileID: 4416159547452902258}
   - component: {fileID: 4300923011328198163}
-  - component: {fileID: 6779007132249043213}
   - component: {fileID: 1102951906637046753}
+  - component: {fileID: 6779007132249043213}
   - component: {fileID: 5720523247777047060}
   - component: {fileID: 161812321840275169}
   - component: {fileID: 8507021317883215589}
@@ -650,8 +650,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.80555, y: 0.80555, z: 0.80555}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 7929630748610194042}
   - {fileID: 6291661237728034848}
@@ -700,10 +700,47 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   canDropItem: 0
   handAnchor: {fileID: 676170088959192611}
+  currentHeldWeapon: {fileID: 0}
+  currentHeldObject: {fileID: 0}
   mainHeldObject: {fileID: 0}
   secondaryHeldItem: {fileID: 0}
   mainWeapon: {fileID: 11400000, guid: 8b38d43e2aed37d47aacfd1b1a18c1f1, type: 2}
   sidearm: {fileID: 11400000, guid: 8629cfa026f8f4e41b63e0ca7cbdb34e, type: 2}
+--- !u!114 &1102951906637046753
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6739474880526340487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97be122e5f6df464d8c8ef27e1cd7a73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  detectionRange: 5
+  isLockOnToggle: 0
+  isAttackingEnemy: 0
+  crosshairReference: {fileID: 0}
+  barrelAnchorReference: {fileID: 4578630470139458280}
+  playerLayermask:
+    serializedVersion: 2
+    m_Bits: 256
+  playerCamera: {fileID: 0}
+  targetCamera: {fileID: 0}
+  aimCamera: {fileID: 0}
+  currentLockedTarget: {fileID: 0}
+  lastTarget: {fileID: 0}
+  OnHit:
+    m_PersistentCalls:
+      m_Calls: []
+  OnTakeDamage:
+    m_PersistentCalls:
+      m_Calls: []
+  OnTrajectory:
+    m_PersistentCalls:
+      m_Calls: []
+  debugDeadBoolean: 0
 --- !u!114 &6779007132249043213
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -725,39 +762,6 @@ MonoBehaviour:
   cameraTransform: {fileID: 0}
   animator: {fileID: 0}
   movementScript: {fileID: 0}
---- !u!114 &1102951906637046753
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6739474880526340487}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 97be122e5f6df464d8c8ef27e1cd7a73, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  detectionRange: 5
-  isLockOnToggle: 0
-  isAttackingEnemy: 0
-  movementScript: {fileID: 0}
-  crosshairReference: {fileID: 0}
-  barrelAnchorReference: {fileID: 4578630470139458280}
-  playerLayermask:
-    serializedVersion: 2
-    m_Bits: 256
-  playerCamera: {fileID: 0}
-  targetCamera: {fileID: 0}
-  aimCamera: {fileID: 0}
-  currentLockedTarget: {fileID: 0}
-  lastTarget: {fileID: 0}
-  OnHit:
-    m_PersistentCalls:
-      m_Calls: []
-  OnTrajectory:
-    m_PersistentCalls:
-      m_Calls: []
-  debugDeadBoolean: 0
 --- !u!114 &5720523247777047060
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -770,31 +774,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a8ef733ed8e0dc41a1a6b672435519d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 3
+  health: 5
   attackDamage: 1
-  punchRange: 3
-  punchReach: 4
-  punchDuration: 0.5
-  punchStunDuration: 0.3
-  meleeRange: 0
   meleeReach: 4
   meleeDuration: 0
   meleeStunDuration: 0
-  punchTargetDistanceOffset: 1
+  targetDistanceOffset: 0.35
+  punchReach: 4
+  punchDuration: 1
+  punchStunDuration: 0.3
+  punchTargetDistanceOffset: 0.35
   gunHipFireBulletAccuracyRange: 10
   gunAimAssistSize: 1
   gunStunDuration: 0
   gunRateOfFireTime: 140
   isStunned: 0
   stunImmune: 0
+  currentAnimationComboChain: 0
+  upcomingAnimationComboChain: 0
   attackIsAvailable: 1
   isAttacking: 0
+  meleeEquipped: 0
+  gunEquipped: 0
+  junkEquipped: 0
   reticleOffset: {x: 0, y: 0, z: 0}
+  diogenicInventory: {fileID: 0}
   bulletVisualsPrefab: {fileID: 0}
   bulletSpawnOriginOffset: {fileID: 0}
-  hitBoxReference: {fileID: 5935337852363439319, guid: c72a4029739e01f409ac8432902e65b6, type: 3}
   animator: {fileID: 3918215746344003973}
-  debugCanAttack: 1
+  currentHurtboxReferences: []
+  ultimateCanAttack: 1
 --- !u!114 &161812321840275169
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -817,10 +826,10 @@ MonoBehaviour:
   dodgeForce: 10
   maxDodgeCooldown: 0.5
   isDodging: 0
-  isDashing: 0
-  isInvincible: 0
+  isInvincibleFromDodge: 0
   animator: {fileID: 0}
-  isAllowedToMove: 1
+  rb: {fileID: 0}
+  ultimateCanMove: 1
 --- !u!143 &8507021317883215589
 CharacterController:
   m_ObjectHideFlags: 0

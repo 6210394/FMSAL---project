@@ -2,24 +2,24 @@ using UnityEngine;
 
 public class Retreat : IState
 {
-    EnemyBlueprint _brawlerEnemy;
+    EnemyBlueprint _enemyStates;
 
     private EnemyMovementController _movementController;
     private Animator _animator;
 
     bool hasRetreated = false;
 
-    public Retreat(EnemyBlueprint brawlerEnemy, EnemyMovementController movementController, Animator animator)
+    public Retreat(EnemyBlueprint enemyStates, EnemyMovementController movementController, Animator animator)
     {
         _movementController = movementController;
         _animator = animator;
-        _brawlerEnemy = brawlerEnemy;
+        _enemyStates = enemyStates;
     }
 
     public void OnEnter()
     {
         hasRetreated = false;
-        _brawlerEnemy.wantsToRetreat = false;
+        _enemyStates.wantsToRetreat = false;
 
         if(Random.Range(1, 4) == 1) //25% chance of the brawler enemy sticking to you
         {
@@ -30,7 +30,7 @@ public class Retreat : IState
 
     public void OnExit()
     {
-        _brawlerEnemy.ResetAnimator();
+        _enemyStates.ResetAnimator();
         hasRetreated = false;
     }
 
@@ -40,14 +40,14 @@ public class Retreat : IState
         {
             Vector3 retreatDirection = -_movementController.transform.forward; // Move backwards locally
             _movementController.MoveEnemyInDirection(retreatDirection, false);
-            _movementController.transform.LookAt(_brawlerEnemy._target);
+            _movementController.transform.LookAt(_enemyStates._target);
             return;
         }
     }
 
     bool IsTooClose()
     {
-        if(Vector3.Distance(_brawlerEnemy._target.position, _movementController.transform.position) < 3)
+        if(Vector3.Distance(_enemyStates._target.position, _movementController.transform.position) < 3)
         {
             return true;
         }
