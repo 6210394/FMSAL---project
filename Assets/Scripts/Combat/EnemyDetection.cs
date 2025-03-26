@@ -83,8 +83,10 @@ public class EnemyDetection : MonoBehaviour
                 }
             }
 
-            if(closestTarget.GetComponent<EnemyCombatController>().IsAttackable())
-            currentTarget = closestTarget.transform.GetComponent<EnemyCombatController>();
+            if(closestTarget != null && closestTarget.GetComponent<EnemyCombatController>().IsAttackable())
+            {
+                currentTarget = closestTarget.transform.GetComponent<EnemyCombatController>();
+            }
         }
         
         if (currentTarget != null && Vector3.Distance(transform.position, currentTarget.transform.position) > autoLockOnRange*1.5f)

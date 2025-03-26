@@ -10,7 +10,6 @@ public class WeaponScript : IObjectType
 
         public bool isThrowable;
         public WeaponType weaponType;
-        public GameObject particleEffects;
 
     [Header("Weapon Stats")]
     

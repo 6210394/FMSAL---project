@@ -32,7 +32,7 @@ public class EnemyCombatController : MonoBehaviour
     public CombatScript combatScript;
 
     [Header("Player References")]
-    public List<GameObject> players = new List<GameObject>();
+    public GameObject[] players;
     public List<EnemyDetection> playerEnemyDetections = new List<EnemyDetection>();
     public Transform target;
 
@@ -50,6 +50,7 @@ public class EnemyCombatController : MonoBehaviour
         enemyManager = FindFirstObjectByType<EnemyManager>();
         combatScript.healthScript.OnTakeDamage.AddListener((CombatScript.HitEventArgs hitEventArgs) => OnTakeHit(hitEventArgs));
         combatScript.healthScript.OnDeath.AddListener(Die);
+        players = GameObject.FindGameObjectsWithTag("Player");
     }
     
     public void OnTakeHit(CombatScript.HitEventArgs hitEventArgs)

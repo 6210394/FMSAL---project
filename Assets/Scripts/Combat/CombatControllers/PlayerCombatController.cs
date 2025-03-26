@@ -106,6 +106,7 @@ public class PlayerCombatController : MonoBehaviour
                 }
                 else if (combatScript.diogenicInventory.currentHeldWeapon.weaponType == WeaponScript.WeaponType.Melee)
                 {
+                    PlayerMelee();
                     QueueAttack(CombatScript.CombatActionType.LightMelee);
                 }
             }
@@ -202,8 +203,8 @@ public class PlayerCombatController : MonoBehaviour
 
         if (inputDirection == Vector3.zero)
         {
-            Debug.Log("asdasdad");
             direction = (forward + right).normalized; // Default push towards the camera direction
+            direction.y = 0;
         }
         else
         {
@@ -211,9 +212,9 @@ public class PlayerCombatController : MonoBehaviour
         }
 
         transform.LookAt(transform.position + direction);
+        Debug.Log(transform.position + direction);
 
         RemoveControl();
-        combatScript.Attack(CombatScript.CombatActionType.LightMelee, combatScript.meleeDuration);
     }
 
     void PlayerShoot()
@@ -245,7 +246,15 @@ public class PlayerCombatController : MonoBehaviour
                 // Save the first hit
                 bulletHitTarget = hit.collider.GetComponent<EnemyCombatController>();
             }
-        }      
+
+            if(bulletHitTarget != null)
+            {
+                if(bulletHitTarget.GetComponent<HealthScript>() != null)
+                {
+                    bulletHitTarget.GetComponent<HealthScript>().TakeDamage(combatScript.BuildAttack(combatScript.attackDamage, combatScript.gunStunDuration, transform));
+                }
+            }
+        }
         
         combatScript.Attack(CombatScript.CombatActionType.Shoot, combatScript.gunRateOfFireTime); //change later to be a variable for different guns
     }
@@ -352,12 +361,12 @@ public class PlayerCombatController : MonoBehaviour
 
     private void RemoveControl()
     {
-        playerMovementController.movementScript.ultimateCanMove = false;
+        playerMovementController.isControlled = false;
     }
 
     private void GiveControl()
     {
-        playerMovementController.movementScript.ultimateCanMove = true;
+        playerMovementController.isControlled = true;
     }
 
     void ProcessAttackQueue()

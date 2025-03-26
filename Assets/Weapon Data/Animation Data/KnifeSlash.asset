@@ -13,6 +13,11 @@ MonoBehaviour:
   m_Name: KnifeSlash
   m_EditorClassIdentifier: 
   animationTriggerName: Slash
+  particleEffect:
+    particleEffectScript: {fileID: 6494572013396623283, guid: 59e58a3c2bc97bb4382e02605464bc23, type: 3}
+    particleOffset: {x: 0, y: 0.5, z: 0}
+    particleRotationOffset: {x: 0, y: 0, z: 0, w: 0}
+    particleScale: {x: 0, y: 0, z: 0}
   hurtboxes:
   - hurtboxGameobject: {fileID: 5491870160663342997, guid: ff527eb14cfeb4c47a4d084ba9ecc81d, type: 3}
     hurtboxOffset: {x: 0.22, y: 0, z: -0.1}

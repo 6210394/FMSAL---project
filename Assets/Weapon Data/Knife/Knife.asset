@@ -21,8 +21,8 @@ MonoBehaviour:
   weaponType: 0
   damage: 1
   stunTime: 0.2
-  swingTime: 0.7
-  weaponReach: 1
+  swingTime: 0.53
+  weaponReach: 4
   weaponTargetOffset: 0.6
   listOfAttacks:
   - {fileID: 11400000, guid: 1d780a5f47268904f914e620bab7339b, type: 2}

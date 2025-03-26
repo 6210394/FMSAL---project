@@ -121,6 +121,7 @@ public class CombatScript : MonoBehaviour
         {
             GameObject hurtboxInstance = Instantiate(hurtBox, parent);
             hurtboxInstance.GetComponent<HurtboxScript>()._hitEventArgs = attackInformation;
+            hurtboxInstance.GetComponent<HurtboxScript>().particleEffect = diogenicInventory.currentHeldWeapon.listOfAttacks[currentAnimationComboChain].particleEffect;
 
             hurtboxInstance.transform.localPosition = diogenicInventory.currentHeldWeapon.listOfAttacks[currentAnimationComboChain].hurtboxes[hurtboxIndex].hurtboxOffset;
             hurtboxInstance.transform.localRotation = diogenicInventory.currentHeldWeapon.listOfAttacks[currentAnimationComboChain].hurtboxes[hurtboxIndex].hurtboxRotationOffset;
@@ -139,7 +140,6 @@ public class CombatScript : MonoBehaviour
     {
         HitEventArgs hitEventArgs = BuildAttack(attackDamage, meleeStunDuration, transform);
         
-
         GameObject hurtBox = BuildHurtbox(diogenicInventory.handAnchor.transform, hitEventArgs, diogenicInventory.currentHeldWeapon.listOfAttacks[currentAnimationComboChain].hurtboxes[hurtboxIndex].hurtboxGameobject, hurtboxIndex);
 
         //CHANGE THIS TO USE THE PROVIDED PARENT IN THE ATTACK DATA
