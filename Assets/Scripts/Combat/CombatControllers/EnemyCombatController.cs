@@ -91,9 +91,6 @@ public class EnemyCombatController : MonoBehaviour
 
     public void Die()
     {   
-        int dieAnimAnex = Random.Range(1,4);
-        combatScript.animator.SetFloat("deathIndex", dieAnimAnex);
-        combatScript.animator.SetTrigger("Die"); 
         foreach(EnemyDetection enemyDetection in playerEnemyDetections)
         {
             enemyDetection.SetCurrentTarget(null);

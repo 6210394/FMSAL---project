@@ -40,7 +40,7 @@ public class CombatScript : MonoBehaviour
 
     //Parrying & Animation Lock
     bool isParrying = false;
-    bool inParryWindow = false;
+    //bool inParryWindow = false;
     [Space]
     public int currentAnimationComboChain = 0;
     public int upcomingAnimationComboChain = 0;

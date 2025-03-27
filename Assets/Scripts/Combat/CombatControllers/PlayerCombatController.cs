@@ -91,7 +91,7 @@ public class PlayerCombatController : MonoBehaviour
         //or
         PlayerFaceTarget();
 
-        PlayerDodge();
+        //PlayerDodge();
 
         //Process player inputs
         PlayerLockOn();

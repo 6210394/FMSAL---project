@@ -40,6 +40,7 @@ public class DepositZoneScript : MonoBehaviour
 
     public void Deposit()
     {
+        /*
         if (isInZone && LevelManager.instance.currentCarry > 0)
         {
             if(Input.GetKey(KeyCode.E) && depositTimer > 0)
@@ -60,6 +61,17 @@ public class DepositZoneScript : MonoBehaviour
                 totalCarryWeight = 0;
                 depositTime = 0;
             }
+        }
+        */
+
+        if (isInZone && LevelManager.instance.currentCarry > 0)
+        {
+            DisplayMessageScript.instance.ChangeDisplayMessage("Deposited!", 0.5f, 1);
+            LevelManager.instance.AddMoney(totalRewardMoney);
+            LevelManager.instance.currentCarry -= totalCarryWeight;
+            totalRewardMoney = 0;
+            totalCarryWeight = 0;
+            depositTime = 0;
         }
     }
 

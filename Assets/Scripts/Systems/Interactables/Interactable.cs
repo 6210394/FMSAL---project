@@ -3,9 +3,7 @@ using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(SphereCollider))]
 public class Interactable : MonoBehaviour
-{
-    //THIS SCRIPT SHOULD BE ATTACHED TO AN EMPTY OBJECT PARENTED TO THE INTERACTABLE OBJECT
-    
+{   
     public float interactRadius = 3f;
     public float interactionAngle = 360;
     public SphereCollider interactCollider;
@@ -15,15 +13,31 @@ public class Interactable : MonoBehaviour
     public GameObject player;
     public KeyCode interactKey = KeyCode.E;
 
-    void Start()
+    void Awake()
     {
         interactCollider = GetComponent<SphereCollider>();
-        interactCollider.isTrigger = true;
-        interactCollider.radius = interactRadius;
-        icon = GetComponentInChildren<FloatingIcons>();
-        icon.SetIconActive(false);
     }
 
+    void Start()
+    {
+        icon = GetComponentInChildren<FloatingIcons>();
+
+        if(interactCollider != null)
+        {
+            interactCollider.isTrigger = true;
+            interactCollider.radius = interactRadius;
+        }
+
+        if(icon != null)
+        {
+            icon.SetIconActive(false);
+        }
+        else
+        {
+            Debug.LogWarning(this + " is an interactable object but doesnt have an interact icon!!");
+        }
+
+    }
 
     void OnTriggerEnter(Collider other)
     {
