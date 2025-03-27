@@ -23470,6 +23470,7 @@ MonoBehaviour:
   player: {fileID: 0}
   interactKey: 101
   door: {fileID: 339989337}
+  keyID: 2
 --- !u!4 &235360644 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1273217355624173582, guid: cd0c691becf53f54dba775c65e2fbc31, type: 3}
@@ -25030,6 +25031,7 @@ MonoBehaviour:
   player: {fileID: 0}
   interactKey: 101
   door: {fileID: 1545103624}
+  keyID: 2
 --- !u!1 &267715274
 GameObject:
   m_ObjectHideFlags: 0
@@ -28073,7 +28075,6 @@ GameObject:
   - component: {fileID: 293443875}
   - component: {fileID: 293443874}
   - component: {fileID: 293443873}
-  - component: {fileID: 293443872}
   m_Layer: 0
   m_Name: Door
   m_TagString: Untagged
@@ -28081,25 +28082,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &293443872
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 293443871}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f21e762e9ec946f4caa4b7cd2f7bf9fd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  interactRadius: 2.08
-  interactionAngle: 360
-  interactCollider: {fileID: 0}
-  icon: {fileID: 0}
-  player: {fileID: 0}
-  interactKey: 101
-  door: {fileID: 0}
 --- !u!135 &293443873
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -31268,7 +31250,7 @@ PrefabInstance:
       objectReference: {fileID: 1027170496}
     - target: {fileID: 8121390650966580491, guid: 9b1c31e372beca14d8ed69ad74c39c23, type: 3}
       propertyPath: carryLimit
-      value: 10
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 8121390650966580491, guid: 9b1c31e372beca14d8ed69ad74c39c23, type: 3}
       propertyPath: enemyPrefab
@@ -31284,7 +31266,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8121390650966580491, guid: 9b1c31e372beca14d8ed69ad74c39c23, type: 3}
       propertyPath: timerDuration
-      value: 360
+      value: 180
       objectReference: {fileID: 0}
     - target: {fileID: 8121390650966580491, guid: 9b1c31e372beca14d8ed69ad74c39c23, type: 3}
       propertyPath: endOfMissionDestination
@@ -33792,7 +33774,6 @@ GameObject:
   - component: {fileID: 339989341}
   - component: {fileID: 339989340}
   - component: {fileID: 339989339}
-  - component: {fileID: 339989338}
   m_Layer: 0
   m_Name: Door (1)
   m_TagString: Untagged
@@ -33800,25 +33781,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &339989338
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 339989337}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f21e762e9ec946f4caa4b7cd2f7bf9fd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  interactRadius: 2.08
-  interactionAngle: 360
-  interactCollider: {fileID: 0}
-  icon: {fileID: 0}
-  player: {fileID: 0}
-  interactKey: 101
-  door: {fileID: 0}
 --- !u!135 &339989339
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -33884,7 +33846,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 86c40d4ab1acd43439d169cc582ba225, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -34793,7 +34755,7 @@ PrefabInstance:
     - target: {fileID: 2960440439327705082, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
       propertyPath: treasureObject
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 353149425}
     - target: {fileID: 3301993376985288588, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
       propertyPath: m_Name
       value: DrugPack Treasure (14)
@@ -34846,6 +34808,11 @@ PrefabInstance:
 --- !u!4 &353149424 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3456841444229955359, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
+  m_PrefabInstance: {fileID: 353149423}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &353149425 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5444095805687527260, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
   m_PrefabInstance: {fileID: 353149423}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &354179128 stripped
@@ -37220,7 +37187,7 @@ PrefabInstance:
     - target: {fileID: 2960440439327705082, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
       propertyPath: treasureObject
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 378131857}
     - target: {fileID: 3301993376985288588, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
       propertyPath: m_Name
       value: DrugPack Treasure (12)
@@ -37273,6 +37240,11 @@ PrefabInstance:
 --- !u!4 &378131856 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3456841444229955359, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
+  m_PrefabInstance: {fileID: 378131855}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &378131857 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5444095805687527260, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
   m_PrefabInstance: {fileID: 378131855}
   m_PrefabAsset: {fileID: 0}
 --- !u!43 &379834799
@@ -38326,7 +38298,7 @@ PrefabInstance:
     - target: {fileID: 2960440439327705082, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
       propertyPath: treasureObject
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 393174520}
     - target: {fileID: 3301993376985288588, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
       propertyPath: m_Name
       value: DrugPack Treasure (5)
@@ -38379,6 +38351,11 @@ PrefabInstance:
 --- !u!4 &393174519 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3456841444229955359, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
+  m_PrefabInstance: {fileID: 393174518}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &393174520 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5444095805687527260, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
   m_PrefabInstance: {fileID: 393174518}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &394370217
@@ -45502,6 +45479,156 @@ MonoBehaviour:
   m_SelectedFaces: 
   m_SelectedEdges: []
   m_SelectedVertices: 
+--- !u!1 &493288148
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 493288149}
+  - component: {fileID: 493288152}
+  - component: {fileID: 493288151}
+  - component: {fileID: 493288150}
+  m_Layer: 5
+  m_Name: LoadText
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &493288149
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 493288148}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 695957236}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -346, y: -192}
+  m_SizeDelta: {x: 200, y: 50}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &493288150
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 493288148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1506cd2a4f2cd6d498cfc3d3df15893a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  loadText: {fileID: 493288151}
+--- !u!114 &493288151
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 493288148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: 0/10
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 36
+  m_fontSizeBase: 36
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 18
+  m_fontSizeMax: 72
+  m_fontStyle: 0
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_TextWrappingMode: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 1
+  m_ActiveFontFeatures: 6e72656b
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_EmojiFallbackSupport: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 1
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &493288152
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 493288148}
+  m_CullTransparentMesh: 1
 --- !u!43 &493516737
 Mesh:
   m_ObjectHideFlags: 0
@@ -45706,7 +45833,7 @@ PrefabInstance:
     - target: {fileID: 2960440439327705082, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
       propertyPath: treasureObject
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 496668447}
     - target: {fileID: 3301993376985288588, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
       propertyPath: m_Name
       value: DrugPack Treasure (1)
@@ -45759,6 +45886,11 @@ PrefabInstance:
 --- !u!4 &496668446 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3456841444229955359, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
+  m_PrefabInstance: {fileID: 496668445}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &496668447 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5444095805687527260, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
   m_PrefabInstance: {fileID: 496668445}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &498311133 stripped
@@ -54961,7 +55093,7 @@ PrefabInstance:
     - target: {fileID: 2960440439327705082, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
       propertyPath: treasureObject
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 597706044}
     - target: {fileID: 3301993376985288588, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
       propertyPath: m_Name
       value: DrugPack Treasure (17)
@@ -55014,6 +55146,11 @@ PrefabInstance:
 --- !u!4 &597706043 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3456841444229955359, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
+  m_PrefabInstance: {fileID: 597706042}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &597706044 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5444095805687527260, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
   m_PrefabInstance: {fileID: 597706042}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &598540729
@@ -55117,7 +55254,7 @@ PrefabInstance:
     - target: {fileID: 2960440439327705082, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
       propertyPath: treasureObject
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 600056928}
     - target: {fileID: 3301993376985288588, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
       propertyPath: m_Name
       value: DrugPack Treasure (7)
@@ -55172,6 +55309,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3456841444229955359, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
   m_PrefabInstance: {fileID: 600056926}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &600056928 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5444095805687527260, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
+  m_PrefabInstance: {fileID: 600056926}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &601399622
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -55211,7 +55353,7 @@ PrefabInstance:
     - target: {fileID: 2960440439327705082, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
       propertyPath: treasureObject
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 601399624}
     - target: {fileID: 3301993376985288588, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
       propertyPath: m_Name
       value: DrugPack Treasure (9)
@@ -55264,6 +55406,11 @@ PrefabInstance:
 --- !u!4 &601399623 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3456841444229955359, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
+  m_PrefabInstance: {fileID: 601399622}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &601399624 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5444095805687527260, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
   m_PrefabInstance: {fileID: 601399622}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &601959311
@@ -55843,7 +55990,7 @@ PrefabInstance:
     - target: {fileID: 2960440439327705082, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
       propertyPath: treasureObject
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 607558836}
     - target: {fileID: 3301993376985288588, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
       propertyPath: m_Name
       value: DrugPack Treasure (10)
@@ -55896,6 +56043,11 @@ PrefabInstance:
 --- !u!4 &607558835 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3456841444229955359, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
+  m_PrefabInstance: {fileID: 607558834}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &607558836 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5444095805687527260, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
   m_PrefabInstance: {fileID: 607558834}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &609831944
@@ -59446,6 +59598,7 @@ MonoBehaviour:
   player: {fileID: 0}
   interactKey: 101
   door: {fileID: 1600830531}
+  keyID: 1
 --- !u!4 &630672150 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1273217355624173582, guid: cd0c691becf53f54dba775c65e2fbc31, type: 3}
@@ -66654,6 +66807,7 @@ RectTransform:
   m_Children:
   - {fileID: 312636888}
   - {fileID: 1027170495}
+  - {fileID: 493288149}
   - {fileID: 2017241907}
   - {fileID: 903217324}
   m_Father: {fileID: 0}
@@ -78408,7 +78562,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1837539283}
+    m_TransformParent: {fileID: 1683326036}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 914e8476c425c3f4e90a68c38a49de4d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -78420,7 +78574,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 914e8476c425c3f4e90a68c38a49de4d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.4279995
+      value: -1.4279976
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 914e8476c425c3f4e90a68c38a49de4d, type: 3}
       propertyPath: m_LocalRotation.w
@@ -80927,7 +81081,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1837539283}
+    m_TransformParent: {fileID: 1683326036}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 914e8476c425c3f4e90a68c38a49de4d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -80939,7 +81093,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 914e8476c425c3f4e90a68c38a49de4d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 2.652
+      value: 2.6520004
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 914e8476c425c3f4e90a68c38a49de4d, type: 3}
       propertyPath: m_LocalRotation.w
@@ -86375,10 +86529,12 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1188134237}
   - {fileID: 176899071}
   - {fileID: 1752317899}
   - {fileID: 1597417273}
   - {fileID: 1443513989}
+  - {fileID: 1920964053}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &889322162
@@ -94585,7 +94741,7 @@ PrefabInstance:
     - target: {fileID: 2960440439327705082, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
       propertyPath: treasureObject
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 964489613}
     - target: {fileID: 3301993376985288588, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
       propertyPath: m_Name
       value: DrugPack Treasure (16)
@@ -94638,6 +94794,11 @@ PrefabInstance:
 --- !u!4 &964489612 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3456841444229955359, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
+  m_PrefabInstance: {fileID: 964489611}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &964489613 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5444095805687527260, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
   m_PrefabInstance: {fileID: 964489611}
   m_PrefabAsset: {fileID: 0}
 --- !u!43 &966805698
@@ -100125,7 +100286,7 @@ PrefabInstance:
     - target: {fileID: 2960440439327705082, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
       propertyPath: treasureObject
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1028186968}
     - target: {fileID: 3301993376985288588, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
       propertyPath: m_Name
       value: DrugPack Treasure (3)
@@ -100178,6 +100339,11 @@ PrefabInstance:
 --- !u!4 &1028186967 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3456841444229955359, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
+  m_PrefabInstance: {fileID: 1028186966}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1028186968 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5444095805687527260, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
   m_PrefabInstance: {fileID: 1028186966}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1035996410
@@ -102924,7 +103090,7 @@ PrefabInstance:
     - target: {fileID: 2960440439327705082, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
       propertyPath: treasureObject
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1073212800}
     - target: {fileID: 3301993376985288588, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
       propertyPath: m_Name
       value: DrugPack Treasure (13)
@@ -102977,6 +103143,11 @@ PrefabInstance:
 --- !u!4 &1073212799 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3456841444229955359, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
+  m_PrefabInstance: {fileID: 1073212798}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1073212800 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5444095805687527260, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
   m_PrefabInstance: {fileID: 1073212798}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1074263333
@@ -105494,7 +105665,7 @@ PrefabInstance:
     - target: {fileID: 2960440439327705082, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
       propertyPath: treasureObject
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1105776692}
     - target: {fileID: 3301993376985288588, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
       propertyPath: m_Name
       value: DrugPack Treasure (6)
@@ -105547,6 +105718,11 @@ PrefabInstance:
 --- !u!4 &1105776691 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3456841444229955359, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
+  m_PrefabInstance: {fileID: 1105776690}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1105776692 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5444095805687527260, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
   m_PrefabInstance: {fileID: 1105776690}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1106317806
@@ -115010,14 +115186,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1188134236}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -27.481, y: -2.009, z: 0}
+  m_LocalRotation: {x: -0, y: -0.70710707, z: -0, w: 0.70710653}
+  m_LocalPosition: {x: 43.743023, y: -3.5889997, z: -55.052002}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 293443877}
   - {fileID: 1196898835}
-  m_Father: {fileID: 1752317899}
+  m_Father: {fileID: 887401957}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!43 &1189098493
 Mesh:
@@ -115948,6 +116124,7 @@ MonoBehaviour:
   player: {fileID: 0}
   interactKey: 101
   door: {fileID: 293443871}
+  keyID: 1
 --- !u!1 &1198162610
 GameObject:
   m_ObjectHideFlags: 0
@@ -121182,7 +121359,7 @@ PrefabInstance:
     - target: {fileID: 2960440439327705082, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
       propertyPath: treasureObject
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1225434565}
     - target: {fileID: 3301993376985288588, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
       propertyPath: m_Name
       value: DrugPack Treasure (4)
@@ -121237,13 +121414,18 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3456841444229955359, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
   m_PrefabInstance: {fileID: 1225434563}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1225434565 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5444095805687527260, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
+  m_PrefabInstance: {fileID: 1225434563}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1226012658
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1837539283}
+    m_TransformParent: {fileID: 1683326036}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 914e8476c425c3f4e90a68c38a49de4d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -121255,7 +121437,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 914e8476c425c3f4e90a68c38a49de4d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.4039974
+      value: 1.4039955
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 914e8476c425c3f4e90a68c38a49de4d, type: 3}
       propertyPath: m_LocalRotation.w
@@ -143618,6 +143800,7 @@ MonoBehaviour:
   icon: {fileID: 0}
   player: {fileID: 0}
   interactKey: 101
+  keyID: 1
 --- !u!4 &1443513989 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 25e2d311ea9e2ad4984e9fb48c41e928, type: 3}
@@ -150655,8 +150838,12 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1837539283}
+    m_TransformParent: {fileID: 1683326036}
     m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 914e8476c425c3f4e90a68c38a49de4d, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 100.00005
+      objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 914e8476c425c3f4e90a68c38a49de4d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 191.153
@@ -150667,7 +150854,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 914e8476c425c3f4e90a68c38a49de4d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 5.7610035
+      value: 5.7610054
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 914e8476c425c3f4e90a68c38a49de4d, type: 3}
       propertyPath: m_LocalRotation.w
@@ -155560,7 +155747,6 @@ GameObject:
   - component: {fileID: 1545103628}
   - component: {fileID: 1545103627}
   - component: {fileID: 1545103626}
-  - component: {fileID: 1545103625}
   m_Layer: 0
   m_Name: Door
   m_TagString: Untagged
@@ -155568,25 +155754,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1545103625
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1545103624}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f21e762e9ec946f4caa4b7cd2f7bf9fd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  interactRadius: 2.08
-  interactionAngle: 360
-  interactCollider: {fileID: 0}
-  icon: {fileID: 0}
-  player: {fileID: 0}
-  interactKey: 101
-  door: {fileID: 0}
 --- !u!135 &1545103626
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -155652,7 +155819,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 86c40d4ab1acd43439d169cc582ba225, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -160967,7 +161134,6 @@ GameObject:
   - component: {fileID: 1600830533}
   - component: {fileID: 1600830532}
   - component: {fileID: 1600830537}
-  - component: {fileID: 1600830536}
   m_Layer: 0
   m_Name: Door
   m_TagString: Untagged
@@ -161064,25 +161230,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 176899071}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1600830536
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1600830531}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f21e762e9ec946f4caa4b7cd2f7bf9fd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  interactRadius: 2.08
-  interactionAngle: 360
-  interactCollider: {fileID: 0}
-  icon: {fileID: 0}
-  player: {fileID: 0}
-  interactKey: 101
-  door: {fileID: 0}
 --- !u!135 &1600830537
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -166204,7 +166351,7 @@ PrefabInstance:
     - target: {fileID: 2960440439327705082, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
       propertyPath: treasureObject
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1677630825}
     - target: {fileID: 3301993376985288588, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
       propertyPath: m_Name
       value: DrugPack Treasure (18)
@@ -166257,6 +166404,11 @@ PrefabInstance:
 --- !u!4 &1677630824 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3456841444229955359, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
+  m_PrefabInstance: {fileID: 1677630823}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1677630825 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5444095805687527260, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
   m_PrefabInstance: {fileID: 1677630823}
   m_PrefabAsset: {fileID: 0}
 --- !u!43 &1679503825
@@ -166536,6 +166688,11 @@ Transform:
   - {fileID: 1870193952}
   - {fileID: 1387496477}
   - {fileID: 1893670745}
+  - {fileID: 1493157266}
+  - {fileID: 1993733305}
+  - {fileID: 838806816}
+  - {fileID: 1226012659}
+  - {fileID: 804343573}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &1687418641
@@ -166742,7 +166899,7 @@ PrefabInstance:
     - target: {fileID: 2960440439327705082, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
       propertyPath: treasureObject
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1687485806}
     - target: {fileID: 3301993376985288588, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
       propertyPath: m_Name
       value: DrugPack Treasure (11)
@@ -166795,6 +166952,11 @@ PrefabInstance:
 --- !u!4 &1687485805 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3456841444229955359, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
+  m_PrefabInstance: {fileID: 1687485804}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1687485806 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5444095805687527260, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
   m_PrefabInstance: {fileID: 1687485804}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1688113663
@@ -169475,7 +169637,7 @@ PrefabInstance:
     - target: {fileID: 2960440439327705082, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
       propertyPath: treasureObject
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1728733860}
     - target: {fileID: 3301993376985288588, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
       propertyPath: m_Name
       value: DrugPack Treasure (8)
@@ -169528,6 +169690,11 @@ PrefabInstance:
 --- !u!4 &1728733859 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3456841444229955359, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
+  m_PrefabInstance: {fileID: 1728733858}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1728733860 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5444095805687527260, guid: b32eb280a4e13964a87fed98a9d09068, type: 3}
   m_PrefabInstance: {fileID: 1728733858}
   m_PrefabAsset: {fileID: 0}
 --- !u!43 &1729943094
@@ -170757,7 +170924,6 @@ Transform:
   m_Children:
   - {fileID: 1545103630}
   - {fileID: 265687801}
-  - {fileID: 1188134237}
   m_Father: {fileID: 887401957}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!1 &1753031474 stripped
@@ -171413,6 +171579,80 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 914e8476c425c3f4e90a68c38a49de4d, type: 3}
   m_PrefabInstance: {fileID: 1763441398}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1766362923
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1920964053}
+    m_Modifications:
+    - target: {fileID: 6028811051629296554, guid: 93b0b7a832e870943b9281d272249433, type: 3}
+      propertyPath: m_LocalScale.x
+      value: -0.006576928
+      objectReference: {fileID: 0}
+    - target: {fileID: 6028811051629296554, guid: 93b0b7a832e870943b9281d272249433, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.006914349
+      objectReference: {fileID: 0}
+    - target: {fileID: 6028811051629296554, guid: 93b0b7a832e870943b9281d272249433, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.006914349
+      objectReference: {fileID: 0}
+    - target: {fileID: 6028811051629296554, guid: 93b0b7a832e870943b9281d272249433, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.014730413
+      objectReference: {fileID: 0}
+    - target: {fileID: 6028811051629296554, guid: 93b0b7a832e870943b9281d272249433, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.0080840085
+      objectReference: {fileID: 0}
+    - target: {fileID: 6028811051629296554, guid: 93b0b7a832e870943b9281d272249433, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.026351545
+      objectReference: {fileID: 0}
+    - target: {fileID: 6028811051629296554, guid: 93b0b7a832e870943b9281d272249433, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071067
+      objectReference: {fileID: 0}
+    - target: {fileID: 6028811051629296554, guid: 93b0b7a832e870943b9281d272249433, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 6028811051629296554, guid: 93b0b7a832e870943b9281d272249433, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6028811051629296554, guid: 93b0b7a832e870943b9281d272249433, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6028811051629296554, guid: 93b0b7a832e870943b9281d272249433, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6028811051629296554, guid: 93b0b7a832e870943b9281d272249433, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6028811051629296554, guid: 93b0b7a832e870943b9281d272249433, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7557907662142833385, guid: 93b0b7a832e870943b9281d272249433, type: 3}
+      propertyPath: m_Name
+      value: Icon
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 93b0b7a832e870943b9281d272249433, type: 3}
+--- !u!4 &1766362924 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6028811051629296554, guid: 93b0b7a832e870943b9281d272249433, type: 3}
+  m_PrefabInstance: {fileID: 1766362923}
   m_PrefabAsset: {fileID: 0}
 --- !u!43 &1767226985
 Mesh:
@@ -176708,15 +176948,10 @@ Transform:
   - {fileID: 1718176941}
   - {fileID: 440148157}
   - {fileID: 1245660872}
-  - {fileID: 1493157266}
-  - {fileID: 1993733305}
   - {fileID: 447153191}
   - {fileID: 1818194773}
   - {fileID: 825780072}
   - {fileID: 1756119351}
-  - {fileID: 838806816}
-  - {fileID: 1226012659}
-  - {fileID: 804343573}
   - {fileID: 274694802}
   - {fileID: 645396593}
   - {fileID: 1294612616}
@@ -188530,6 +188765,138 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1001 &1920964052
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 887401957}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 25e2d311ea9e2ad4984e9fb48c41e928, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 22.807001
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 25e2d311ea9e2ad4984e9fb48c41e928, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 22.807
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 25e2d311ea9e2ad4984e9fb48c41e928, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 22.807
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 25e2d311ea9e2ad4984e9fb48c41e928, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 34.18
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 25e2d311ea9e2ad4984e9fb48c41e928, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.433
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 25e2d311ea9e2ad4984e9fb48c41e928, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -15.318
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 25e2d311ea9e2ad4984e9fb48c41e928, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071067
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 25e2d311ea9e2ad4984e9fb48c41e928, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 25e2d311ea9e2ad4984e9fb48c41e928, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 25e2d311ea9e2ad4984e9fb48c41e928, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 25e2d311ea9e2ad4984e9fb48c41e928, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 25e2d311ea9e2ad4984e9fb48c41e928, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 25e2d311ea9e2ad4984e9fb48c41e928, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 25e2d311ea9e2ad4984e9fb48c41e928, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 65751e0363100f244aaa6feb4bce6ca5, type: 2}
+    - target: {fileID: 919132149155446097, guid: 25e2d311ea9e2ad4984e9fb48c41e928, type: 3}
+      propertyPath: m_Name
+      value: Key 1 (1)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 25e2d311ea9e2ad4984e9fb48c41e928, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1766362924}
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 25e2d311ea9e2ad4984e9fb48c41e928, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1920964056}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 25e2d311ea9e2ad4984e9fb48c41e928, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1920964055}
+  m_SourcePrefab: {fileID: 100100000, guid: 25e2d311ea9e2ad4984e9fb48c41e928, type: 3}
+--- !u!4 &1920964053 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 25e2d311ea9e2ad4984e9fb48c41e928, type: 3}
+  m_PrefabInstance: {fileID: 1920964052}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1920964054 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 25e2d311ea9e2ad4984e9fb48c41e928, type: 3}
+  m_PrefabInstance: {fileID: 1920964052}
+  m_PrefabAsset: {fileID: 0}
+--- !u!135 &1920964055
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1920964054}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1920964056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1920964054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1034cf9eb9ca27540b87d4da0be41ba6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactRadius: 3
+  interactionAngle: 360
+  interactCollider: {fileID: 0}
+  icon: {fileID: 0}
+  player: {fileID: 0}
+  interactKey: 101
+  keyID: 2
 --- !u!1 &1922035550
 GameObject:
   m_ObjectHideFlags: 0
@@ -195870,8 +196237,12 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1837539283}
+    m_TransformParent: {fileID: 1683326036}
     m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 914e8476c425c3f4e90a68c38a49de4d, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 100.00005
+      objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 914e8476c425c3f4e90a68c38a49de4d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 191.153
@@ -195882,7 +196253,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 914e8476c425c3f4e90a68c38a49de4d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 4.656004
+      value: 4.656002
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 914e8476c425c3f4e90a68c38a49de4d, type: 3}
       propertyPath: m_LocalRotation.w

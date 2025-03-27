@@ -3,19 +3,21 @@ using UnityEngine;
 public class LockedDoorScript : Interactable
 {
     public GameObject door;
+    public int keyID;
 
     public override void Interact()
     {
         base.Interact();
-        if(LevelManager.instance.hasKey)
+        foreach(KeyPickup key in LevelManager.instance.keys)
         {
-            Destroy(door);
-            Destroy(gameObject);
-            DisplayMessageScript.instance.ChangeDisplayMessage("Unlocked!", 0.5f, 0.5f);
+            if(key.keyID == keyID)
+            {
+                Destroy(door);
+                Destroy(gameObject);
+                DisplayMessageScript.instance.ChangeDisplayMessage("Unlocked!", 0.5f, 0.5f);
+                return;
+            }
         }
-        else
-        {
-            DisplayMessageScript.instance.ChangeDisplayMessage("Locked.", 0.5f, 0.5f);
-        }
+        DisplayMessageScript.instance.ChangeDisplayMessage("Locked.", 0.5f, 0.5f);
     }
 }

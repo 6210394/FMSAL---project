@@ -292,5 +292,5 @@ MonoBehaviour:
   icon: {fileID: 0}
   player: {fileID: 0}
   interactKey: 101
-  treasureObject: {fileID: 0}
+  treasureObject: {fileID: 5444095805687527260}
   treasureData: {fileID: 11400000, guid: 27702462a09090249819435f62eeca76, type: 2}

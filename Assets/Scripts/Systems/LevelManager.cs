@@ -18,7 +18,7 @@ public class LevelManager : MonoBehaviour
 
     public int carryLimit = 3;
     public int currentCarry = 0;
-    public bool hasKey;
+    public List<KeyPickup> keys;
 
     [SerializeField] MissionType missionType;
 
@@ -33,6 +33,7 @@ public class LevelManager : MonoBehaviour
     public string endOfMissionDestination = "Home";
 
     public static UnityEvent onMissionInitialize = new UnityEvent();
+    public UnityEvent onTreasurePickup;
     public GameObject enemyPrefab;
 
     void Awake()
@@ -111,6 +112,7 @@ public class LevelManager : MonoBehaviour
 
     public void AddCarryWeight(int rewardMoney, int weight, int dropTime)
     {
+        onTreasurePickup.Invoke();
         currentCarry += weight;
     }
 

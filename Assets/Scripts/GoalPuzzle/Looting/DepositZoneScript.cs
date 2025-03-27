@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class DepositZoneScript : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class DepositZoneScript : MonoBehaviour
 
     public float depositTime;
     public float depositTimer;
+
+    public static UnityEvent onDeposit = new UnityEvent();
 
     void Start()
     {
@@ -72,6 +75,8 @@ public class DepositZoneScript : MonoBehaviour
             totalRewardMoney = 0;
             totalCarryWeight = 0;
             depositTime = 0;
+
+            onDeposit.Invoke();
         }
     }
 
