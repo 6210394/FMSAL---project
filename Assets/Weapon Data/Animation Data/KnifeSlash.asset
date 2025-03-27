@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animationTriggerName: Slash
   particleEffect:
-    particleEffectScript: {fileID: 6494572013396623283, guid: 59e58a3c2bc97bb4382e02605464bc23, type: 3}
+    particleEffectScript: {fileID: 5658433022426117929, guid: 07f75a8f24ad6fb4e81db4f29687e292, type: 3}
     particleOffset: {x: 0, y: 0.5, z: 0}
     particleRotationOffset: {x: 0, y: 0, z: 0, w: 0}
-    particleScale: {x: 0, y: 0, z: 0}
+    particleScale: {x: -4.47, y: -3.72, z: -3}
   hurtboxes:
   - hurtboxGameobject: {fileID: 5491870160663342997, guid: ff527eb14cfeb4c47a4d084ba9ecc81d, type: 3}
     hurtboxOffset: {x: 0.22, y: 0, z: -0.1}

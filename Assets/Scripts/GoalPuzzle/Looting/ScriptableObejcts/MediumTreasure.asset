@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: MediumTreasure
   m_EditorClassIdentifier: 
   rewardMoney: 10
-  carryWeight: 2
+  carryWeight: 1
   dropTime: 3
