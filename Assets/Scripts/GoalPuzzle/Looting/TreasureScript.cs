@@ -5,6 +5,7 @@ using UnityEngine.Events;
 
 public class TreasureScript : Pickupable
 {
+    public GameObject treasureObject;
     public static UnityEvent<int, int, int> onPickup = new UnityEvent<int, int, int>();
 
     public TreasureScriptable treasureData;
@@ -24,6 +25,7 @@ public class TreasureScript : Pickupable
         if(LevelManager.instance.currentCarry + carryWeight <= LevelManager.instance.carryLimit)
         {
             onPickup.Invoke(rewardMoney, carryWeight, dropTime);
+            Destroy(treasureObject);
             base.OnPickup();
         }
         else

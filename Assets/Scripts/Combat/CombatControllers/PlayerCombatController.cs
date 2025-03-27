@@ -516,6 +516,11 @@ public class PlayerCombatController : MonoBehaviour
         int dieAnimAnex = UnityEngine.Random.Range(1,4);
         combatScript.animator.SetFloat("deathIndex", dieAnimAnex);
         combatScript.animator.SetTrigger("Die");
+
+        if(LevelManager.instance)
+        {
+            LevelManager.instance.FailMission();
+        }
     }
 #endregion
 

@@ -18,6 +18,7 @@ public class LevelManager : MonoBehaviour
 
     public int carryLimit = 3;
     public int currentCarry = 0;
+    public bool hasKey;
 
     [SerializeField] MissionType missionType;
 
@@ -32,6 +33,7 @@ public class LevelManager : MonoBehaviour
     public string endOfMissionDestination = "Home";
 
     public static UnityEvent onMissionInitialize = new UnityEvent();
+    public GameObject enemyPrefab;
 
     void Awake()
     {
@@ -78,7 +80,28 @@ public class LevelManager : MonoBehaviour
         {
             enemySpawnPoints.Add(spawnPoint.transform);
         }
-        playerSpawnPoint = GameObject.FindGameObjectWithTag("PlayerSpawnPoint").transform;
+        //playerSpawnPoint = GameObject.FindGameObjectWithTag("PlayerSpawnPoint").transform;
+    }
+
+    
+    IEnumerator SpawnEnemies()
+    {
+        while (true)
+        {
+            if (enemySpawnPoints.Count > 0)
+            {
+                // Select a random spawn point
+                Transform randomSpawnPoint = enemySpawnPoints[Random.Range(0, enemySpawnPoints.Count)];
+                
+                // Spawn the enemy at the selected spawn point
+                GameObject enemyManager = FindFirstObjectByType<EnemyManager>().gameObject;
+
+                Instantiate(enemyPrefab, randomSpawnPoint.position, randomSpawnPoint.rotation, enemyManager.transform);
+            }
+
+            // Wait for 1 minute before spawning the next enemy
+            yield return new WaitForSeconds(60f);
+        }
     }
 
     public void AddMoney(int money)
@@ -102,7 +125,6 @@ public class LevelManager : MonoBehaviour
 
     public void FailMission()
     {
-
         Debug.Log("Mission Failed");
         StartCoroutine(ILeaveMission());
     }
@@ -139,6 +161,7 @@ public class LevelManager : MonoBehaviour
 
     void TimerEnded()
     {
+        CompleteMission();
         Debug.Log("Time's up!");
     }
 

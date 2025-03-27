@@ -431,6 +431,7 @@ public class CombatScript : MonoBehaviour
     public IEnumerator IStunned(float time)
     {
         isStunned = true;
+        ClearHurtboxes();
         yield return new WaitForSeconds(time);
         isStunned = false;
     }
