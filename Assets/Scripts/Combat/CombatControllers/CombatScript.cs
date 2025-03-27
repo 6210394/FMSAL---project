@@ -399,7 +399,6 @@ public class CombatScript : MonoBehaviour
             {
                 attackCooldownTimer = 0;
                 attackIsAvailable = true;
-                Debug.LogWarning("Attack Cooldown Over!");
             }
         }
     }

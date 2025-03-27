@@ -45,6 +45,7 @@ public class EnemyBlueprint : MonoBehaviour
 
     protected void OnTakeHit(float stunDuration, Transform damageSource)
     {
+        Debug.Log("HAS TAKEN HIT");
         _hasTakenHit = true;
         _damageSource = damageSource.position;
         _stunDuration = stunDuration;
@@ -52,9 +53,13 @@ public class EnemyBlueprint : MonoBehaviour
 
     public void Death()
     {
+        _combatController.Die();
+        
+        ResetAnimator();
         int dieAnimAnex = Random.Range(1,4);
         _animator.SetFloat("deathIndex", dieAnimAnex);
-        _animator.SetTrigger("Die");
+        _animator.SetTrigger("Die"); 
+
         _stateMachine = null;
     }
 

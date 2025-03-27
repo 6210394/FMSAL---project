@@ -22,7 +22,6 @@ public class EnemyCombatController : MonoBehaviour
     public float fieldOfViewAngle = -135f;
 
     [Header("Combat Booleans")]
-    public bool isDead = false;
     public bool isPreparingAttack = false;
     public bool isAvailableForEnemyManager = true;
 
@@ -49,7 +48,6 @@ public class EnemyCombatController : MonoBehaviour
     {
         enemyManager = FindFirstObjectByType<EnemyManager>();
         combatScript.healthScript.OnTakeDamage.AddListener((CombatScript.HitEventArgs hitEventArgs) => OnTakeHit(hitEventArgs));
-        combatScript.healthScript.OnDeath.AddListener(Die);
         players = GameObject.FindGameObjectsWithTag("Player");
     }
     
@@ -91,15 +89,17 @@ public class EnemyCombatController : MonoBehaviour
         }
     }
 
-    void Die()
+    public void Die()
     {   
-        isDead = true;
-
+        int dieAnimAnex = Random.Range(1,4);
+        combatScript.animator.SetFloat("deathIndex", dieAnimAnex);
+        combatScript.animator.SetTrigger("Die"); 
         foreach(EnemyDetection enemyDetection in playerEnemyDetections)
         {
             enemyDetection.SetCurrentTarget(null);
         }
 
+        combatScript.ultimateCanAttack = false;
         enemyManager.SetEnemyAvailiability(this, false);
     }
 

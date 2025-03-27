@@ -190,6 +190,7 @@ public class PlayerCombatController : MonoBehaviour
         Vector3 inputDirection = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).normalized;
         #endregion
 
+        /*
         if(currentLockedTarget)
         {
             transform.LookAt(currentLockedTarget.transform.position);
@@ -198,6 +199,7 @@ public class PlayerCombatController : MonoBehaviour
                 playerMovementController.movementScript.LerpToTransform(currentLockedTarget.gameObject.transform, combatScript.meleeDuration/1.75f, combatScript.punchTargetDistanceOffset);
             }
         }
+        */
 
         Vector3 direction;
 
@@ -212,7 +214,6 @@ public class PlayerCombatController : MonoBehaviour
         }
 
         transform.LookAt(transform.position + direction);
-        Debug.Log(transform.position + direction);
 
         RemoveControl();
     }

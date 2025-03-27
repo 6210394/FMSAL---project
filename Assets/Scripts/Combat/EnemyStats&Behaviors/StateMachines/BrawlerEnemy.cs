@@ -30,6 +30,7 @@ public class BrawlerEnemy : EnemyBlueprint
         
         _combatController.combatScript.healthScript.OnTakeDamage.AddListener((CombatScript.HitEventArgs hitEventArgs) => OnTakeHit(hitEventArgs.stunDuration, hitEventArgs.damageSource));
         _combatController.combatScript.OnAttackCompleted.AddListener(RetreatAfterHit);
+        _combatController.combatScript.healthScript.OnDeath.AddListener(Death);
 
         //Begin at Patrol
         _stateMachine.SetState(patrol);

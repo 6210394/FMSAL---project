@@ -11,8 +11,15 @@ public class LevelManager : MonoBehaviour
 
     public GameObject playerPrefab;
 
+    public enum MissionType
+    {
+        Freeroam, Loot, Assassination
+    }
+
     public int carryLimit = 3;
     public int currentCarry = 0;
+
+    [SerializeField] MissionType missionType;
 
     public TextMeshProUGUI timerText;
     public float timerDuration = 120f;
@@ -58,7 +65,10 @@ public class LevelManager : MonoBehaviour
         //Destroy(GameObject.Find("MainCamera"));
         FindSpawnPoints();
         //Instantiate(playerPrefab, playerSpawnPoint.position, playerSpawnPoint.rotation).GetComponent<CombatScript>().enabled = true;
-        StartCoroutine(StartTimer());
+        if(missionType == MissionType.Loot)
+        {
+            StartCoroutine(StartTimer());
+        }
         onMissionInitialize.Invoke();
     }    
 

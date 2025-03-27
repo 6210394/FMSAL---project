@@ -5,6 +5,7 @@ public class HealthScript : MonoBehaviour
 {
     public int currentHealth;
     public int maxHealth = 3;
+    public bool isDead;
 
     public UnityEvent<CombatScript.HitEventArgs> OnTakeDamage;
     public UnityEvent OnDeath;
@@ -32,7 +33,7 @@ public class HealthScript : MonoBehaviour
     // Method to take damage
     public void TakeDamage(CombatScript.HitEventArgs hitEventArgs)
     {
-        if(transform != hitEventArgs.damageSource)
+        if(transform != hitEventArgs.damageSource && !isDead)
         {
             currentHealth -= hitEventArgs.damageReceived;
             if (currentHealth <= 0)
@@ -64,8 +65,8 @@ public class HealthScript : MonoBehaviour
     // Method to handle death
     void Die()
     {
-        Debug.Log("Character is dead.");
+        Debug.Log("death message sent");
+        isDead = true;
         OnDeath.Invoke();
-        // Add additional logic for when the character dies, such as playing a death animation
     }
 }

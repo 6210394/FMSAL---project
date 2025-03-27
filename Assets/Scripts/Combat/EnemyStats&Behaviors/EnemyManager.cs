@@ -153,6 +153,8 @@ public class EnemyManager : MonoBehaviour
 
     public void SetEnemyAvailiability (EnemyCombatController enemy, bool state)
     {
+        StopCoroutine(AI_Loop_Coroutine);
+
         for (int i = 0; i < allEnemies.Length; i++)
         {
             if (allEnemies[i].enemyStateMachine == enemy)
@@ -161,6 +163,8 @@ public class EnemyManager : MonoBehaviour
 
         if (FindFirstObjectByType<EnemyDetection>().CurrentTarget() == enemy)
             FindFirstObjectByType<EnemyDetection>().SetCurrentTarget(null);
+
+        AI_Loop_Coroutine = StartCoroutine(AI_Loop(null));
     }
 }
 

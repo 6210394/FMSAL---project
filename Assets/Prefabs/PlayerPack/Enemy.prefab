@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 2058122964224401961}
   - component: {fileID: 6548890165488695915}
   - component: {fileID: 6659547010701238330}
+  - component: {fileID: 8174544363230357267}
   m_Layer: 7
   m_Name: Enemy
   m_TagString: Untagged
@@ -81,12 +82,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canDropItem: 0
-  handAnchor: {fileID: 0}
+  handAnchor: {fileID: 7094340397062939044}
   currentHeldWeapon: {fileID: 0}
   currentHeldObject: {fileID: 0}
   mainHeldObject: {fileID: 0}
   secondaryHeldItem: {fileID: 0}
-  mainWeapon: {fileID: 0}
+  mainWeapon: {fileID: 11400000, guid: 8629cfa026f8f4e41b63e0ca7cbdb34e, type: 2}
   sidearm: {fileID: 0}
 --- !u!114 &4327786530937481723
 MonoBehaviour:
@@ -136,15 +137,6 @@ MonoBehaviour:
   players: []
   playerEnemyDetections: []
   target: {fileID: 0}
-  OnDamage:
-    m_PersistentCalls:
-      m_Calls: []
-  OnHit:
-    m_PersistentCalls:
-      m_Calls: []
-  OnDeath:
-    m_PersistentCalls:
-      m_Calls: []
   moveDebugBool: 0
 --- !u!114 &4776239741273295831
 MonoBehaviour:
@@ -207,14 +199,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a8ef733ed8e0dc41a1a6b672435519d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 3
   attackDamage: 1
-  meleeRange: 2
   meleeReach: 0
   meleeDuration: 0
   meleeStunDuration: 0
   targetDistanceOffset: 1
-  punchRange: 3
   punchReach: 4
   punchDuration: 0.5
   punchStunDuration: 0.3
@@ -232,13 +221,17 @@ MonoBehaviour:
   meleeEquipped: 0
   gunEquipped: 0
   junkEquipped: 0
-  reticleOffset: {x: 0, y: 0, z: 0}
+  healthScript: {fileID: 0}
   diogenicInventory: {fileID: 0}
+  reticleOffset: {x: 0, y: 0, z: 0}
   bulletVisualsPrefab: {fileID: 0}
   bulletSpawnOriginOffset: {fileID: 0}
   animator: {fileID: 6659547010701238330}
   currentHurtboxReferences: []
-  ultimateCanAttack: 0
+  OnAttackCompleted:
+    m_PersistentCalls:
+      m_Calls: []
+  ultimateCanAttack: 1
 --- !u!143 &6548890165488695915
 CharacterController:
   m_ObjectHideFlags: 0
@@ -258,7 +251,7 @@ CharacterController:
   m_Enabled: 1
   serializedVersion: 3
   m_Height: 2
-  m_Radius: 0.24
+  m_Radius: 0.45
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
@@ -286,6 +279,26 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &8174544363230357267
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4544851032864408619}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c54d654f77494444a9a9881555b85e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentHealth: 0
+  maxHealth: 3
+  OnTakeDamage:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDeath:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &7094340397062939044
 GameObject:
   m_ObjectHideFlags: 0

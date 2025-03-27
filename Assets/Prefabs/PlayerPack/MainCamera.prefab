@@ -27,13 +27,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8521953825973289847}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.0720665, y: 0.000000034516273, z: -0.0000000024939515, w: 0.99739987}
+  m_LocalRotation: {x: 0.07206322, y: 0, z: 0, w: 0.9974001}
   m_LocalPosition: {x: -3.04, y: 3.4089174, z: -14.01313}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 12.032, y: 0.573, z: 0}
+  m_LocalEulerAnglesHint: {x: 8.265, y: 0, z: 0}
 --- !u!20 &6138775334795267726
 Camera:
   m_ObjectHideFlags: 0
@@ -105,14 +105,32 @@ MonoBehaviour:
   UpdateMethod: 2
   BlendUpdateMethod: 1
   LensModeOverride:
-    Enabled: 0
+    Enabled: 1
     DefaultMode: 2
   DefaultBlend:
-    Style: 1
-    Time: 2
+    Style: 7
+    Time: 0.2
     CustomCurve:
       serializedVersion: 2
-      m_Curve: []
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 2
+        outSlope: 2
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -130,14 +148,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lockMode: 1
-  baseFOV: 60
-  aimFOV: 40
-  cam: {fileID: 0}
-  target: {fileID: 0}
-  baseDistanceX: 0
-  baseDistanceY: 1.45
-  baseDistanceZ: -3.5
-  aimDistanceX: 1
-  aimDistanceY: 1.09
-  aimDistanceZ: -4
-  rotationSpeed: 5

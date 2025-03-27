@@ -20,31 +20,34 @@ public class TakeDamage : IState
 
     public void OnEnter()
     {
+        Debug.Log("Is on TakeDamage step");
         RecieveHit();
     }
 
     public void OnExit()
     {
-
+        
     }
 
     public void Tick()
     {
-
+        if(!_combatController.combatScript.isStunned)
+        {
+            _enemyStates._hasTakenHit = false;
+        }
     }
 
     void RecieveHit()
     {
-        if(_combatController.isDead)
+        if(!_combatController.combatScript.healthScript.isDead)
         {
-            _enemyStates.Death();
-            return;
+            _animator.SetTrigger("RecieveHit");
         }
-       
-        _animator.SetTrigger("RecieveHit");
+        
         if(_enemyStates._damageSource != null)
         {
             _movementController.movementScript.KnockBack(0.3f, 0.1f, _enemyStates._damageSource);
+            _combatController.isPreparingAttack = false;
         }
         if(!_combatController.combatScript.stunImmune)
         {
@@ -52,8 +55,8 @@ public class TakeDamage : IState
             _combatController.combatScript.Stun(_enemyStates._stunDuration);
         }
 
-        Retaliate();
-        _enemyStates._hasTakenHit = false;
+        //Retaliate();
+
     }
 
     public bool Retaliate()

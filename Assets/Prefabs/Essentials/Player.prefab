@@ -633,6 +633,7 @@ GameObject:
   - component: {fileID: 8507021317883215589}
   - component: {fileID: 3918215746344003973}
   - component: {fileID: 7700586179343452143}
+  - component: {fileID: 1054404184456134323}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -734,12 +735,6 @@ MonoBehaviour:
   OnHit:
     m_PersistentCalls:
       m_Calls: []
-  OnTakeDamage:
-    m_PersistentCalls:
-      m_Calls: []
-  OnTrajectory:
-    m_PersistentCalls:
-      m_Calls: []
   debugDeadBoolean: 0
 --- !u!114 &6779007132249043213
 MonoBehaviour:
@@ -774,7 +769,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a8ef733ed8e0dc41a1a6b672435519d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 5
   attackDamage: 1
   meleeReach: 4
   meleeDuration: 0
@@ -797,12 +791,16 @@ MonoBehaviour:
   meleeEquipped: 0
   gunEquipped: 0
   junkEquipped: 0
-  reticleOffset: {x: 0, y: 0, z: 0}
+  healthScript: {fileID: 0}
   diogenicInventory: {fileID: 0}
+  reticleOffset: {x: 0, y: 0, z: 0}
   bulletVisualsPrefab: {fileID: 0}
   bulletSpawnOriginOffset: {fileID: 0}
   animator: {fileID: 3918215746344003973}
   currentHurtboxReferences: []
+  OnAttackCompleted:
+    m_PersistentCalls:
+      m_Calls: []
   ultimateCanAttack: 1
 --- !u!114 &161812321840275169
 MonoBehaviour:
@@ -899,6 +897,27 @@ MonoBehaviour:
   inputDirection: {x: 0, y: 0, z: 0}
   currentTarget: {fileID: 0}
   cam: {fileID: 0}
+--- !u!114 &1054404184456134323
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6739474880526340487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c54d654f77494444a9a9881555b85e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentHealth: 0
+  maxHealth: 3
+  isDead: 0
+  OnTakeDamage:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDeath:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &6949846103159818603
 GameObject:
   m_ObjectHideFlags: 0

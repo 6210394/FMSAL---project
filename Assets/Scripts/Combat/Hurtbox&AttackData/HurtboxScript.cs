@@ -19,7 +19,7 @@ public class HurtboxScript : MonoBehaviour
         }
         else
         {
-            Debug.Log(this + " has not health script!!");
+            Debug.Log(this + " has no health script!!");
         }
     }
 }

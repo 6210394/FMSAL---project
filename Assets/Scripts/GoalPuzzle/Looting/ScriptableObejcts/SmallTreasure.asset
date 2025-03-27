@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: SmallTreasure
   m_EditorClassIdentifier: 
   rewardMoney: 5
-  carryWeight: 1
+  carryWeight: 0
   dropTime: 1
