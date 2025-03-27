@@ -7,6 +7,11 @@ public class CurrentMoneyDisplayScript : MonoBehaviour
 {
     public TextMeshProUGUI moneyText;
 
+    void Start()
+    {
+        UpdateMoneyText(GameManager.instance.money);
+    }
+
     public void UpdateMoneyText(int money)
     {
         moneyText.text = money.ToString() + "$";

@@ -57,6 +57,7 @@ public class CirclingPlayer : IState
     {
         _randomTime = Random.Range(3f, 5f);
         _randomTimeTimer = _randomTime;
+        _combatController.isAvailableForEnemyManager = true;
         ChangeDirection();
     }
 
@@ -64,6 +65,7 @@ public class CirclingPlayer : IState
     {
         _enemyStates.ResetAnimator();
         _enemyStates._isReadyToAttack = false;
+        _combatController.isAvailableForEnemyManager = false;
     }
 
     private bool IsTooClose()

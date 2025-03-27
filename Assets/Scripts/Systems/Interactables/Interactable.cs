@@ -13,14 +13,12 @@ public class Interactable : MonoBehaviour
     public GameObject player;
     public KeyCode interactKey = KeyCode.E;
 
-    void Awake()
-    {
-        interactCollider = GetComponent<SphereCollider>();
-    }
 
     void Start()
     {
         icon = GetComponentInChildren<FloatingIcons>();
+        interactCollider = GetComponent<SphereCollider>();
+
 
         if(interactCollider != null)
         {
