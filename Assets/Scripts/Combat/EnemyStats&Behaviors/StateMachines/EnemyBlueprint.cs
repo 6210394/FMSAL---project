@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof (EnemyCombatController))]
@@ -8,7 +9,7 @@ public class EnemyBlueprint : MonoBehaviour
     public bool _isReadyToAttack = false; //indicates that the player is available for attacking to the EnemyManager
     
     public bool _hasTakenHit = false;
-    public Vector3 _damageSource;
+    public Vector3 _searchPosition;
     public float _stunDuration = 0;
     public float _stunChainRecoveryRate;
 
@@ -21,6 +22,9 @@ public class EnemyBlueprint : MonoBehaviour
     protected StateMachine _stateMachine;
 
     public Transform _target;
+
+    private Vector3 _lastRaycastDirection;
+    private bool _raycastHitPlayer;
 
     void Awake()
     {
@@ -36,7 +40,12 @@ public class EnemyBlueprint : MonoBehaviour
 
         _combatController.combatScript.SwitchWeapons(1);
     }
-    
+
+    void Update()
+    {
+        CheckForPlayersInDetectionRange();
+    }
+
     public void ResetAnimator()
     {
         _animator.SetBool("Strafe", false);
@@ -47,7 +56,7 @@ public class EnemyBlueprint : MonoBehaviour
     {
         Debug.Log("HAS TAKEN HIT");
         _hasTakenHit = true;
-        _damageSource = damageSource.position;
+        _searchPosition = damageSource.position;
         _stunDuration = stunDuration;
     }
 
@@ -61,6 +70,7 @@ public class EnemyBlueprint : MonoBehaviour
         _animator.SetTrigger("Die"); 
 
         _stateMachine = null;
+        enabled = false;
     }
 
     protected bool CheckForPlayersInDetectionRange()
@@ -74,21 +84,50 @@ public class EnemyBlueprint : MonoBehaviour
             {
                 float angleToPlayer = Vector3.Angle(_combatController.transform.forward, directionToPlayer);
 
-
                 if (angleToPlayer <= _combatController.fieldOfViewAngle / 2)
                 {
-                    Debug.Log("Player detected");
-                    _target = player.GetComponent<PlayerCombatController>().transform;
-                    _combatController.target = _target;
-                    return true;
+                    _lastRaycastDirection = player.transform.position - transform.position  + new Vector3(0,1,0);
+
+                    if(Physics.Raycast(transform.position + new Vector3(0,1,0), player.transform.position - transform.position, 100))
+                    {
+                        _target = player.GetComponent<PlayerCombatController>().transform;
+                        _combatController.target = _target;
+
+                        if(!_combatController.enemyManager.availableEnemies.Contains(this) && _combatController.isAvailableForEnemyManager)
+                        {
+                            _combatController.enemyManager.AddEnemy(this);
+                        }
+
+                        return true;
+                    }                   
                 }
             }
             else
             {
-                _target = null;
+                if(_combatController.enemyManager.availableEnemies.Contains(this) || !_combatController.isAvailableForEnemyManager)
+                {
+                    _combatController.enemyManager.RemoveEnemy(this);
+                }
                 return false;
             }
         }
         return false;
+    }
+
+    private void OnDrawGizmos()
+    {
+        if(_stateMachine != null)
+        {
+            Gizmos.color = _stateMachine.GetGizmoColor();
+            Gizmos.DrawSphere(transform.position + Vector3.up * 3, 0.5f);
+        }
+
+        if (_combatController == null) return;
+
+        Gizmos.color = _raycastHitPlayer ? Color.green : Color.red; // Green if the raycast hit the player, red otherwise
+        if (_lastRaycastDirection != Vector3.zero)
+        {
+            Gizmos.DrawRay(_combatController.transform.position, _lastRaycastDirection * _combatController.detectionRange);
+        }
     }
 }

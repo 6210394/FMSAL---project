@@ -12,6 +12,7 @@ public class CirclingPlayer : IState
 
     float _randomTime;
     float _randomTimeTimer;
+    float _randomComfortRange;
 
     public CirclingPlayer(EnemyBlueprint enemyStates, EnemyMovementController movementController, EnemyCombatController combatController, Animator animator)
     {
@@ -55,6 +56,12 @@ public class CirclingPlayer : IState
 
     public void OnEnter()
     {
+        _randomComfortRange = _combatController.comfortRange + Random.Range(-1, 2);
+        if(_randomComfortRange < 0)
+        {
+            _randomComfortRange = 2f;
+        }
+
         _randomTime = Random.Range(3f, 5f);
         _randomTimeTimer = _randomTime;
         _combatController.isAvailableForEnemyManager = true;
@@ -82,7 +89,7 @@ public class CirclingPlayer : IState
 
     private bool IsInComfortRange()
     {
-        if(Vector3.Distance(_enemyStates._target.position, _movementController.transform.position) > _combatController.comfortRange)
+        if(Vector3.Distance(_enemyStates._target.position, _movementController.transform.position) > _randomComfortRange)
         {
             return false;
         }

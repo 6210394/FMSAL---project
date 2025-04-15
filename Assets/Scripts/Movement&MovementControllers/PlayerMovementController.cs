@@ -9,7 +9,9 @@ public class PlayerMovementController : MonoBehaviour
     [Header("Booleans")]
     public bool isControlled = true;
     public bool canSprint = true;
-    bool isSprintingAnim;
+    bool isSprinting;
+
+    public bool isFocused = false;
 
     [Header("Field Of View & Speed Values")]
     public float normalFOV = 60f;
@@ -17,13 +19,11 @@ public class PlayerMovementController : MonoBehaviour
     public float playerRotationSpeed = 5f;
 
     [Header("Component References")]
-    public GameObject backupCamera;
     public Transform cameraTransform;
+    
     public Animator animator;
 
     public MovementScript movementScript;
-    private CinemachineBrain cinemachineBrain;
-    private Rigidbody rb;
 
 #region Initialization
     void Awake()
@@ -33,14 +33,11 @@ public class PlayerMovementController : MonoBehaviour
     
     void Start()
     {
-        //characterController = GetComponent<CharacterController>();
         DebugTools();
-        cinemachineBrain = FindAnyObjectByType<CinemachineBrain>();
     }
 
     void Initialize()
     {
-        rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
         movementScript = GetComponent<MovementScript>();
     }
@@ -51,10 +48,7 @@ public class PlayerMovementController : MonoBehaviour
         cameraTransform = Camera.main.transform; //Find the reference for the current active camera
         if(isControlled)
         {   
-            if(!movementScript.isDodging)
-            {
-                MovePlayer();
-            }
+            MovePlayer();
         }
         UpdateAnimator();
     }
@@ -62,29 +56,31 @@ public class PlayerMovementController : MonoBehaviour
     void UpdateAnimator()
     {
         animator.SetFloat("Speed", movementScript.currentMovementSpeed);
-        animator.SetBool("Sprinting", isSprintingAnim);
-        animator.SetBool("Dashing", movementScript.isDodging);
+        animator.SetBool("Sprinting", isSprinting);
     }
 
     void MovePlayer()
     {
-        bool isSprinting = false;
 
-        if(Input.GetKeyDown(KeyCode.LeftShift) && canSprint)
+        if(!isFocused && canSprint)
         {
-            isSprintingAnim = true;
-            Camera.main.DOFieldOfView(sprintingFOV, 0.2f);
-        }
-        if(Input.GetKeyUp(KeyCode.LeftShift))
-        {
-            isSprintingAnim = false;
-            Camera.main.DOFieldOfView(normalFOV, 0.2f);
-        }
-
-
-        if(Input.GetKey(KeyCode.LeftShift) && canSprint)
-        {
-            isSprinting = true;
+            if(Input.GetKeyDown(KeyCode.LeftShift))
+            {
+                isSprinting = true;
+            }
+            if(Input.GetKeyUp(KeyCode.LeftShift))
+            {
+                isSprinting = false;
+            }
+            
+            if(Input.GetKey(KeyCode.LeftShift))
+            {
+                isSprinting = true;
+            }
+            else
+            {
+                isSprinting = false;
+            }
         }
         else
         {
@@ -99,19 +95,24 @@ public class PlayerMovementController : MonoBehaviour
         right.y = 0;
         right.Normalize();
      
-
         Vector3 moveDirection = forward * Input.GetAxis("Vertical") + right * Input.GetAxis("Horizontal");
-        moveDirection = moveDirection.normalized;
-        animator.SetFloat("StrafeDirection", moveDirection.z);
 
-        if(!movementScript.isDodging)
+        #region Movement Animation Modifiers
+        if(isFocused)
         {
-            if (moveDirection != Vector3.zero && !Input.GetMouseButton(1))
-            {
-                movementScript.FaceTowards(moveDirection, playerRotationSpeed);
-            }
-            movementScript.Move(moveDirection, isSprinting);
+            animator.SetFloat("StrafeDirection", moveDirection.z);
+
+            bool isWalkingBack = Vector3.Dot(transform.forward, moveDirection.normalized) < 0;
+            animator.SetBool("WalkBack", isWalkingBack);
         }
+        #endregion
+
+  
+        if (moveDirection != Vector3.zero && !Input.GetMouseButton(1))
+        {
+            movementScript.FaceTowards(moveDirection, playerRotationSpeed);
+        }
+        movementScript.Move(moveDirection, isSprinting);
     }
 
     void DebugTools()

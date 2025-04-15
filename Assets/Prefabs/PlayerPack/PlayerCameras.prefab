@@ -62,11 +62,11 @@ GameObject:
   m_Component:
   - component: {fileID: 6457127010684214748}
   - component: {fileID: 6804584995471763108}
-  - component: {fileID: 8087628379340927887}
   - component: {fileID: 1895686750087277029}
+  - component: {fileID: 8087628379340927887}
   - component: {fileID: 2936809337223929236}
-  - component: {fileID: 3081050345004056714}
   - component: {fileID: 5787089543655033895}
+  - component: {fileID: 3081050345004056714}
   - component: {fileID: 3953341964798196931}
   m_Layer: 0
   m_Name: TargetCamera
@@ -134,19 +134,6 @@ MonoBehaviour:
       BarrelClipping: 0.25
       Anamorphism: 0
   BlendHint: 0
---- !u!114 &8087628379340927887
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8152727019718937741}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e8b78ac948f05a46a6d8339a503172b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  LookAtOffset: {x: 0, y: 0, z: 0}
 --- !u!114 &1895686750087277029
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -173,6 +160,19 @@ MonoBehaviour:
     CameraRadius: 0.2
     DampingIntoCollision: 0
     DampingFromCollision: 0.5
+--- !u!114 &8087628379340927887
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8152727019718937741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e8b78ac948f05a46a6d8339a503172b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LookAtOffset: {x: 0, y: 0, z: 0}
 --- !u!114 &2936809337223929236
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -194,22 +194,6 @@ MonoBehaviour:
   FovRange: {x: 1, y: 100}
   DollyRange: {x: -100, y: 100}
   OrthoSizeRange: {x: 1, y: 1000}
---- !u!114 &3081050345004056714
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8152727019718937741}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a076c17fe76165e4f8ed21498b877bf9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Modifiers: []
-  references:
-    version: 2
-    RefIds: []
 --- !u!114 &5787089543655033895
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -229,6 +213,22 @@ MonoBehaviour:
     Controllers: []
   PlayerIndex: -1
   AutoEnableInputs: 1
+--- !u!114 &3081050345004056714
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8152727019718937741}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a076c17fe76165e4f8ed21498b877bf9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Modifiers: []
+  references:
+    version: 2
+    RefIds: []
 --- !u!114 &3953341964798196931
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -256,6 +256,7 @@ GameObject:
   m_Component:
   - component: {fileID: 718746830474967961}
   - component: {fileID: 808450868095369555}
+  - component: {fileID: 8312076087479426891}
   m_Layer: 0
   m_Name: PlayerCameras
   m_TagString: Untagged
@@ -294,6 +295,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cinemachineCamera: {fileID: 0}
+--- !u!114 &8312076087479426891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8301813497948482348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ec72517d6c949a4db6bebfbb1a752d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defaultPlayerCamera: {fileID: 8446403340506265815}
+  targetCamera: {fileID: 8152727019718937741}
+  aimCamera: {fileID: 8890423807505124223}
+  camerasInitialized:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &8446403340506265815
 GameObject:
   m_ObjectHideFlags: 0

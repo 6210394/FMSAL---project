@@ -129,6 +129,7 @@ MonoBehaviour:
   icon: {fileID: 0}
   player: {fileID: 0}
   interactKey: 101
+  treasureObject: {fileID: 0}
   treasureData: {fileID: 11400000, guid: d09405c181d2edf4c9e6b164dc7072b6, type: 2}
 --- !u!135 &7582395006136883693
 SphereCollider:
@@ -159,6 +160,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8434328190115730274}
     m_Modifications:
+    - target: {fileID: 611899724152410634, guid: cd0c691becf53f54dba775c65e2fbc31, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
     - target: {fileID: 1273217355624173582, guid: cd0c691becf53f54dba775c65e2fbc31, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

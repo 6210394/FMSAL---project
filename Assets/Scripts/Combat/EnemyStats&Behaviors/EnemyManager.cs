@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class EnemyManager : MonoBehaviour
 {
-    private EnemyBlueprint[] enemies;
-    public EnemyStruct[] allEnemies;
+    public List<EnemyBlueprint> enemiesInScene;
+    public List<EnemyBlueprint> availableEnemies = new List<EnemyBlueprint>();
     private List<int> enemyIndexes;
 
     [Header("Main AI Loop - Settings")]
@@ -15,15 +15,7 @@ public class EnemyManager : MonoBehaviour
     
     void Start()
     {
-        enemies = GetComponentsInChildren<EnemyBlueprint>();
-
-        allEnemies = new EnemyStruct[enemies.Length];
-
-        for (int i = 0; i < allEnemies.Length; i++)
-        {
-            allEnemies[i].enemyStateMachine = enemies[i];
-            allEnemies[i].enemyAvailability = true;
-        }
+        availableEnemies.Clear(); // Clear the list before populating
 
         StartAI();
     }
@@ -35,14 +27,21 @@ public class EnemyManager : MonoBehaviour
 
     public void StartAI()
     {
+        foreach(EnemyBlueprint enemy in GetComponentsInChildren<EnemyBlueprint>())
+        {
+            enemiesInScene.Add(enemy);
+        }
         AI_Loop_Coroutine = StartCoroutine(AI_Loop(null));
     }
 
     IEnumerator AI_Loop(EnemyBlueprint enemy)
     {
+        Debug.Log("Meta AI start!");
+
         if (AliveEnemyCount() == 0)
         {
             StopCoroutine(AI_Loop(null));
+            Debug.Log("No enemies available");
             yield break;
         }
         
@@ -56,17 +55,36 @@ public class EnemyManager : MonoBehaviour
             attackingEnemy = RandomEnemy();
 
         if (attackingEnemy == null)
+        {
+            AI_Loop_Coroutine = StartCoroutine(AI_Loop(null));
             yield break;
+        }
+
+        Debug.Log(attackingEnemy + " will attack!");
+
+        if(attackingEnemy._combatController.combatScript.isStunned)
+        {
+           yield break; 
+        }
+
+        if (!attackingEnemy.isActiveAndEnabled)
+        {
+            Debug.Log(attackingEnemy + " is no longer active. Resetting AI loop.");
+            AI_Loop_Coroutine = StartCoroutine(AI_Loop(null));
+            yield break;
+        }
             
         yield return new WaitUntil(() => attackingEnemy._isReadyToAttack);
         Debug.Log(attackingEnemy + " Is Ready to Attack!");
         
-        if(attackingEnemy._combatController.combatScript.isStunned)
-        {
-           //yield break; 
-        }
-
         attackingEnemy._combatController.Attack();
+
+        if (!attackingEnemy.isActiveAndEnabled)
+        {
+            Debug.Log(attackingEnemy + " is no longer active. Resetting AI loop.");
+            AI_Loop_Coroutine = StartCoroutine(AI_Loop(null));
+            yield break;
+        }
         
         yield return new WaitUntil(() => attackingEnemy._combatController.IsPreparingAttack() == false);
 
@@ -76,15 +94,39 @@ public class EnemyManager : MonoBehaviour
             AI_Loop_Coroutine = StartCoroutine(AI_Loop(attackingEnemy));
     }
     
+    public void AddEnemy(EnemyBlueprint enemyBlueprint)
+    {
+        if(enemyBlueprint._combatController.isAvailableForEnemyManager && !availableEnemies.Contains(enemyBlueprint))
+        {
+            availableEnemies.Add(enemyBlueprint);
+        }
+        else
+        {
+            return;
+        }
+        aliveEnemyCount = AliveEnemyCount();
+    }
 
+    public void RemoveEnemy(EnemyBlueprint enemyBlueprint)
+    {
+        if(availableEnemies.Contains(enemyBlueprint))
+        {
+            availableEnemies.Remove(enemyBlueprint);
+        }
+        else
+        {
+            return;
+        }
+        aliveEnemyCount = AliveEnemyCount();
+    }
 
     public EnemyBlueprint RandomEnemy()
     {
         enemyIndexes = new List<int>();
 
-        for (int i = 0; i < allEnemies.Length; i++)
+        for (int i = 0; i < availableEnemies.Count; i++)
         {
-            if (allEnemies[i].enemyAvailability)
+            if (availableEnemies[i]._combatController.isAvailableForEnemyManager)
                 enemyIndexes.Add(i);
         }
 
@@ -93,7 +135,7 @@ public class EnemyManager : MonoBehaviour
 
         EnemyBlueprint randomEnemy;
         int randomIndex = Random.Range(0, enemyIndexes.Count);
-        randomEnemy = allEnemies[enemyIndexes[randomIndex]].enemyStateMachine;
+        randomEnemy = availableEnemies[enemyIndexes[randomIndex]];
 
         return randomEnemy;
     }
@@ -102,9 +144,9 @@ public class EnemyManager : MonoBehaviour
     {
         enemyIndexes = new List<int>();
 
-        for (int i = 0; i < allEnemies.Length; i++)
+        for (int i = 0; i < availableEnemies.Count; i++)
         {
-            if (allEnemies[i].enemyAvailability && allEnemies[i].enemyStateMachine != exclude)
+            if (availableEnemies[i]._combatController.isAvailableForEnemyManager && availableEnemies[i] != exclude)
                 enemyIndexes.Add(i);
         }
 
@@ -113,7 +155,7 @@ public class EnemyManager : MonoBehaviour
 
         EnemyBlueprint randomEnemy;
         int randomIndex = Random.Range(0, enemyIndexes.Count);
-        randomEnemy = allEnemies[enemyIndexes[randomIndex]].enemyStateMachine;
+        randomEnemy = availableEnemies[enemyIndexes[randomIndex]];
 
         return randomEnemy;
     }
@@ -121,30 +163,21 @@ public class EnemyManager : MonoBehaviour
     public int AvailableEnemyCount()
     {
         int count = 0;
-        for (int i = 0; i < allEnemies.Length; i++)
+        for (int i = 0; i < availableEnemies.Count; i++)
         {
-            if (allEnemies[i].enemyAvailability)
+            if (availableEnemies[i]._combatController.isAvailableForEnemyManager)
                 count++;
         }
         return count;
-    }
-
-    public bool AnEnemyIsAttacking()
-    {
-        foreach (EnemyStruct enemyStruct in allEnemies)
-        {
-            
-        }
-        return false;
     }
 
 
     public int AliveEnemyCount()
     {
         int count = 0;
-        for (int i = 0; i < allEnemies.Length; i++)
+        for (int i = 0; i < enemiesInScene.Count; i++)
         {
-            if (allEnemies[i].enemyStateMachine.isActiveAndEnabled)
+            if (enemiesInScene[i].isActiveAndEnabled)
                 count++;
         }
         aliveEnemyCount = count;
@@ -155,10 +188,12 @@ public class EnemyManager : MonoBehaviour
     {
         StopCoroutine(AI_Loop_Coroutine);
 
-        for (int i = 0; i < allEnemies.Length; i++)
+        for (int i = 0; i < availableEnemies.Count; i++)
         {
-            if (allEnemies[i].enemyStateMachine == enemy)
-                allEnemies[i].enemyAvailability = state;
+            if (availableEnemies[i] == enemy)
+            {
+                availableEnemies[i]._combatController.isAvailableForEnemyManager = state;
+            }
         }
 
         if (FindFirstObjectByType<EnemyDetection>().CurrentTarget() == enemy)
@@ -166,11 +201,4 @@ public class EnemyManager : MonoBehaviour
 
         AI_Loop_Coroutine = StartCoroutine(AI_Loop(null));
     }
-}
-
-[System.Serializable]
-public struct EnemyStruct
-{
-    public EnemyBlueprint enemyStateMachine;
-    public bool enemyAvailability;
 }

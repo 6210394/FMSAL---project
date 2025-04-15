@@ -26,7 +26,7 @@ public class EnemyCombatController : MonoBehaviour
     public bool isAvailableForEnemyManager = true;
 
     //References
-    private EnemyManager enemyManager;
+    public EnemyManager enemyManager;
     public EnemyMovementController enemyMovementController;
     public CombatScript combatScript;
 

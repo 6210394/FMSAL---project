@@ -16,18 +16,17 @@ public class PlayerCombatController : MonoBehaviour
 
 #region Variables & States
 
-    public float detectionRange = 5;
+    public float autoLockDetectionRange = 5;
     private EnemyCombatController bulletHitTarget;
     
     [Header("States")]
-    public bool isLockOnToggle = false;
     
     private bool isAiming = false;
     public bool isAttackingEnemy = false;
 #endregion
 
 #region Component References
-    private PlayerMovementController playerMovementController;
+    public PlayerMovementController playerMovementController {get; private set;}
     private CombatScript combatScript;
     private EnemyManager enemyManager;
     private EnemyDetection enemyDetection;
@@ -39,9 +38,11 @@ public class PlayerCombatController : MonoBehaviour
 
 #region Camera References & Targeting
     [Header("Camera References")]
-    [SerializeField] private CinemachineCamera playerCamera;
-    [SerializeField] private CinemachineCamera targetCamera;
-    [SerializeField] private CinemachineCamera aimCamera;
+    public PlayerCameraInitializer PlayerCameras;
+
+    private CinemachineCamera defaultCamera;
+    private CinemachineCamera targetCamera;
+    private CinemachineCamera aimCamera;
 
     [Header("Combat References")]
     private Queue<CombatScript.CombatActionType> attackQueue = new Queue<CombatScript.CombatActionType>();
@@ -65,16 +66,13 @@ public class PlayerCombatController : MonoBehaviour
 
     void Start()
     {
-        playerCamera = GameObject.Find("DefaultPlayerCamera").GetComponent<CinemachineCamera>();
-        targetCamera = GameObject.Find("TargetCamera").GetComponent<CinemachineCamera>();
-        aimCamera = GameObject.Find("ThirdPersonAimCamera").GetComponent<CinemachineCamera>();
-
         playerLayermask = LayerMask.GetMask("Player");
 
         //CHANGE THIS TO SUPPLY OUR OWN CROSSHAIR BASED ON THE WEAPON HELD
         crosshairReference = GameObject.Find("Crosshair").GetComponent<Image>();
         crosshairReference.enabled = false;
 
+        GetCameraReferences();
         combatScript.healthScript.OnTakeDamage.AddListener((CombatScript.HitEventArgs hitEventArgs) => OnTakeHit(hitEventArgs));
         combatScript.healthScript.OnDeath.AddListener(Die);
     }
@@ -98,17 +96,14 @@ public class PlayerCombatController : MonoBehaviour
         
         if(Input.GetKeyDown(KeyCode.Mouse0)) //Attack Command
         {
-            if(!playerMovementController.movementScript.isDodging)
+            if(combatScript.diogenicInventory.currentHeldWeapon.weaponType == WeaponScript.WeaponType.Gun)
             {
-                if(combatScript.diogenicInventory.currentHeldWeapon.weaponType == WeaponScript.WeaponType.Gun)
-                {
-                    PlayerShoot();
-                }
-                else if (combatScript.diogenicInventory.currentHeldWeapon.weaponType == WeaponScript.WeaponType.Melee)
-                {
-                    PlayerMelee();
-                    QueueAttack(CombatScript.CombatActionType.LightMelee);
-                }
+                PlayerShoot();
+            }
+            else if (combatScript.diogenicInventory.currentHeldWeapon.weaponType == WeaponScript.WeaponType.Melee)
+            {
+                PlayerMelee();
+                QueueAttack(CombatScript.CombatActionType.LightMelee);
             }
         }
 
@@ -275,7 +270,7 @@ public class PlayerCombatController : MonoBehaviour
                 crosshairReference.enabled = true;
 
                 playerMovementController.canSprint = false;
-                isLockOnToggle = false;
+                playerMovementController.isFocused = false;
                 enemyDetection.SetCurrentTarget(null);
 
                 SwitchCamera(CameraType.Aim);
@@ -305,28 +300,26 @@ public class PlayerCombatController : MonoBehaviour
 
     void PlayerLockOn()
     {
-        if(Input.GetKeyDown(KeyCode.Q) && !isLockOnToggle) //Lock On Command
+        if(Input.GetKeyDown(KeyCode.Q) && !playerMovementController.isFocused) //Lock On Command
         {
             if(currentLockedTarget)
             {
-                isLockOnToggle = !isLockOnToggle;
-                playerMovementController.canSprint = false;
+                playerMovementController.isFocused = !playerMovementController.isFocused;
                 playerMovementController.animator.SetBool("Strafe", true);
             }
             //make the FOV zoom closer or farther based on LockOnMode
         }
 
-        else if(Input.GetKeyDown(KeyCode.Q) && isLockOnToggle || currentLockedTarget == null)
+        else if(Input.GetKeyDown(KeyCode.Q) && playerMovementController.isFocused || currentLockedTarget == null)
         {
-            isLockOnToggle = false;
-            playerMovementController.canSprint = true;
+            playerMovementController.isFocused = false;
             playerMovementController.animator.SetBool("Strafe", false);
         }
     }
 
     void PlayerFaceTarget()
     {
-        if(isLockOnToggle && !isAiming && !playerMovementController.movementScript.isSprinting)
+        if(playerMovementController.isFocused && !isAiming && !playerMovementController.movementScript.isSprinting)
         {
            transform.DOLookAt(currentLockedTarget.transform.position, 0.1f);
         }
@@ -360,6 +353,13 @@ public class PlayerCombatController : MonoBehaviour
 
 #region Controller Functions
 
+    private void GetCameraReferences()
+    {
+        defaultCamera = PlayerCameras.defaultPlayerCamera.GetComponent<CinemachineCamera>();
+        targetCamera = PlayerCameras.targetCamera.GetComponent<CinemachineCamera>();
+        aimCamera = PlayerCameras.aimCamera.GetComponent<CinemachineCamera>();
+    }
+
     private void RemoveControl()
     {
         playerMovementController.isControlled = false;
@@ -387,8 +387,8 @@ public class PlayerCombatController : MonoBehaviour
         {
             case CameraType.Default:
             {
-                CinemachineShake.Instance.cinemachineCamera = playerCamera;
-                playerCamera.Priority = 1;
+                CinemachineShake.Instance.cinemachineCamera = defaultCamera;
+                defaultCamera.Priority = 1;
                 targetCamera.Priority = 0;
                 aimCamera.Priority = 0;
                 break;
@@ -397,7 +397,7 @@ public class PlayerCombatController : MonoBehaviour
             {
                 CinemachineShake.Instance.cinemachineCamera = aimCamera;
                 aimCamera.Priority = 1;
-                playerCamera.Priority = 0;
+                defaultCamera.Priority = 0;
                 targetCamera.Priority = 0;
                 break;
             }
@@ -406,7 +406,7 @@ public class PlayerCombatController : MonoBehaviour
                 CinemachineShake.Instance.cinemachineCamera = targetCamera;
                 targetCamera.Priority = 1;
                 aimCamera.Priority = 0;
-                playerCamera.Priority = 0;
+                defaultCamera.Priority = 0;
                 break;
             }
         }
@@ -469,7 +469,7 @@ public class PlayerCombatController : MonoBehaviour
         {
             CinemachineTargetGroup cinemachineTargetGroup = targetCamera.GetComponentInChildren<CinemachineTargetGroup>();
 
-            if (currentLockedTarget != null && isLockOnToggle) 
+            if (currentLockedTarget != null && playerMovementController.isFocused) 
             {
                 if (cinemachineTargetGroup.FindMember(currentLockedTarget.transform) == -1)
                 {
@@ -483,7 +483,7 @@ public class PlayerCombatController : MonoBehaviour
                 {
                     cinemachineTargetGroup.RemoveMember(lastTarget.transform);
                 }
-                isLockOnToggle = false;
+                playerMovementController.isFocused = false;
                 SwitchCamera(CameraType.Default);
             }
         }

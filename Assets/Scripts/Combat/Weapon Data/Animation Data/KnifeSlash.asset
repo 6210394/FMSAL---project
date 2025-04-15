@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93e9692e95007ff46b874ca37c9c3c7a, type: 3}
+  m_Name: KnifeSlash
+  m_EditorClassIdentifier: 
+  animationTriggerName: Slash
+  particleEffect:
+    particleEffectScript: {fileID: 5658433022426117929, guid: 07f75a8f24ad6fb4e81db4f29687e292, type: 3}
+    particleOffset: {x: 0, y: 0.5, z: 0}
+    particleRotationOffset: {x: 0, y: 0, z: 0, w: 0}
+    particleScale: {x: -4.47, y: -3.72, z: -3}
+  hurtboxes:
+  - hurtboxGameobject: {fileID: 5491870160663342997, guid: ff527eb14cfeb4c47a4d084ba9ecc81d, type: 3}
+    hurtboxOffset: {x: 0, y: 0, z: 0}
+    hurtboxRotationOffset: {x: 0, y: 0, z: 0.70710677, w: 0.70710677}
+    hurtboxScale: {x: 1, y: 1, z: 1}

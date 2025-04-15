@@ -51,12 +51,8 @@ public class MovementScript : MonoBehaviour
 
     void Update()
     {
-        DodgeTimer();
-    }
-
-     void FixedUpdate()
-    {
         ApplyGravity();
+        DodgeTimer();
     }
 
     void Initizialize()
@@ -85,9 +81,6 @@ public class MovementScript : MonoBehaviour
             {
                 characterController.Move(moveDirection * currentMovementSpeed * Time.deltaTime);
                 isMoving = true;
-
-                bool isWalkingBack = Vector3.Dot(transform.forward, moveDirection) < 0;
-                animator.SetBool("WalkBack", isWalkingBack);
             }
             else
             {
@@ -186,7 +179,7 @@ public class MovementScript : MonoBehaviour
     void ApplyGravity()
     {
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, Vector3.down, out hit, 0.2f))
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, 0.01f))
         {
             isGrounded = true;
         }
@@ -196,7 +189,8 @@ public class MovementScript : MonoBehaviour
         }
         if(!isGrounded)
         {
-            transform.position += Vector3.down * gravityScale * Time.deltaTime;
+            Vector3 gravityForce = Vector3.down * gravityScale * Time.deltaTime;
+            characterController.Move(gravityForce);
         }
     }
 

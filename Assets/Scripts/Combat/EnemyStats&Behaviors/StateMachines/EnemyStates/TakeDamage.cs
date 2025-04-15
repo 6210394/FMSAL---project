@@ -44,9 +44,9 @@ public class TakeDamage : IState
             _animator.SetTrigger("RecieveHit");
         }
         
-        if(_enemyStates._damageSource != null)
+        if(_enemyStates._searchPosition != null)
         {
-            _movementController.movementScript.KnockBack(0.3f, 0.1f, _enemyStates._damageSource);
+            _movementController.movementScript.KnockBack(0.3f, 0.1f, _enemyStates._searchPosition);
             _combatController.isPreparingAttack = false;
         }
         if(!_combatController.combatScript.stunImmune)

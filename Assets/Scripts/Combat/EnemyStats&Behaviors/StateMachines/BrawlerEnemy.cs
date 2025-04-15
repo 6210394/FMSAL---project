@@ -12,21 +12,22 @@ public class BrawlerEnemy : EnemyBlueprint
         var patrol = new Patrol(this, _movementController, _animator);
         var circlingPlayer = new CirclingPlayer(this, _movementController, _combatController, _animator);
         var approachAndAttack = new ApproachAndAttack(this, _movementController, _combatController, _animator);
-        var searchDamageSourceArea = new SearchDamageSourceArea(this, _movementController);
+        var searchAroundGivenArea = new SearchAroundGivenArea(this, _movementController);
         var retreat = new Retreat(this, _movementController, _animator);
 
         //Create the transitions with their condition
         At(patrol, circlingPlayer, PlayerInDetectionRange());
         At(circlingPlayer, approachAndAttack, PreparingAttack());
         At(takeDamage, approachAndAttack, Retaliate());
-        At(takeDamage, searchDamageSourceArea, OutOfHit());
-        At(searchDamageSourceArea, circlingPlayer, PlayerInDetectionRange());
-        At(searchDamageSourceArea, patrol, FinishedSearching());
+        At(takeDamage, searchAroundGivenArea, OutOfHit());
+        At(searchAroundGivenArea, circlingPlayer, PlayerInDetectionRange());
+        At(searchAroundGivenArea, patrol, FinishedSearching());
         At(circlingPlayer, approachAndAttack, PreparingAttack());
         At(retreat, circlingPlayer, FinishedRetreating());
 
         _stateMachine.AddAnyTransition(takeDamage, TookHit());
         _stateMachine.AddAnyTransition(retreat, WantsToRetreat());
+        _stateMachine.AddAnyTransition(searchAroundGivenArea, PlayerLeftDetectionRange());
         
         _combatController.combatScript.healthScript.OnTakeDamage.AddListener((CombatScript.HitEventArgs hitEventArgs) => OnTakeHit(hitEventArgs.stunDuration, hitEventArgs.damageSource));
         _combatController.combatScript.OnAttackCompleted.AddListener(RetreatAfterHit);
@@ -37,11 +38,12 @@ public class BrawlerEnemy : EnemyBlueprint
 
         void At(IState to, IState from, Func<bool> condition) => _stateMachine.AddTransition(to, from, condition);
         Func<bool> PlayerInDetectionRange() => () => CheckForPlayersInDetectionRange();
+        Func<bool> PlayerLeftDetectionRange() => () => LoseSightOfTarget();
         Func<bool> PreparingAttack() => () => _combatController.isPreparingAttack == true;
         Func<bool> TookHit() => () => _hasTakenHit;
         Func<bool> OutOfHit() => () => !_hasTakenHit;
         Func<bool> Retaliate() => () => takeDamage.Retaliate();
-        Func<bool> FinishedSearching() => () => searchDamageSourceArea.HasTimerReachedMax();
+        Func<bool> FinishedSearching() => () => searchAroundGivenArea.HasTimerReachedMax();
         Func<bool> WantsToRetreat() => () => wantsToRetreat;
         Func<bool> FinishedRetreating() => () => retreat.HasRetreated();
     }
@@ -60,12 +62,27 @@ public class BrawlerEnemy : EnemyBlueprint
         wantsToRetreat = true;
     }
 
-    private void OnDrawGizmos()
+    private bool LoseSightOfTarget()
     {
-        if(_stateMachine != null)
+        if(!CheckForPlayersInDetectionRange())
         {
-            Gizmos.color = _stateMachine.GetGizmoColor();
-            Gizmos.DrawSphere(transform.position + Vector3.up * 3, 0.5f);
+            if(_target != null)
+            {
+                _searchPosition = _target.transform.position;
+                _target = null;
+
+                if(_combatController.enemyManager.availableEnemies.Contains(this) || !_combatController.isAvailableForEnemyManager)
+                {
+                    _combatController.enemyManager.RemoveEnemy(this);
+                }
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
+        else return false;
     }
+
 }

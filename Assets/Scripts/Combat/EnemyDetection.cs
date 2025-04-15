@@ -3,28 +3,24 @@ using UnityEngine;
 
 public class EnemyDetection : MonoBehaviour
 {
-    [SerializeField] private EnemyManager enemyManager;
-
-    public PlayerCombatController playerCombatController;
+    private PlayerCombatController playerCombatController;
 
     public LayerMask layerMask;
     public float autoLockOnRange = 10f; //THIS NEEDS TO BE CHANGED BASED ON THE WEAPON'S RANGE
 
     public float sphereCastAOESize = 3f;
 
-    [SerializeField] Vector3 inputDirection;
+    private Vector3 inputDirection;
     [SerializeField] private EnemyCombatController currentTarget;
 
-    public GameObject cam;
-
-    private void Start()
+    void Awake()
     {
         playerCombatController = GetComponent<PlayerCombatController>();
     }
 
     private void Update()
     {
-        if(!playerCombatController.isLockOnToggle)
+        if(!playerCombatController.playerMovementController.isFocused)
         {
             var camera = Camera.main;
             var forward = camera.transform.forward;

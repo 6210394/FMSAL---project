@@ -210,17 +210,6 @@ public class CombatScript : MonoBehaviour
                 UpdateStatsBasedOnWeapon(null);
             }
         }
-
-        /*
-        if(gunEquipped)
-        {
-            enemyDetection.autoLockOnRange = 10f;
-        }
-        else
-        {
-            enemyDetection.autoLockOnRange = 5f;
-        }
-        */
     }
 
     public void UpdateStatsBasedOnWeapon(WeaponScript weapon) //THIS NEEDS TO BE A WEAPON AND MUST BE VERIFIED
@@ -242,7 +231,7 @@ public class CombatScript : MonoBehaviour
                     targetDistanceOffset = weapon.weaponTargetOffset;
 
                     float animationSpeed = 1f / (meleeDuration * 1.2f);
-                    animator.SetFloat("MeleeSpeed", animationSpeed);
+                    animator.SetFloat("MeleeSpeedMod", animationSpeed);
                     break;
                 }
 
@@ -254,7 +243,7 @@ public class CombatScript : MonoBehaviour
                     meleeEquipped = false;
 
                     float animationSpeed = weapon.rateOfFire / 60f;
-                    animator.SetFloat("ShootSpeed", animationSpeed);
+                    animator.SetFloat("ShootSpeedMod", animationSpeed);
                     break;
                 }
             }
@@ -335,7 +324,7 @@ public class CombatScript : MonoBehaviour
         isAttacking = true;
         attackIsAvailable = false;
 
-        animator.SetInteger("ComboValue", currentAnimationComboChain);
+        animator.SetInteger("ComboIndex", currentAnimationComboChain);
         animator.SetTrigger(animationName);
         yield return new WaitUntil(() => attackIsAvailable = true); //wait for the attack cooldown to be over
 
@@ -344,7 +333,7 @@ public class CombatScript : MonoBehaviour
         yield return new WaitForSeconds(1f);
         currentAnimationComboChain = 0;
         upcomingAnimationComboChain = 0;
-        animator.SetInteger("ComboValue", currentAnimationComboChain);
+        animator.SetInteger("ComboIndex", currentAnimationComboChain);
         isAttacking = false;
         OnAttackCompleted.Invoke();
     }
