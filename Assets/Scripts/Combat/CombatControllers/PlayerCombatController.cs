@@ -105,6 +105,10 @@ public class PlayerCombatController : MonoBehaviour
                 PlayerMelee();
                 QueueAttack(CombatScript.CombatActionType.LightMelee);
             }
+            else
+            {
+                return;
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.C))
