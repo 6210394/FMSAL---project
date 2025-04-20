@@ -112,8 +112,8 @@ public class LevelManager : MonoBehaviour
 
     public void AddCarryWeight(int rewardMoney, int weight, int dropTime)
     {
-        onTreasurePickup.Invoke();
         currentCarry += weight;
+        onTreasurePickup.Invoke();
     }
 
     public void CompleteMission()
@@ -133,7 +133,7 @@ public class LevelManager : MonoBehaviour
 
     IEnumerator ILeaveMission()
     {
-        StartCoroutine(FadeInOutScript.instance.IFadeOut(1));
+        StartCoroutine(FadeInOutScript.instance.IFadeOut(0.5f));
         yield return new WaitForSeconds(1);
         foreach(GameObject player in GameManager.instance.players)
         {
@@ -158,7 +158,7 @@ public class LevelManager : MonoBehaviour
 
     void UpdateTimerUI()
     {
-        timerText.text = "Mission Over In: " + Mathf.Floor(timerDuration / 60).ToString("00") + ":" + (timerDuration % 60).ToString("00");
+        timerText.text = "Extraction in: " + Mathf.Floor(timerDuration / 60).ToString("00") + ":" + (timerDuration % 60).ToString("00");
     }
 
     void TimerEnded()

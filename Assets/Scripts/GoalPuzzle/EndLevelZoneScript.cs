@@ -22,7 +22,7 @@ public class EndLevelZoneScript : MonoBehaviour
 
         if (display)
         {
-            DisplayMessageScript.instance.ChangeDisplayMessage("Sample Text", 1, 1);
+            DisplayMessageScript.instance.ChangeDisplayMessage("You can't afford to leave now.", 1, 1);
         }
         if(fadeOut)
         {

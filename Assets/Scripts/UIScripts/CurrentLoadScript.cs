@@ -17,5 +17,4 @@ public class CurrentLoadScript : MonoBehaviour
     {
         loadText.text = LevelManager.instance.currentCarry + "/" + LevelManager.instance.carryLimit;
     }
-    
 }

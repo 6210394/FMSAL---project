@@ -20,8 +20,6 @@ public class DiogenicInventory : MonoBehaviour
 
     GameObject instantiatedVisual;
 
-    
-
     void RecieveObject(WeaponScript weapon)
     {
         if(mainWeapon = null)

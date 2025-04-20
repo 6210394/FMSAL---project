@@ -640,12 +640,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6110002508807796809}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.7071065, y: -0, z: -0, w: 0.7071071}
-  m_LocalPosition: {x: -0, y: 0.01, z: 0.116}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: 0.7071064, y: -0, z: -0, w: 0.70710725}
+  m_LocalPosition: {x: 0, y: 0.00029241573, z: 0.0011600016}
+  m_LocalScale: {x: 0.01, y: 0.009999998, z: 0.009999998}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4170848390567775362}
+  m_Father: {fileID: 6927629070785836797}
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!114 &1869228001003867697
 MonoBehaviour:
@@ -713,7 +713,6 @@ Transform:
   - {fileID: 459122662929397878}
   - {fileID: 4578630470139458280}
   - {fileID: 6081960031976705168}
-  - {fileID: 6606142911190990056}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1054404184456134323
@@ -774,7 +773,7 @@ MonoBehaviour:
   mainHeldObject: {fileID: 0}
   secondaryHeldItem: {fileID: 0}
   mainWeapon: {fileID: 11400000, guid: 8629cfa026f8f4e41b63e0ca7cbdb34e, type: 2}
-  sidearm: {fileID: 11400000, guid: 8b38d43e2aed37d47aacfd1b1a18c1f1, type: 2}
+  sidearm: {fileID: 0}
 --- !u!114 &1102951906637046753
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -842,7 +841,7 @@ MonoBehaviour:
   punchReach: 4
   punchDuration: 1
   punchStunDuration: 0.3
-  punchTargetDistanceOffset: 0.35
+  punchTargetDistanceOffset: 0.2
   gunHipFireBulletAccuracyRange: 10
   gunAimAssistSize: 1
   gunStunDuration: 0
@@ -884,6 +883,7 @@ MonoBehaviour:
   normalSpeed: 3
   sprintSpeed: 9
   isMoving: 0
+  usesGravity: 1
   isGrounded: 0
   dodgeMoveDuration: 1
   dodgeForce: 10
@@ -931,7 +931,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: bc566711cdfb72b4d9b9304fd9eb81d5, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_AnimatePhysics: 0
@@ -1250,6 +1250,9 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: -5490399226833740410, guid: 7c3be85d9ec0e7747980a0507898e32f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6606142911190990056}
     - targetCorrespondingSourceObject: {fileID: -8481918012947659634, guid: 7c3be85d9ec0e7747980a0507898e32f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3149863490426532575}
@@ -1263,5 +1266,10 @@ Transform:
 --- !u!4 &6460382398954713077 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8481918012947659634, guid: 7c3be85d9ec0e7747980a0507898e32f, type: 3}
+  m_PrefabInstance: {fileID: 6047717549010135931}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &6927629070785836797 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -5490399226833740410, guid: 7c3be85d9ec0e7747980a0507898e32f, type: 3}
   m_PrefabInstance: {fileID: 6047717549010135931}
   m_PrefabAsset: {fileID: 0}

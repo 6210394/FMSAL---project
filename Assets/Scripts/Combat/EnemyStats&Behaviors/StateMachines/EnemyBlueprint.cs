@@ -65,7 +65,7 @@ public class EnemyBlueprint : MonoBehaviour
         _combatController.Die();
         
         ResetAnimator();
-        int dieAnimAnex = Random.Range(1,4);
+        int dieAnimAnex = 0;
         _animator.SetFloat("DeathIndex", dieAnimAnex);
         _animator.SetTrigger("Die"); 
 

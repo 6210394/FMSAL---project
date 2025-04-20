@@ -45,7 +45,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 6739474880526340487, guid: 40c565ee377da1b40beae600764c177d, type: 3}
+  carryLimit: 20
+  currentCarry: 0
+  keys: []
+  missionType: 1
+  timerText: {fileID: 0}
+  timerDuration: 180
   enemySpawnPoints: []
   playerSpawnPoint: {fileID: 0}
-  rewardMoney: 100
-  endOfMissionDestination: Home
+  rewardMoney: 0
+  endOfMissionDestination: EndOfDemo
+  onTreasurePickup:
+    m_PersistentCalls:
+      m_Calls: []
+  enemyPrefab: {fileID: 4544851032864408619, guid: 257fe48e4379fa447a8f728f258038b9, type: 3}

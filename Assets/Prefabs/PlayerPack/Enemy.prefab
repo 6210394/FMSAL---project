@@ -263,8 +263,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentMovementSpeed: 5
   isSprinting: 0
-  normalSpeed: 2
-  sprintSpeed: 5
+  normalSpeed: 3
+  sprintSpeed: 10
   isMoving: 0
   isGrounded: 0
   dodgeMoveDuration: 0

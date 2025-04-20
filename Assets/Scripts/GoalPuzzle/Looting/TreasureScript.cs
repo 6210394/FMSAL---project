@@ -17,7 +17,6 @@ public class TreasureScript : Pickupable
     {
         rewardMoney = treasureData.rewardMoney;
         carryWeight = treasureData.carryWeight;
-        dropTime = treasureData.dropTime;
     }
 
     public override void OnPickup()

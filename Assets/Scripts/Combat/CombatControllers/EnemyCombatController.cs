@@ -98,6 +98,15 @@ public class EnemyCombatController : MonoBehaviour
 
         combatScript.ultimateCanAttack = false;
         enemyManager.SetEnemyAvailiability(this, false);
+        
+        enemyMovementController.movementScript.usesGravity = false;
+
+        Collider collider = GetComponent<Collider>();
+        if (collider != null)
+        {
+            collider.enabled = false;
+        }
+
     }
 
     public void OnDrawGizmos()

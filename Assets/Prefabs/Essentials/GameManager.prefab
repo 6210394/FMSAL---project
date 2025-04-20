@@ -53,6 +53,7 @@ MonoBehaviour:
   week: 0
   day: 0
   quotaMultiplier: 0
+  hasFailedQuota: 0
   hasCompletedDailyMission: 0
   interactEnabled: 1
   players: []

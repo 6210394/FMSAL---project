@@ -88,8 +88,8 @@ public class DisplayMessageScript : MonoBehaviour
         StopAllCoroutines();
         isDisplayingMessage = false;
         messageList.Clear();
-        displayMessageText.color = new Color(displayMessageText.color.r, displayMessageText.color.g, displayMessageText.color.b, 1);
-        displayBackground.color = new Color(displayBackground.color.r, displayBackground.color.g, displayBackground.color.b, 1);
+        displayMessageText.color = new Color(displayMessageText.color.r, displayMessageText.color.g, displayMessageText.color.b, 0.8f);
+        displayBackground.color = new Color(displayBackground.color.r, displayBackground.color.g, displayBackground.color.b, 0.8f);
     }
 
     public void ImmidiatelyHideMessage()
@@ -113,8 +113,8 @@ public class DisplayMessageScript : MonoBehaviour
             Color textTransparency = displayMessageText.color;
             Color bgTransparency = displayBackground.color;
 
-            textTransparency.a = 1;
-            bgTransparency.a = 1;
+            textTransparency.a = 0.8f;
+            bgTransparency.a = 0.8f;
 
             displayMessageText.color = textTransparency;
             displayBackground.color = bgTransparency;

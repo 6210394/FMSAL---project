@@ -17,6 +17,7 @@ public class MovementScript : MonoBehaviour
     public bool isMoving;
 
     [Header("Gravity")]
+    public bool usesGravity = true;
     public bool isGrounded;
     float gravityScale = 9.8f;
 
@@ -51,8 +52,10 @@ public class MovementScript : MonoBehaviour
 
     void Update()
     {
-        ApplyGravity();
-        DodgeTimer();
+        if(usesGravity)
+        {
+            ApplyGravity();
+        }
     }
 
     void Initizialize()

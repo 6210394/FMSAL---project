@@ -27,7 +27,7 @@ public class ApproachAndAttack : IState
                 return;
             }
             
-            if(Vector3.Distance(_movementController.transform.position, _enemyStates._target.transform.position) > 1)
+            if(Vector3.Distance(_movementController.transform.position, _enemyStates._target.transform.position) > 1 && !hasAttacked)
             {
                 Vector3 moveDir = (_enemyStates._target.position - _movementController.transform.position).normalized;
                 _movementController.MoveEnemyInDirection(moveDir, true);
