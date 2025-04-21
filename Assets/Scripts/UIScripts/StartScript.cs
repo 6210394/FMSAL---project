@@ -25,12 +25,14 @@ public class StartScript : MonoBehaviour
 
     public void StartNewGame()
     {
+        /*
         if(SaveManager.instance.fileDataHandler.Load() != null && !overwrite)
         {
             DisplayMessageScript.instance.ChangeDisplayMessage("Save found. Give up on them?", 1, 2);
             overwrite = true;
             return;
         }
+        */
         SaveManager.instance.NewGame();
         LoadScene();
     }
