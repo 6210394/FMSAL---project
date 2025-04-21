@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -7,8 +8,10 @@ public class StartScript : MonoBehaviour
 
     [SerializeField]
     GameObject gameManagerObject;
+    [SerializeField]
+    GameObject fadeOutScreen;
 
-    bool overwrite = false;
+    //bool overwrite = false;
 
     void Start()
     {
@@ -34,7 +37,16 @@ public class StartScript : MonoBehaviour
         }
         */
         SaveManager.instance.NewGame();
-        LoadScene();
+
+        StartCoroutine(StartMission());
+    }
+
+    IEnumerator StartMission()
+    {
+        fadeOutScreen.SetActive(true);
+        StartCoroutine(FadeInOutScript.instance.IFadeOut(1f));
+        yield return new WaitForSeconds(3);
+        GameManager.instance.LoadMission(sceneName);
     }
 
     public void Continue()

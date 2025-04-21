@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Knife
   m_EditorClassIdentifier: 
   grabPoint: {x: -0.1, y: -0.1, z: 0.1}
-  itemMesh: {fileID: 4898376589914736847, guid: 3d0d3f22b628a2943a392aad8e92d3c6, type: 3}
+  itemMesh: {fileID: 4898376589914736847, guid: ed57dd7bc6d880543bdd39f113e7d69b, type: 3}
   itemMaterial: {fileID: 2100000, guid: c04b59a28199a4042a3753023840eecf, type: 2}
   scale: 90
   rotation: {x: 0, y: -15, z: 180}

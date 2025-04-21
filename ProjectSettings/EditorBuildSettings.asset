@@ -18,6 +18,9 @@ EditorBuildSettings:
     path: Assets/Scenes/MetricGym.unity
     guid: d70d1fbaddedcd94685bb9cffb05f202
   - enabled: 1
+    path: Assets/Scenes/Pre-MissionScene.unity
+    guid: 8c9f119f2ddbfcd43b7b0f3af0d65d1e
+  - enabled: 1
     path: Assets/Scenes/CombatGym.unity
     guid: 4364453b449a3cc4f909c24766c14fd2
   - enabled: 1
@@ -26,6 +29,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/EndOfDemo.unity
     guid: 911c48c1d9ccc884ca40a00072c13b94
+  - enabled: 1
+    path: Assets/Scenes/DeathScene.unity
+    guid: 931540553ef61944a97ab8cd354a0ac7
   m_configObjects:
     com.unity.dt.app-ui: {fileID: 11400000, guid: 99f9c9493070a9d4c979a8fec7c5a8d3, type: 2}
   m_UseUCBPForAssetBundles: 0

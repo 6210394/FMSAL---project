@@ -88,7 +88,7 @@ public class EnemyManager : MonoBehaviour
         
         yield return new WaitUntil(() => attackingEnemy._combatController.IsPreparingAttack() == false);
 
-        yield return new WaitForSeconds(Random.Range(2, 4));
+        yield return new WaitForSeconds(Random.Range(0, 2));
 
         if (AliveEnemyCount() > 0)
             AI_Loop_Coroutine = StartCoroutine(AI_Loop(attackingEnemy));

@@ -31,6 +31,7 @@ public class LevelManager : MonoBehaviour
     
     public int rewardMoney = 0;
     public string endOfMissionDestination = "Home";
+    public string deathDestination = "Home";
 
     public static UnityEvent onMissionInitialize = new UnityEvent();
     public UnityEvent onTreasurePickup;
@@ -122,24 +123,24 @@ public class LevelManager : MonoBehaviour
         Debug.Log("Mission Complete");
         Debug.Log("You have earned " + rewardMoney + " money");
         GameManager.instance.money += rewardMoney;
-        StartCoroutine(ILeaveMission());
+        StartCoroutine(ILeaveMission(endOfMissionDestination));
     }
 
     public void FailMission()
     {
         Debug.Log("Mission Failed");
-        StartCoroutine(ILeaveMission());
+        StartCoroutine(ILeaveMission(deathDestination));
     }
 
-    IEnumerator ILeaveMission()
+    IEnumerator ILeaveMission(string destination)
     {
         StartCoroutine(FadeInOutScript.instance.IFadeOut(0.5f));
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(2);
         foreach(GameObject player in GameManager.instance.players)
         {
             Destroy(player);
         }
-        SceneManager.LoadScene(endOfMissionDestination);
+        SceneManager.LoadScene(destination);
         GameManager.instance.hasCompletedDailyMission = true;
         instance = null;
     }

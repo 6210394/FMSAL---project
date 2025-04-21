@@ -15,6 +15,8 @@ public class FadeInOutScript : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        sprite = GetComponent<Image>();
+        initialColor = sprite.color;
     }
 
     public Image sprite;
@@ -23,8 +25,7 @@ public class FadeInOutScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        sprite = GetComponent<Image>();
-        initialColor = sprite.color;
+        
     }
 
     // Update is called once per frame
