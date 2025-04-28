@@ -56,6 +56,7 @@ public class CombatScript : MonoBehaviour
     
     [Header ("Object & Component References ")]
     public HealthScript healthScript;
+    public MovementScript movementScript;
     public DiogenicInventory diogenicInventory;
 
     [SerializeField] Vector3 reticleOffset;
@@ -261,24 +262,26 @@ public class CombatScript : MonoBehaviour
         }
     }
 
-    public void Attack(CombatActionType attackType, float specificAttackCooldown)
+    public void Attack(CombatActionType attackType)
     {
+        List<AttackAnimationData> animationDataList = diogenicInventory.currentHeldWeapon.listOfAttacks;
+
         if(!isStunned && attackIsAvailable && ultimateCanAttack)
         {
-            attackCooldown = specificAttackCooldown;
-
+            
             currentAnimationComboChain = upcomingAnimationComboChain;
 
             string animationTriggerName; //default animation trigger name
             if(currentAnimationComboChain <= diogenicInventory.currentHeldWeapon.listOfAttacks.Count - 1)
             {
-                animationTriggerName = diogenicInventory.currentHeldWeapon.listOfAttacks[currentAnimationComboChain].animationTriggerName;
+                attackCooldown = animationDataList[currentAnimationComboChain].animationEndCooldown;
+                animationTriggerName = animationDataList[currentAnimationComboChain].animationTriggerName;
             }
             else
             {
                 currentAnimationComboChain = 0;
                 upcomingAnimationComboChain = 0;
-                animationTriggerName = diogenicInventory.currentHeldWeapon.listOfAttacks[currentAnimationComboChain].animationTriggerName;
+                animationTriggerName = animationDataList[currentAnimationComboChain].animationTriggerName;
             }
 
             switch(attackType)
@@ -330,7 +333,7 @@ public class CombatScript : MonoBehaviour
 
         upcomingAnimationComboChain += 1;
         
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(attackCooldown);
         currentAnimationComboChain = 0;
         upcomingAnimationComboChain = 0;
         animator.SetInteger("ComboIndex", currentAnimationComboChain);
@@ -420,6 +423,7 @@ public class CombatScript : MonoBehaviour
     public IEnumerator IStunned(float time)
     {
         isStunned = true;
+        
         ClearHurtboxes();
         yield return new WaitForSeconds(time);
         isStunned = false;

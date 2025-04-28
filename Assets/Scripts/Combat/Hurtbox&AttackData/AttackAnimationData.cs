@@ -7,6 +7,7 @@ public class AttackAnimationData : ScriptableObject
     //This serves to give moves their specific hitboxes. Different hitboxes can be created by the animation using their index.
 
     public string animationTriggerName;
+    public float animationEndCooldown; //keep this around animation length for expected results
     public ParticleEffect particleEffect;
 
     public List<Hurtbox> hurtboxes;

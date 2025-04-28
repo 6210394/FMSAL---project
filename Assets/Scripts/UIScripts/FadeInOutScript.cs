@@ -34,6 +34,11 @@ public class FadeInOutScript : MonoBehaviour
         
     }
 
+    public void FadeIn(float speed)
+    {
+        StartCoroutine(IFadeIn(speed));
+    }
+
     public IEnumerator IFadeOutInCycle(float speed, float length)
     {
         Debug.Log("Fading Out");

@@ -21,6 +21,7 @@ public class MovementScript : MonoBehaviour
     public bool isGrounded;
     float gravityScale = 9.8f;
 
+    /*
     [Header("Dodging/Dashing Values")]
     public float dodgeMoveDuration;
     public float dodgeForce; // to be made private
@@ -31,17 +32,19 @@ public class MovementScript : MonoBehaviour
     public bool isDodging = false;
 
     public bool isInvincibleFromDodge = false;
+    */
 
     [Header("Component References")]
     public Animator animator;
     public Rigidbody rb;
 
     [Header("Coroutines")]
+    Coroutine KnockBackCoroutine;
     Coroutine TweenCoroutine;
     Coroutine DodgeCoroutine;
 
     [Header("Ultimate Bool")]
-    public bool ultimateCanMove = true;
+    private bool ultimateCanMove = true;
 
 
     void Start()
@@ -97,7 +100,6 @@ public class MovementScript : MonoBehaviour
             currentMovementSpeed = 0;
         }
 
-
         animator.SetFloat("Speed", currentMovementSpeed);
         animator.SetBool("Sprinting", isSprinting);
     }
@@ -121,21 +123,17 @@ public class MovementScript : MonoBehaviour
 
     private IEnumerator ILerpToPosition(Vector3 target, float moveDuration, float moveTowardsTargetOffset)
     {
-        Vector3 startPosition = transform.position;
-        Vector3 targetPosition = TargetOffset(target, moveTowardsTargetOffset);
-        float distance = Vector3.Distance(startPosition, targetPosition);
-        float speed = distance / moveDuration;
+        Vector3 targetDirection = TargetOffset(target, moveTowardsTargetOffset);
         float elapsedTime = 0f;
 
         while (elapsedTime < moveDuration)
         {
-            float t = (speed * elapsedTime) / distance;
-            transform.position = Vector3.Lerp(startPosition, targetPosition, t);
+            characterController.Move(targetDirection * Time.deltaTime);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
 
-        transform.position = targetPosition;
+        transform.position = targetDirection;
         TweenCoroutine = null;
     }
 
@@ -143,19 +141,20 @@ public class MovementScript : MonoBehaviour
     {
         Vector3 startPosition = transform.position;
         Vector3 targetPosition = TargetOffset(target.position, moveTowardsTargetOffset);
-        float distance = Vector3.Distance(startPosition, targetPosition);
-        float speed = distance / moveDuration;
         float elapsedTime = 0f;
 
         while (elapsedTime < moveDuration)
         {
-            float t = (speed * elapsedTime) / distance;
-            transform.position = Vector3.Lerp(startPosition, targetPosition, t);
+            Vector3 interpolatedPosition = Vector3.Lerp(startPosition, targetPosition, elapsedTime / moveDuration);
+
+            Vector3 moveDirection = interpolatedPosition - transform.position;
+            moveDirection.y = 0;
+            characterController.Move(moveDirection);
+
             elapsedTime += Time.deltaTime;
             yield return null;
         }
 
-        transform.position = targetPosition;
         TweenCoroutine = null;
     }
 
@@ -197,71 +196,34 @@ public class MovementScript : MonoBehaviour
         }
     }
 
-    public void DodgeInvincibilityFrame()
+    public void Knockback(float knockBackTime, Vector3 knockBackOrigin, float knockbackStrength)
     {
-        isInvincibleFromDodge = !isInvincibleFromDodge;
-    }
-
-    public void DodgeWithTarget(Vector3 dodgeDirection, float dodgeCooldownLength, Transform lockedTarget)
-    {   
-        if(ultimateCanMove && DodgeCoroutine == null)
+        if(KnockBackCoroutine!=null)
         {
-            maxDodgeCooldown = dodgeCooldownLength;
-
-            isDodging = true;
-
-            DodgeCoroutine = StartCoroutine(DodgeAround(lockedTarget, dodgeDirection, 5, dodgeMoveDuration));
+            StopCoroutine(KnockBackCoroutine);
+            KnockBackCoroutine = null;
         }
+        KnockBackCoroutine = StartCoroutine(IKnockBack(knockBackTime, knockBackOrigin, knockbackStrength));
     }
 
-    IEnumerator DodgeAround(Transform axisPoint, Vector3 orbitDirection, float orbitDistance, float orbitDuration)
+    IEnumerator IKnockBack(float knockBackTime, Vector3 knockBackOrigin, float knockbackStrength)
     {
-        float elapsedTime = 0f;
-        float direction = orbitDirection.x > 0 ? -1 : 1;
-        float radius = Vector3.Distance(transform.position, axisPoint.position);
+        float currentTime = 0;
+        Vector3 knockBackDirection = (transform.position - knockBackOrigin).normalized;
+        Vector3 knockbackVector = knockBackDirection * knockbackStrength;
+        knockbackVector.y = 0;
+        
+        Vector3 knockbackVelocity = knockbackVector / knockBackTime;
 
-        float initialDodgeAwayDistance = 0f;
-        float finalDodgeAwayDistance = 0.5f;
-
-        while (elapsedTime < orbitDuration)
+        // Knockback
+        while (currentTime < knockBackTime)
         {
-            elapsedTime += Time.deltaTime;
-            float angle = (orbitDistance / radius) * (360f / (2 * Mathf.PI)) * Time.deltaTime * direction;
-            Vector3 offset = transform.position - axisPoint.position;
-            offset = Quaternion.Euler(0, angle, 0) * offset.normalized * radius;
-
-            float currentDodgeAwayDistance = Mathf.Lerp(initialDodgeAwayDistance, finalDodgeAwayDistance, elapsedTime / orbitDuration);
-            offset += offset.normalized * currentDodgeAwayDistance;
-
-            transform.position = axisPoint.position + offset;
-            DodgeCoroutine = null;
+            characterController.Move(knockbackVelocity * Time.deltaTime);
+            currentTime += Time.deltaTime;
             yield return null;
         }
-    }
 
-    void DodgeTimer()
-    {
-        if (isDodging && dodgeCooldownRemaining <= 0)
-        {
-            dodgeCooldownRemaining = maxDodgeCooldown;
-        }
-
-        if (dodgeCooldownRemaining >= 0)
-        {
-            dodgeCooldownRemaining -= Time.deltaTime;
-            
-            if (dodgeCooldownRemaining <= 0)
-            {
-                dodgeCooldownRemaining = 0;
-                isDodging = false;
-            }
-        }
-    }
-
-    public void KnockBack(float knockBackTime, float knockBackDelay, Vector3 knockBackOrigin)
-    {
-        Vector3 knockBackDirection = (transform.position - knockBackOrigin).normalized;
-        transform.DOMove(transform.position + knockBackDirection / 2, knockBackTime).SetDelay(knockBackDelay);
+        yield return null;
     }
 
     public void FaceTowards(Vector3 orientation, float rotationSpeed)

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class TakeDamage : IState
 {
@@ -21,7 +22,7 @@ public class TakeDamage : IState
     public void OnEnter()
     {
         Debug.Log("Is on TakeDamage step");
-        RecieveHit();
+        RecieveHit(_enemyStates._damageSource);
     }
 
     public void OnExit()
@@ -37,16 +38,16 @@ public class TakeDamage : IState
         }
     }
 
-    void RecieveHit()
+    void RecieveHit(Vector3 hitOrigin)
     {
         if(!_combatController.combatScript.healthScript.isDead)
         {
             _animator.SetTrigger("RecieveHit");
         }
         
-        if(_enemyStates._searchPosition != null)
+        if(_enemyStates._damageSource != null)
         {
-            _movementController.movementScript.KnockBack(0.3f, 0.1f, _enemyStates._searchPosition);
+            _movementController.movementScript.Knockback(0.5f, hitOrigin, 1f);
             _combatController.isPreparingAttack = false;
         }
         if(!_combatController.combatScript.stunImmune)
@@ -56,7 +57,6 @@ public class TakeDamage : IState
         }
 
         //Retaliate();
-
     }
 
     public bool Retaliate()

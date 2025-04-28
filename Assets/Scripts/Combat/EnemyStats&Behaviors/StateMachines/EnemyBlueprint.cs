@@ -6,10 +6,10 @@ using UnityEngine;
 public class EnemyBlueprint : MonoBehaviour
 {
     public EnemyStats _enemyStats;
-    public bool _isReadyToAttack = false; //indicates that the player is available for attacking to the EnemyManager
+    public bool _isReadyToAttack = false; //indicates that the entity is available for attacking to the EnemyManager
     
     public bool _hasTakenHit = false;
-    public Vector3 _searchPosition;
+    public Vector3 _damageSource;
     public float _stunDuration = 0;
     public float _stunChainRecoveryRate;
 
@@ -33,7 +33,6 @@ public class EnemyBlueprint : MonoBehaviour
         _animator = GetComponent<Animator>();
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     protected virtual void Start()
     {
         _stateMachine = new StateMachine();
@@ -56,7 +55,7 @@ public class EnemyBlueprint : MonoBehaviour
     {
         Debug.Log("HAS TAKEN HIT");
         _hasTakenHit = true;
-        _searchPosition = damageSource.position;
+        _damageSource = damageSource.position;
         _stunDuration = stunDuration;
     }
 
@@ -124,7 +123,7 @@ public class EnemyBlueprint : MonoBehaviour
 
         if (_combatController == null) return;
 
-        Gizmos.color = _raycastHitPlayer ? Color.green : Color.red; // Green if the raycast hit the player, red otherwise
+        Gizmos.color = _raycastHitPlayer ? Color.green : Color.red;
         if (_lastRaycastDirection != Vector3.zero)
         {
             Gizmos.DrawRay(_combatController.transform.position, _lastRaycastDirection * _combatController.detectionRange);

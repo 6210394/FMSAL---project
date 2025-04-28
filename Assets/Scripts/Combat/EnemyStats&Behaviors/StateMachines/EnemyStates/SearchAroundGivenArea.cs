@@ -20,7 +20,7 @@ public class SearchAroundGivenArea : IState
 
     public void OnEnter()
     {
-        _searchPosition = _enemyStates._searchPosition + new Vector3(Random.Range(-2,3), 0, Random.Range(-2,3));
+        _searchPosition = _enemyStates._damageSource + new Vector3(Random.Range(-2,3), 0, Random.Range(-2,3));
 
         _hasArrived = false;
         _timerReachedMax = false;
@@ -41,7 +41,7 @@ public class SearchAroundGivenArea : IState
         }
         else
         {
-            _movementController.transform.LookAt(_enemyStates._searchPosition);
+            _movementController.transform.LookAt(_enemyStates._damageSource);
             MoveToSearchPosition();
         }
     }
@@ -66,13 +66,13 @@ public class SearchAroundGivenArea : IState
 
     private void MoveToSearchPosition()
     {
-        Vector3 direction = (_enemyStates._searchPosition - _movementController.transform.position).normalized;
-        _movementController.MoveEnemyInDirection(direction, true);
+        Vector3 direction = (_searchPosition - _movementController.transform.position).normalized;
+    _movementController.MoveEnemyInDirection(direction, true);
 
-        if (Vector3.Distance(_movementController.transform.position, _searchPosition) < 1f)
-        {
-            _hasArrived = true;
-        }
+    if (Vector3.Distance(_movementController.transform.position, _searchPosition) < 1f)
+    {
+        _hasArrived = true;
+    }
     }
 
     public Color GizmoColor()

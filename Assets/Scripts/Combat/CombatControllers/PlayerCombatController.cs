@@ -91,8 +91,6 @@ public class PlayerCombatController : MonoBehaviour
         //or
         PlayerFaceTarget();
 
-        //PlayerDodge();
-
         //Process player inputs
         PlayerLockOn();
         
@@ -100,11 +98,10 @@ public class PlayerCombatController : MonoBehaviour
         {
             if(combatScript.diogenicInventory.currentHeldWeapon.weaponType == WeaponScript.WeaponType.Gun)
             {
-                PlayerShoot();
+                QueueAttack(CombatScript.CombatActionType.Shoot);
             }
             else if (combatScript.diogenicInventory.currentHeldWeapon.weaponType == WeaponScript.WeaponType.Melee)
             {
-                PlayerMelee();
                 QueueAttack(CombatScript.CombatActionType.LightMelee);
             }
             else
@@ -171,6 +168,24 @@ public class PlayerCombatController : MonoBehaviour
         }
     }
 
+    void PlayerAttack(CombatScript.CombatActionType combatActionType)
+    {
+        switch(combatActionType)
+        {
+            case CombatScript.CombatActionType.LightMelee:
+            {
+                PlayerMelee();
+                break;
+            }
+
+            case CombatScript.CombatActionType.Shoot:
+            {
+                PlayerShoot();
+                break;
+            }
+        }
+    }
+
     void PlayerMelee()
     {
         if(!combatScript.meleeEquipped || !combatScript.attackIsAvailable)
@@ -190,32 +205,41 @@ public class PlayerCombatController : MonoBehaviour
 
         Vector3 inputDirection = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).normalized;
         #endregion
-
         
         if(currentLockedTarget)
         {
             transform.LookAt(currentLockedTarget.transform.position);
-            if(TargetDistance(currentLockedTarget.transform) < combatScript.meleeReach)
+            if(TargetDistance(currentLockedTarget.transform) > combatScript.punchTargetDistanceOffset)
             {
-                playerMovementController.movementScript.LerpToTransform(currentLockedTarget.gameObject.transform, combatScript.meleeDuration/1.75f, combatScript.punchTargetDistanceOffset);
+                Debug.Log("Trying to dash towards enemy!");
+                if(TargetDistance(currentLockedTarget.transform) < combatScript.meleeReach)
+                {
+                    playerMovementController.movementScript.LerpToTransform(currentLockedTarget.gameObject.transform, combatScript.meleeDuration/1.75f, combatScript.punchTargetDistanceOffset);
+                }
+                else
+                {
+                    Debug.Log("Out of range!");
+                }
             }
-        }
-        
-
-        Vector3 direction;
-
-        if (inputDirection == Vector3.zero)
-        {
-            direction = (forward + right).normalized; // Default push towards the camera direction
-            direction.y = 0;
         }
         else
         {
-            direction = (forward * inputDirection.z + right * inputDirection.x).normalized;
+            Vector3 direction;
+
+            if (inputDirection == Vector3.zero)
+            {
+                direction = (forward + right).normalized; // Default push towards the camera direction
+                direction.y = 0;
+            }
+            else
+            {
+                direction = (forward * inputDirection.z + right * inputDirection.x).normalized;
+            }
+
+            transform.LookAt(transform.position + direction);
         }
-
-        transform.LookAt(transform.position + direction);
-
+        
+        combatScript.Attack(CombatScript.CombatActionType.LightMelee);
         RemoveControl();
     }
 
@@ -258,7 +282,7 @@ public class PlayerCombatController : MonoBehaviour
             }
         }
         
-        combatScript.Attack(CombatScript.CombatActionType.Shoot, combatScript.gunRateOfFireTime); //change later to be a variable for different guns
+        combatScript.Attack(CombatScript.CombatActionType.Shoot); //change later to be a variable for different guns
     }
 
     void PlayerAim()
@@ -331,29 +355,9 @@ public class PlayerCombatController : MonoBehaviour
         }
     }
 
-    void PlayerDodge()
-    {   
-        Vector3 forward = Camera.main.transform.forward;
-        forward.y = 0;
-        forward.Normalize();
-
-        Vector3 inputDirection = forward * Input.GetAxis("Vertical") + Vector3.right * Input.GetAxis("Horizontal");
-        inputDirection.Normalize();
-        
-        if (Input.GetKeyDown(KeyCode.Space) && inputDirection != Vector3.zero && !playerMovementController.movementScript.isDodging)
-        {
-            combatScript.AttackCancel();
-            playerMovementController.animator.SetTrigger("DashingTrigger");
-            if(currentLockedTarget)
-            {
-                playerMovementController.movementScript.DodgeWithTarget(inputDirection, 0.5f, currentLockedTarget.transform);
-            }
-        }
-    }
-
     void PlayerParry()
     {
-        combatScript.Attack(CombatScript.CombatActionType.Parry, 0);
+        combatScript.Attack(CombatScript.CombatActionType.Parry);
     }
 #endregion
 
@@ -381,7 +385,7 @@ public class PlayerCombatController : MonoBehaviour
         if (combatScript.attackIsAvailable && attackQueue.Count > 0)
         {
             var nextAttack = attackQueue.Dequeue();
-            combatScript.Attack(nextAttack, combatScript.GetAttackCooldown(nextAttack));
+            PlayerAttack(nextAttack);
         }
     }
 
@@ -420,54 +424,12 @@ public class PlayerCombatController : MonoBehaviour
 
     public void OnTakeHit(CombatScript.HitEventArgs hitEventArgs)
     {
-        
-        if(playerMovementController.movementScript.isInvincibleFromDodge)
-        {
-            Debug.LogWarning("DODGED");
-            return;
-        }
-
         playerMovementController.animator.SetTrigger("RecieveHit");
         if(hitEventArgs.damageSource != null)
         {
-            playerMovementController.movementScript.KnockBack(0.3f, 0.1f, hitEventArgs.damageSource.position);
+            playerMovementController.movementScript.Knockback(0.3f, hitEventArgs.damageSource.position, 1);
         }
     }
-
-    /*
-    public void DealDamageEvent()
-    {
-        Debug.Log("Attack!");
-        GiveControl();
-        if(combatScript.meleeEquipped)
-        {
-            if (currentLockedTarget == null)
-            {
-                return;
-            }
-            if(Vector3.Distance(transform.position, currentLockedTarget.gameObject.transform.position) > enemyDetection.autoLockOnRange)
-            {
-                return;
-            }
-
-            if(currentLockedTarget)
-            {
-                OnHit.Invoke(combatScript.BuildAttack(combatScript.attackDamage, combatScript.meleeStunDuration, combatScript.meleeRange, currentLockedTarget.transform, transform));
-            }
-            //punchParticle.PlayParticleAtPosition(punchPosition.position);
-        }
-
-        if(combatScript.gunEquipped)
-        {
-            Debug.Log("Shot fired!");
-            if(bulletHitTarget == null)
-            {
-                return;
-            }
-            OnHit.Invoke(combatScript.BuildAttack(combatScript.attackDamage, combatScript.gunStunDuration, 100, transform));
-        }
-    }
-    */
 
     void AdjustLockOnCamera()
     {   

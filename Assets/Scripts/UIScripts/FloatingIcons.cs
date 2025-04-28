@@ -16,6 +16,9 @@ public class FloatingIcons : MonoBehaviour
 
     public void SetIconActive(bool active)
     {
-        GetComponent<SpriteRenderer>().enabled = active;
+        if(GetComponent<SpriteRenderer>() != null)
+        {
+            GetComponent<SpriteRenderer>().enabled = active;
+        }
     }
 }

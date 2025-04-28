@@ -68,7 +68,7 @@ public class BrawlerEnemy : EnemyBlueprint
         {
             if(_target != null)
             {
-                _searchPosition = _target.transform.position;
+                _damageSource = _target.transform.position;
                 _target = null;
 
                 if(_combatController.enemyManager.availableEnemies.Contains(this) || !_combatController.isAvailableForEnemyManager)

@@ -35,7 +35,7 @@ public class ApproachAndAttack : IState
             else if (!hasAttacked)
             {
                 hasAttacked = true;
-                _combatController.combatScript.Attack(CombatScript.CombatActionType.LightMelee, 0);
+                _combatController.combatScript.Attack(CombatScript.CombatActionType.LightMelee);
             }
             else
             {

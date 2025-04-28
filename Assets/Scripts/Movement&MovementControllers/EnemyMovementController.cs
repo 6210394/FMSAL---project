@@ -73,12 +73,6 @@ public class EnemyMovementController : MonoBehaviour
         finalDirection.y = 0;
         transform.LookAt(axisPoint);
     }
-
-    public void StopMoving()
-    {
-        movementScript.ultimateCanMove = false;
-        givenMoveDirection = Vector3.zero;
-    }
     
     #endregion
 }
