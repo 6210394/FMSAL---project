@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: EnemySlash
   m_EditorClassIdentifier: 
   animationTriggerName: EnemySlash
-  animationEndCooldown: 0.5
+  animationEndCooldown: 0.8
   particleEffect:
     particleEffectScript: {fileID: 5658433022426117929, guid: 07f75a8f24ad6fb4e81db4f29687e292, type: 3}
     particleOffset: {x: 0, y: 0.5, z: 0}
