@@ -68,14 +68,6 @@ public class EnemyCombatController : MonoBehaviour
         Attack();
     }
 
-    /*
-    public void DealDamageEvent()
-    {
-        target.SendMessage("OnTakeHit", combatScript.BuildAttack(combatScript.attackDamage, combatScript.meleeStunDuration, transform));
-        OnHit.Invoke();
-    }
-    */
-
     public void Attack()
     {
         if(combatScript.ultimateCanAttack)

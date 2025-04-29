@@ -660,7 +660,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 2100000, guid: a65f13a3280d016458e08b4437bb0b9d, type: 2}
-  m_DrawDistance: 1000
+  m_DrawDistance: 100
   m_FadeScale: 1
   m_StartAngleFade: 180
   m_EndAngleFade: 180
@@ -728,7 +728,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentHealth: 0
-  maxHealth: 6
+  maxHealth: 5
   isDead: 0
   OnTakeDamage:
     m_PersistentCalls:
@@ -834,14 +834,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attackDamage: 1
-  meleeReach: 4
+  meleeReach: 6
   meleeDuration: 0
   meleeStunDuration: 0
   targetDistanceOffset: 0.35
   punchReach: 4
   punchDuration: 1
   punchStunDuration: 0.3
-  punchTargetDistanceOffset: 0.2
+  punchTargetDistanceOffset: 0.1
   gunHipFireBulletAccuracyRange: 10
   gunAimAssistSize: 1
   gunStunDuration: 0
@@ -856,6 +856,7 @@ MonoBehaviour:
   gunEquipped: 0
   junkEquipped: 0
   healthScript: {fileID: 0}
+  movementScript: {fileID: 0}
   diogenicInventory: {fileID: 0}
   reticleOffset: {x: 0, y: 0, z: 0}
   bulletVisualsPrefab: {fileID: 0}
@@ -885,14 +886,8 @@ MonoBehaviour:
   isMoving: 0
   usesGravity: 1
   isGrounded: 0
-  dodgeMoveDuration: 1
-  dodgeForce: 10
-  maxDodgeCooldown: 0.5
-  isDodging: 0
-  isInvincibleFromDodge: 0
   animator: {fileID: 0}
   rb: {fileID: 0}
-  ultimateCanMove: 1
 --- !u!143 &8507021317883215589
 CharacterController:
   m_ObjectHideFlags: 0

@@ -67,7 +67,7 @@ public class DepositZoneScript : MonoBehaviour
         }
         */
 
-        if (isInZone && LevelManager.instance.currentCarry > 0)
+        if (isInZone && LevelManager.instance.currentCarry > 0 && Input.GetKeyDown(KeyCode.E))
         {
             DisplayMessageScript.instance.ChangeDisplayMessage("Deposited!", 0.5f, 1);
             LevelManager.instance.AddMoney(totalRewardMoney);

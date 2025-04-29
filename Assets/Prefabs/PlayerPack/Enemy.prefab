@@ -76,7 +76,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 2100000, guid: a65f13a3280d016458e08b4437bb0b9d, type: 2}
-  m_DrawDistance: 1000
+  m_DrawDistance: 100
   m_FadeScale: 1
   m_StartAngleFade: 180
   m_EndAngleFade: 180
@@ -192,7 +192,7 @@ MonoBehaviour:
   _enemyStats: {fileID: 0}
   _isReadyToAttack: 0
   _hasTakenHit: 0
-  _searchPosition: {x: 0, y: 0, z: 0}
+  _damageSource: {x: 0, y: 0, z: 0}
   _stunDuration: 0
   _stunChainRecoveryRate: 0
   wantsToRetreat: 0
@@ -268,14 +268,8 @@ MonoBehaviour:
   isMoving: 0
   usesGravity: 1
   isGrounded: 0
-  dodgeMoveDuration: 0
-  dodgeForce: 0
-  maxDodgeCooldown: 0.5
-  isDodging: 0
-  isInvincibleFromDodge: 0
   animator: {fileID: 0}
   rb: {fileID: 0}
-  ultimateCanMove: 1
 --- !u!114 &2058122964224401961
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -311,6 +305,7 @@ MonoBehaviour:
   gunEquipped: 0
   junkEquipped: 0
   healthScript: {fileID: 0}
+  movementScript: {fileID: 0}
   diogenicInventory: {fileID: 0}
   reticleOffset: {x: 0, y: 0, z: 0}
   bulletVisualsPrefab: {fileID: 0}

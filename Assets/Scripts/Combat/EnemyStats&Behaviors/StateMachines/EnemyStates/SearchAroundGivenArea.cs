@@ -66,13 +66,13 @@ public class SearchAroundGivenArea : IState
 
     private void MoveToSearchPosition()
     {
-        Vector3 direction = (_searchPosition - _movementController.transform.position).normalized;
-    _movementController.MoveEnemyInDirection(direction, true);
+        Vector3 direction = (_enemyStates._damageSource - _movementController.transform.position).normalized;
+        _movementController.MoveEnemyInDirection(direction, true);
 
-    if (Vector3.Distance(_movementController.transform.position, _searchPosition) < 1f)
-    {
-        _hasArrived = true;
-    }
+        if(Vector3.Distance(_movementController.transform.position, _searchPosition) < 1f)
+        {
+            _hasArrived = true;
+        }
     }
 
     public Color GizmoColor()

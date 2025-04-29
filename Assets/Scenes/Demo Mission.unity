@@ -34244,10 +34244,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 9005477387588778129, guid: 257fe48e4379fa447a8f728f258038b9, type: 3}
-      propertyPath: m_DrawDistance
-      value: 100
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -162976,10 +162972,6 @@ PrefabInstance:
       propertyPath: Targets.Array.data[0].Object
       value: 
       objectReference: {fileID: 2054423102}
-    - target: {fileID: 2111554232866109797, guid: 31a631ea320e51545a7e12a38d4f98d2, type: 3}
-      propertyPath: AvoidObstacles.CameraRadius
-      value: 0.34
-      objectReference: {fileID: 0}
     - target: {fileID: 3651089036395097147, guid: 31a631ea320e51545a7e12a38d4f98d2, type: 3}
       propertyPath: Target.TrackingTarget
       value: 
@@ -215977,10 +215969,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 417968437}
     m_Modifications:
-    - target: {fileID: 1054404184456134323, guid: 40c565ee377da1b40beae600764c177d, type: 3}
-      propertyPath: maxHealth
-      value: 5
-      objectReference: {fileID: 0}
     - target: {fileID: 1102951906637046753, guid: 40c565ee377da1b40beae600764c177d, type: 3}
       propertyPath: PlayerCameras
       value: 
@@ -215989,10 +215977,6 @@ PrefabInstance:
       propertyPath: crosshairReference
       value: 
       objectReference: {fileID: 312636889}
-    - target: {fileID: 1869228001003867697, guid: 40c565ee377da1b40beae600764c177d, type: 3}
-      propertyPath: m_DrawDistance
-      value: 100
-      objectReference: {fileID: 0}
     - target: {fileID: 4170848390567775362, guid: 40c565ee377da1b40beae600764c177d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 13.810111
@@ -216034,12 +216018,8 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5720523247777047060, guid: 40c565ee377da1b40beae600764c177d, type: 3}
-      propertyPath: meleeReach
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 5720523247777047060, guid: 40c565ee377da1b40beae600764c177d, type: 3}
       propertyPath: punchTargetDistanceOffset
-      value: 0.1
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6739474880526340487, guid: 40c565ee377da1b40beae600764c177d, type: 3}
       propertyPath: m_Name

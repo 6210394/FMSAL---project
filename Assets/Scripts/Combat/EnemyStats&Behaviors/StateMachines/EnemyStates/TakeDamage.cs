@@ -45,7 +45,7 @@ public class TakeDamage : IState
             _animator.SetTrigger("RecieveHit");
         }
         
-        if(_enemyStates._damageSource != null)
+        if(_enemyStates._damageSource != null && currentChainStun >= _combatController.maximumChainStun)
         {
             _movementController.movementScript.Knockback(0.5f, hitOrigin, 1f);
             _combatController.isPreparingAttack = false;
