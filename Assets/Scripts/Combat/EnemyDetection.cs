@@ -82,11 +82,26 @@ public class EnemyDetection : MonoBehaviour
             if(closestTarget != null && closestTarget.GetComponent<EnemyCombatController>().IsAttackable())
             {
                 currentTarget = closestTarget.transform.GetComponent<EnemyCombatController>();
+                foreach(SkinnedMeshRenderer meshRenderer in currentTarget.gameObject.GetComponentsInChildren<SkinnedMeshRenderer>())
+                {
+                    if(meshRenderer.gameObject.CompareTag("HighlightableMaterial"))
+                    {
+                        Debug.Log("Fixing up " + meshRenderer);
+                        meshRenderer.material.SetFloat("OutlineOpacity", 1);
+                    }
+                }
             }
         }
         
         if (currentTarget != null && Vector3.Distance(transform.position, currentTarget.transform.position) > autoLockOnRange*1.5f)
         {   
+            foreach(SkinnedMeshRenderer meshRenderer in currentTarget.gameObject.GetComponentsInChildren<SkinnedMeshRenderer>())
+                {
+                    if(meshRenderer.gameObject.CompareTag("HighlightableMaterial"))
+                    {
+                        meshRenderer.material.SetFloat("OutlineOpacity", 0);
+                    }
+                }
             currentTarget = null;
         }
     }

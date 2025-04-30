@@ -130084,10 +130084,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enemy (4)
       objectReference: {fileID: 0}
-    - target: {fileID: 4776239741273295831, guid: 257fe48e4379fa447a8f728f258038b9, type: 3}
-      propertyPath: doesPatrol
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 8661229243928107996, guid: 257fe48e4379fa447a8f728f258038b9, type: 3}
       propertyPath: m_LocalPosition.x
       value: 12.253712
@@ -130127,10 +130123,6 @@ PrefabInstance:
     - target: {fileID: 8661229243928107996, guid: 257fe48e4379fa447a8f728f258038b9, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9005477387588778129, guid: 257fe48e4379fa447a8f728f258038b9, type: 3}
-      propertyPath: m_DrawDistance
-      value: 100
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

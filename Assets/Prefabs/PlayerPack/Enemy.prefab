@@ -456,6 +456,14 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 6094251323514054a99af0ee4424a9e7, type: 2}
+    - target: {fileID: -6879110535765575012, guid: 7c3be85d9ec0e7747980a0507898e32f, type: 3}
+      propertyPath: m_TagString
+      value: HighlightableMaterial
+      objectReference: {fileID: 0}
+    - target: {fileID: -6794470628045418376, guid: 7c3be85d9ec0e7747980a0507898e32f, type: 3}
+      propertyPath: m_TagString
+      value: HighlightableMaterial
+      objectReference: {fileID: 0}
     - target: {fileID: -5232361586444669173, guid: 7c3be85d9ec0e7747980a0507898e32f, type: 3}
       propertyPath: m_LocalScale.x
       value: 100
@@ -476,6 +484,10 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 6094251323514054a99af0ee4424a9e7, type: 2}
+    - target: {fileID: -4314764439493069775, guid: 7c3be85d9ec0e7747980a0507898e32f, type: 3}
+      propertyPath: m_TagString
+      value: HighlightableMaterial
+      objectReference: {fileID: 0}
     - target: {fileID: -4077823109998420977, guid: 7c3be85d9ec0e7747980a0507898e32f, type: 3}
       propertyPath: m_LocalScale.x
       value: 100
@@ -499,6 +511,10 @@ PrefabInstance:
     - target: {fileID: -2837919815553016221, guid: 7c3be85d9ec0e7747980a0507898e32f, type: 3}
       propertyPath: m_LocalScale.z
       value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: -2659987461315992009, guid: 7c3be85d9ec0e7747980a0507898e32f, type: 3}
+      propertyPath: m_TagString
+      value: HighlightableMaterial
       objectReference: {fileID: 0}
     - target: {fileID: -1967366211996953865, guid: 7c3be85d9ec0e7747980a0507898e32f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -516,10 +532,18 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 100
       objectReference: {fileID: 0}
+    - target: {fileID: -741832106251744268, guid: 7c3be85d9ec0e7747980a0507898e32f, type: 3}
+      propertyPath: m_TagString
+      value: HighlightableMaterial
+      objectReference: {fileID: 0}
     - target: {fileID: -666985854777507172, guid: 7c3be85d9ec0e7747980a0507898e32f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 6094251323514054a99af0ee4424a9e7, type: 2}
+    - target: {fileID: -259972160606440404, guid: 7c3be85d9ec0e7747980a0507898e32f, type: 3}
+      propertyPath: m_TagString
+      value: HighlightableMaterial
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 7c3be85d9ec0e7747980a0507898e32f, type: 3}
       propertyPath: m_Name
       value: PlayerVisuals
@@ -540,6 +564,10 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 6094251323514054a99af0ee4424a9e7, type: 2}
+    - target: {fileID: 2958709981866249414, guid: 7c3be85d9ec0e7747980a0507898e32f, type: 3}
+      propertyPath: m_TagString
+      value: HighlightableMaterial
+      objectReference: {fileID: 0}
     - target: {fileID: 3101198487952676126, guid: 7c3be85d9ec0e7747980a0507898e32f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -580,6 +608,10 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 100
       objectReference: {fileID: 0}
+    - target: {fileID: 5525266705404801133, guid: 7c3be85d9ec0e7747980a0507898e32f, type: 3}
+      propertyPath: m_TagString
+      value: HighlightableMaterial
+      objectReference: {fileID: 0}
     - target: {fileID: 6002546529898548627, guid: 7c3be85d9ec0e7747980a0507898e32f, type: 3}
       propertyPath: m_LocalScale.x
       value: 100
@@ -592,10 +624,18 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 100
       objectReference: {fileID: 0}
+    - target: {fileID: 6435973517611433237, guid: 7c3be85d9ec0e7747980a0507898e32f, type: 3}
+      propertyPath: m_TagString
+      value: HighlightableMaterial
+      objectReference: {fileID: 0}
     - target: {fileID: 6719237573219571879, guid: 7c3be85d9ec0e7747980a0507898e32f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 6094251323514054a99af0ee4424a9e7, type: 2}
+    - target: {fileID: 7410821519865028538, guid: 7c3be85d9ec0e7747980a0507898e32f, type: 3}
+      propertyPath: m_TagString
+      value: HighlightableMaterial
+      objectReference: {fileID: 0}
     - target: {fileID: 7876023681238672744, guid: 7c3be85d9ec0e7747980a0507898e32f, type: 3}
       propertyPath: m_LocalScale.x
       value: 100

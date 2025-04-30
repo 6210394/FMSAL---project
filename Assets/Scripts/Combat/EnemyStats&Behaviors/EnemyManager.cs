@@ -36,8 +36,6 @@ public class EnemyManager : MonoBehaviour
 
     IEnumerator AI_Loop(EnemyBlueprint enemy)
     {
-        Debug.Log("Meta AI start!");
-
         if (AliveEnemyCount() == 0)
         {
             StopCoroutine(AI_Loop(null));
@@ -60,8 +58,6 @@ public class EnemyManager : MonoBehaviour
             yield break;
         }
 
-        Debug.Log(attackingEnemy + " will attack!");
-
         if(attackingEnemy._combatController.combatScript.isStunned)
         {
            yield break; 
@@ -75,7 +71,6 @@ public class EnemyManager : MonoBehaviour
         }
             
         yield return new WaitUntil(() => attackingEnemy._isReadyToAttack);
-        Debug.Log(attackingEnemy + " Is Ready to Attack!");
         
         attackingEnemy._combatController.Attack();
 
