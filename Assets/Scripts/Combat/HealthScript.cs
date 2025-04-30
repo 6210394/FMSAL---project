@@ -20,14 +20,6 @@ public class HealthScript : MonoBehaviour
     void Update()
     {
 
-        if(Input.GetKeyDown(KeyCode.V))
-        {
-            CombatScript.HitEventArgs hitEventArgs;
-            hitEventArgs.damageSource = null;
-            hitEventArgs.damageReceived = 1;
-            hitEventArgs.stunDuration = 0;
-            TakeDamage(hitEventArgs);
-        }
     }
 
     // Method to take damage

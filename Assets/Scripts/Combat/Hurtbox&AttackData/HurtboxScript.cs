@@ -1,3 +1,4 @@
+using Unity.Cinemachine;
 using UnityEngine;
 
 public class HurtboxScript : MonoBehaviour
@@ -10,6 +11,7 @@ public class HurtboxScript : MonoBehaviour
         if(other.GetComponent<HealthScript>() != null && other.transform != _hitEventArgs.damageSource)
         {
             other.GetComponent<HealthScript>().TakeDamage(_hitEventArgs);
+            CinemachineShake.Instance.ShakeCamera(_hitEventArgs.cameraShakeAmplitude, 0.1f);
             if(particleEffect.particleEffectScript != null)
             {
                 Vector3 hitPosition = other.ClosestPointOnBounds(transform.position);

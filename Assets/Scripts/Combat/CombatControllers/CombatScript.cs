@@ -102,15 +102,17 @@ public class CombatScript : MonoBehaviour
     {
         public int damageReceived;
         public float stunDuration;
+        public float cameraShakeAmplitude;
         public Transform damageSource;
     }
 
-    public HitEventArgs BuildAttack(int damageReceived, float stunDuration, Transform damageSource)
+    public HitEventArgs BuildAttack(int damageReceived, float stunDuration, float cameraShakeAmplitude, Transform damageSource)
     {
         HitEventArgs hitEventArgs;
 
         hitEventArgs.damageReceived = damageReceived;
         hitEventArgs.stunDuration = stunDuration;
+        hitEventArgs.cameraShakeAmplitude = cameraShakeAmplitude;
         hitEventArgs.damageSource = damageSource;
 
         return hitEventArgs;
@@ -139,7 +141,7 @@ public class CombatScript : MonoBehaviour
 
     public void CreateHurtbox(int hurtboxIndex)
     {
-        HitEventArgs hitEventArgs = BuildAttack(attackDamage, meleeStunDuration, transform);
+        HitEventArgs hitEventArgs = BuildAttack(attackDamage, meleeStunDuration,diogenicInventory.currentHeldWeapon.listOfAttacks[currentAnimationComboChain].hitImpactCameraShakeAmplitude , transform);
         
         GameObject hurtBox = BuildHurtbox(diogenicInventory.handAnchor.transform, hitEventArgs, diogenicInventory.currentHeldWeapon.listOfAttacks[currentAnimationComboChain].hurtboxes[hurtboxIndex].hurtboxGameobject, hurtboxIndex);
 

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93e9692e95007ff46b874ca37c9c3c7a, type: 3}
   m_Name: KnifeSlash
   m_EditorClassIdentifier: 
+  hitImpactCameraShakeAmplitude: 1
   animationTriggerName: Slash
   animationEndCooldown: 0.5
   particleEffect:

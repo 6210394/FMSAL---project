@@ -27,7 +27,7 @@ public class PlayerCombatController : MonoBehaviour
 
 #region Component References
     public PlayerMovementController playerMovementController {get; private set;}
-    private CombatScript combatScript;
+    public CombatScript combatScript {get; private set;}
     private EnemyManager enemyManager;
     private EnemyDetection enemyDetection;
 
@@ -92,7 +92,7 @@ public class PlayerCombatController : MonoBehaviour
         PlayerFaceTarget();
 
         //Process player inputs
-        PlayerLockOn();
+        //PlayerLockOn();
         
         if(Input.GetKeyDown(KeyCode.Mouse0)) //Attack Command
         {
@@ -277,7 +277,7 @@ public class PlayerCombatController : MonoBehaviour
             {
                 if(bulletHitTarget.GetComponent<HealthScript>() != null)
                 {
-                    bulletHitTarget.GetComponent<HealthScript>().TakeDamage(combatScript.BuildAttack(combatScript.attackDamage, combatScript.gunStunDuration, transform));
+                    //bulletHitTarget.GetComponent<HealthScript>().TakeDamage(combatScript.BuildAttack(combatScript.attackDamage, combatScript.gunStunDuration, transform));
                 }
             }
         }
@@ -391,13 +391,11 @@ public class PlayerCombatController : MonoBehaviour
 
     void SwitchCamera(CameraType cameraType)
     {
-        CinemachineShake.Instance.ResetCameraShake();
-
         switch(cameraType)
         {
             case CameraType.Default:
             {
-                CinemachineShake.Instance.cinemachineCamera = defaultCamera;
+                CinemachineShake.Instance.SetActiveCamera(0);
                 defaultCamera.Priority = 1;
                 targetCamera.Priority = 0;
                 aimCamera.Priority = 0;
@@ -405,7 +403,7 @@ public class PlayerCombatController : MonoBehaviour
             }
             case CameraType.Aim:
             {
-                CinemachineShake.Instance.cinemachineCamera = aimCamera;
+                CinemachineShake.Instance.SetActiveCamera(1);
                 aimCamera.Priority = 1;
                 defaultCamera.Priority = 0;
                 targetCamera.Priority = 0;
@@ -413,7 +411,7 @@ public class PlayerCombatController : MonoBehaviour
             }
             case CameraType.Focus:
             {
-                CinemachineShake.Instance.cinemachineCamera = targetCamera;
+                CinemachineShake.Instance.SetActiveCamera(2);
                 targetCamera.Priority = 1;
                 aimCamera.Priority = 0;
                 defaultCamera.Priority = 0;

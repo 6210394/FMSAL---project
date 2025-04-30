@@ -88,6 +88,7 @@ public class EnemyCombatController : MonoBehaviour
             enemyDetection.SetCurrentTarget(null);
         }
 
+        ClearOutline();
         combatScript.ultimateCanAttack = false;
         enemyManager.SetEnemyAvailiability(this, false);
         
@@ -99,6 +100,21 @@ public class EnemyCombatController : MonoBehaviour
             collider.enabled = false;
         }
 
+    }
+
+    void ClearOutline()
+    {
+        foreach(SkinnedMeshRenderer meshRenderer in GetComponentsInChildren<SkinnedMeshRenderer>())
+        {
+            if(meshRenderer.gameObject.CompareTag("HighlightableMaterial"))
+            {
+                Material material = meshRenderer.material;
+                if (material.HasProperty("_OutlineOpacity"))
+                {
+                    material.SetFloat("_OutlineOpacity", 0f);
+                }
+            }
+        }
     }
 
     public void OnDrawGizmos()

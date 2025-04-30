@@ -48,7 +48,7 @@ public class EnemyDetection : MonoBehaviour
                 float angle = Vector3.Angle(inputDirection, toTarget);
                 if (angle > 80f)
                 {
-                    currentTarget = null;
+                    ClearTarget();
                 }
             }
         }
@@ -82,24 +82,43 @@ public class EnemyDetection : MonoBehaviour
             if(closestTarget != null && closestTarget.GetComponent<EnemyCombatController>().IsAttackable())
             {
                 currentTarget = closestTarget.transform.GetComponent<EnemyCombatController>();
-                foreach(SkinnedMeshRenderer meshRenderer in currentTarget.gameObject.GetComponentsInChildren<SkinnedMeshRenderer>())
+                if(Vector3.Distance(currentTarget.transform.position, gameObject.transform.position) <= playerCombatController.combatScript.meleeReach)
                 {
-                    if(meshRenderer.gameObject.CompareTag("HighlightableMaterial"))
+                    foreach(SkinnedMeshRenderer meshRenderer in currentTarget.gameObject.GetComponentsInChildren<SkinnedMeshRenderer>())
                     {
-                        Debug.Log("Fixing up " + meshRenderer);
-                        meshRenderer.material.SetFloat("OutlineOpacity", 1);
+                        if(meshRenderer.gameObject.CompareTag("HighlightableMaterial"))
+                        {
+                            Material material = meshRenderer.material;
+                            if (material.HasProperty("_OutlineOpacity"))
+                            {
+                                material.SetFloat("_OutlineOpacity", 3f);
+                            }
+                        }
                     }
                 }
+                
             }
         }
         
-        if (currentTarget != null && Vector3.Distance(transform.position, currentTarget.transform.position) > autoLockOnRange*1.5f)
+        if (currentTarget != null && Vector3.Distance(transform.position, currentTarget.transform.position) > playerCombatController.combatScript.meleeReach)
         {   
+            ClearTarget();
+        }
+    }
+
+    void ClearTarget()
+    {
+        if(currentTarget != null)
+        {
             foreach(SkinnedMeshRenderer meshRenderer in currentTarget.gameObject.GetComponentsInChildren<SkinnedMeshRenderer>())
                 {
                     if(meshRenderer.gameObject.CompareTag("HighlightableMaterial"))
                     {
-                        meshRenderer.material.SetFloat("OutlineOpacity", 0);
+                        Material material = meshRenderer.material;
+                        if (material.HasProperty("_OutlineOpacity"))
+                        {
+                            material.SetFloat("_OutlineOpacity", 0f);
+                        }
                     }
                 }
             currentTarget = null;

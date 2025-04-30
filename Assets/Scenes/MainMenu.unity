@@ -1752,7 +1752,7 @@ MonoBehaviour:
   m_fontAsset: {fileID: 11400000, guid: 2c62a3bbd1755dd41a974242e9e4225e, type: 2}
   m_sharedMaterial: {fileID: -5952668280122945307, guid: 2c62a3bbd1755dd41a974242e9e4225e, type: 2}
   m_fontSharedMaterials:
-  - {fileID: -6921269085139887605, guid: f9a518e150e46f247b2d4239a8790375, type: 2}
+  - {fileID: -5952668280122945307, guid: 2c62a3bbd1755dd41a974242e9e4225e, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:

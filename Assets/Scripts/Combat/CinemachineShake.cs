@@ -4,19 +4,35 @@ using UnityEngine;
 public class CinemachineShake : MonoBehaviour
 {
     public static CinemachineShake Instance {get; private set;}
-    public CinemachineCamera cinemachineCamera;
+    [SerializeField] private CinemachineCamera[] cinemachineCameras;
+    private CinemachineCamera currentActiveCamera;
     private float shakeTimer;
 
     private void Awake()
     {
         Instance = this;
-        cinemachineCamera = GetComponentInChildren<CinemachineCamera>();
+        cinemachineCameras = GetComponentsInChildren<CinemachineCamera>();
+    }
+
+    void Start()
+    {
+        currentActiveCamera = cinemachineCameras[0];
+    }
+
+    public void SetActiveCamera(int activeCameraIndex)
+    {
+        if(currentActiveCamera != cinemachineCameras[activeCameraIndex])
+        {
+            ResetCameraShake();
+        }
+        currentActiveCamera = cinemachineCameras[activeCameraIndex];
     }
 
     public void ShakeCamera(float intensity, float time)
     {
+        Debug.Log("SHAKING THAT " + currentActiveCamera + " CAM!!");
         CinemachineBasicMultiChannelPerlin cinemachineBasicMultiChannelPerlin =
-            cinemachineCamera.GetComponent<CinemachineBasicMultiChannelPerlin>();
+            currentActiveCamera.GetComponent<CinemachineBasicMultiChannelPerlin>();
 
         cinemachineBasicMultiChannelPerlin.AmplitudeGain = intensity;
         shakeTimer = time;
@@ -25,7 +41,7 @@ public class CinemachineShake : MonoBehaviour
     public void ResetCameraShake()
     {
         CinemachineBasicMultiChannelPerlin cinemachineBasicMultiChannelPerlin =
-                    cinemachineCamera.GetComponent<CinemachineBasicMultiChannelPerlin>();
+                    currentActiveCamera.GetComponent<CinemachineBasicMultiChannelPerlin>();
                 
         cinemachineBasicMultiChannelPerlin.AmplitudeGain = 0;
     }
@@ -39,7 +55,7 @@ public class CinemachineShake : MonoBehaviour
             if(shakeTimer <= 0)
             {
                 CinemachineBasicMultiChannelPerlin cinemachineBasicMultiChannelPerlin =
-                    cinemachineCamera.GetComponent<CinemachineBasicMultiChannelPerlin>();
+                    currentActiveCamera.GetComponent<CinemachineBasicMultiChannelPerlin>();
                 
                 cinemachineBasicMultiChannelPerlin.AmplitudeGain = 0;
             }

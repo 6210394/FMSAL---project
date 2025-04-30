@@ -12,7 +12,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Home.unity
     guid: 6ce5ed387fb5f7245a946a5424977896
   - enabled: 0
-    path: Assets/Scenes/Mission1-2.unity
+    path: Assets/Scenes/Deprecated/TestMission.unity
     guid: 4ddb70fca6228924688c9f959613c539
   - enabled: 0
     path: Assets/Scenes/MetricGym.unity

@@ -4,8 +4,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "AttackAnimationData", menuName = "Scriptable Objects/AttackAnimationData")]
 public class AttackAnimationData : ScriptableObject
 {
-    //This serves to give moves their specific hitboxes. Different hitboxes can be created by the animation using their index.
-
+    //This serves to give animations/parts of combos their specific hitboxes. Different hitboxes can be created by the animation using their index.
+    public float hitImpactCameraShakeAmplitude;
     public string animationTriggerName;
     public float animationEndCooldown; //keep this around animation length for expected results
     public ParticleEffect particleEffect;
