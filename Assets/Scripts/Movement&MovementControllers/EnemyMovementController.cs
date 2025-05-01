@@ -30,6 +30,7 @@ public class EnemyMovementController : MonoBehaviour
     {
         movementScript = GetComponent<MovementScript>();
         animator = GetComponent<Animator>();
+        navMeshAgent = GetComponent<NavMeshAgent>();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created

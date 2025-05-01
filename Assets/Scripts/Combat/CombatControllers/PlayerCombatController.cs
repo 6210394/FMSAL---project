@@ -211,14 +211,9 @@ public class PlayerCombatController : MonoBehaviour
             transform.LookAt(currentLockedTarget.transform.position);
             if(TargetDistance(currentLockedTarget.transform) > combatScript.punchTargetDistanceOffset)
             {
-                Debug.Log("Trying to dash towards enemy!");
                 if(TargetDistance(currentLockedTarget.transform) < combatScript.meleeReach)
                 {
                     playerMovementController.movementScript.LerpToTransform(currentLockedTarget.gameObject.transform, combatScript.meleeDuration/1.75f, combatScript.punchTargetDistanceOffset);
-                }
-                else
-                {
-                    Debug.Log("Out of range!");
                 }
             }
         }

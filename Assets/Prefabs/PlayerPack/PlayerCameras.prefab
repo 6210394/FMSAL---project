@@ -91,7 +91,7 @@ Transform:
   m_Children:
   - {fileID: 5457110545878331076}
   m_Father: {fileID: 718746830474967961}
-  m_LocalEulerAnglesHint: {x: 19.613, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 3.379, y: 0, z: 0}
 --- !u!114 &6804584995471763108
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -221,7 +221,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8152727019718937741}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a076c17fe76165e4f8ed21498b877bf9, type: 3}
   m_Name: 
@@ -254,7 +254,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8152727019718937741}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dbe43d662878a7c43bcd44d43c9e2094, type: 3}
   m_Name: 
@@ -352,6 +352,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32f20b1e45f9a1d4097c58a423ef95ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cinemachineCameras: []
 --- !u!1 &8446403340506265815
 GameObject:
   m_ObjectHideFlags: 0
@@ -368,7 +369,6 @@ GameObject:
   - component: {fileID: 3755043803347506644}
   - component: {fileID: 3110007727596877784}
   - component: {fileID: 2111554232866109797}
-  - component: {fileID: 5223991580565881795}
   m_Layer: 0
   m_Name: DefaultPlayerCamera
   m_TagString: PlayerCamera
@@ -615,7 +615,7 @@ MonoBehaviour:
   NoiseProfile: {fileID: 11400000, guid: 69ce8388f6785dd4c8c39915efece2f4, type: 2}
   PivotOffset: {x: 0, y: 0, z: 0}
   AmplitudeGain: 0
-  FrequencyGain: 0
+  FrequencyGain: 10
   m_NoiseOffsets: {x: 0, y: 0, z: 0}
 --- !u!114 &2111554232866109797
 MonoBehaviour:
@@ -656,18 +656,6 @@ MonoBehaviour:
     NearLimit: 5
     FarLimit: 30
     MaxQualityBoost: 0.2
---- !u!114 &5223991580565881795
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8446403340506265815}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 32f20b1e45f9a1d4097c58a423ef95ca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &8890423807505124223
 GameObject:
   m_ObjectHideFlags: 0

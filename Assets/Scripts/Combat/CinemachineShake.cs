@@ -30,7 +30,6 @@ public class CinemachineShake : MonoBehaviour
 
     public void ShakeCamera(float intensity, float time)
     {
-        Debug.Log("SHAKING THAT " + currentActiveCamera + " CAM!!");
         CinemachineBasicMultiChannelPerlin cinemachineBasicMultiChannelPerlin =
             currentActiveCamera.GetComponent<CinemachineBasicMultiChannelPerlin>();
 

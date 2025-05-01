@@ -841,7 +841,7 @@ MonoBehaviour:
   punchReach: 4
   punchDuration: 1
   punchStunDuration: 0.3
-  punchTargetDistanceOffset: 0.1
+  punchTargetDistanceOffset: 1
   gunHipFireBulletAccuracyRange: 10
   gunAimAssistSize: 1
   gunStunDuration: 0

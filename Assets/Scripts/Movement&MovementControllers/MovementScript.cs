@@ -17,8 +17,8 @@ public class MovementScript : MonoBehaviour
     public bool isMoving;
 
     [Header("Gravity")]
-    public bool usesGravity = true;
-    public bool isGrounded;
+    [SerializeField] public bool usesGravity = true;
+    [SerializeField] public bool isGrounded;
     float gravityScale = 9.8f;
 
     /*
@@ -39,21 +39,20 @@ public class MovementScript : MonoBehaviour
     public Rigidbody rb;
 
     [Header("Coroutines")]
-    Coroutine KnockBackCoroutine;
-    Coroutine TweenCoroutine;
-    Coroutine DodgeCoroutine;
+    public Coroutine KnockBackCoroutine;
+    public Coroutine TweenCoroutine;
 
     [Header("Ultimate Bool")]
-    private bool ultimateCanMove = true;
+    protected bool ultimateCanMove = true;
 
 
-    void Start()
+    protected void Start()
     {
         Initizialize();
         sprintSpeed = currentMovementSpeed * 2;
     }
 
-    void Update()
+    protected virtual void Update()
     {
         if(usesGravity)
         {
@@ -61,7 +60,7 @@ public class MovementScript : MonoBehaviour
         }
     }
 
-    void Initizialize()
+    protected virtual void Initizialize()
     {
         currentMovementSpeed = normalSpeed;
         characterController = GetComponent<CharacterController>();
@@ -73,12 +72,9 @@ public class MovementScript : MonoBehaviour
     {
         StopCoroutine(TweenCoroutine);
         TweenCoroutine = null;
-
-        StopCoroutine(DodgeCoroutine);
-        DodgeCoroutine = null;
     }
 
-    public void Move(Vector3 moveDirection, bool isSprinting)
+    public virtual void Move(Vector3 moveDirection, bool isSprinting)
     {
         if(ultimateCanMove && TweenCoroutine == null)
         {
@@ -104,7 +100,7 @@ public class MovementScript : MonoBehaviour
         animator.SetBool("Sprinting", isSprinting);
     }
 
-    public void TweenToPosition(Vector3 target, float moveDuration, float moveTowardsTargetOffset)
+    public virtual void TweenToPosition(Vector3 target, float moveDuration, float moveTowardsTargetOffset)
     {
         if(TweenCoroutine == null)
         {
@@ -113,7 +109,7 @@ public class MovementScript : MonoBehaviour
         }
     }
 
-    public void LerpToTransform(Transform target, float moveDuration, float moveTowardsTargetOffset)
+    public virtual void LerpToTransform(Transform target, float moveDuration, float moveTowardsTargetOffset)
     {
         if(TweenCoroutine == null)
         {
@@ -121,7 +117,7 @@ public class MovementScript : MonoBehaviour
         }
     }
 
-    private IEnumerator ILerpToPosition(Vector3 target, float moveDuration, float moveTowardsTargetOffset)
+    protected virtual IEnumerator ILerpToPosition(Vector3 target, float moveDuration, float moveTowardsTargetOffset)
     {
         Vector3 targetDirection = TargetOffset(target, moveTowardsTargetOffset);
         float elapsedTime = 0f;
@@ -137,7 +133,7 @@ public class MovementScript : MonoBehaviour
         TweenCoroutine = null;
     }
 
-    private IEnumerator ILerpToTransform(Transform target, float moveDuration, float moveTowardsTargetOffset)
+    protected virtual IEnumerator ILerpToTransform(Transform target, float moveDuration, float moveTowardsTargetOffset)
     {
         Vector3 startPosition = transform.position;
         Vector3 targetPosition = TargetOffset(target.position, moveTowardsTargetOffset);
@@ -158,13 +154,13 @@ public class MovementScript : MonoBehaviour
         TweenCoroutine = null;
     }
 
-    Vector3 TargetOffset(Vector3 target, float offsetDistance)
+    protected Vector3 TargetOffset(Vector3 target, float offsetDistance)
     {
         Vector3 position = target;
         return Vector3.MoveTowards(position, transform.position, offsetDistance);
     }
 
-    void SprintCheckAndSpeedSetup(bool sprintInput)
+    protected void SprintCheckAndSpeedSetup(bool sprintInput)
     {
         if (sprintInput)
         {
@@ -178,7 +174,7 @@ public class MovementScript : MonoBehaviour
         }
     }
 
-    void ApplyGravity()
+    protected virtual void ApplyGravity()
     {
         RaycastHit hit;
         if (Physics.Raycast(transform.position, Vector3.down, out hit, 0.01f))
@@ -196,7 +192,7 @@ public class MovementScript : MonoBehaviour
         }
     }
 
-    public void Knockback(float knockBackTime, Vector3 knockBackOrigin, float knockbackStrength)
+    public virtual void Knockback(float knockBackTime, Vector3 knockBackOrigin, float knockbackStrength)
     {
         if(KnockBackCoroutine!=null)
         {
@@ -206,7 +202,7 @@ public class MovementScript : MonoBehaviour
         KnockBackCoroutine = StartCoroutine(IKnockBack(knockBackTime, knockBackOrigin, knockbackStrength));
     }
 
-    IEnumerator IKnockBack(float knockBackTime, Vector3 knockBackOrigin, float knockbackStrength)
+    protected virtual IEnumerator IKnockBack(float knockBackTime, Vector3 knockBackOrigin, float knockbackStrength)
     {
         float currentTime = 0;
         Vector3 knockBackDirection = (transform.position - knockBackOrigin).normalized;

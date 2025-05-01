@@ -21,7 +21,6 @@ public class TakeDamage : IState
 
     public void OnEnter()
     {
-        Debug.Log("Is on TakeDamage step");
         RecieveHit(_enemyStates._damageSource);
     }
 
@@ -45,11 +44,14 @@ public class TakeDamage : IState
             _animator.SetTrigger("RecieveHit");
         }
         
-        if(_enemyStates._damageSource != null && currentChainStun >= _combatController.maximumChainStun)
+        if(_enemyStates._damageSource != null && currentChainStun < _combatController.maximumChainStun)
         {
+            _combatController.combatScript.ClearHurtboxes();
             _movementController.movementScript.Knockback(0.5f, hitOrigin, 1f);
+            Debug.Log("Should knockback");
             _combatController.isPreparingAttack = false;
         }
+        
         if(!_combatController.combatScript.stunImmune)
         {
             currentChainStun += 1;
