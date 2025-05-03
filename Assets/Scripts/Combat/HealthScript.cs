@@ -57,7 +57,6 @@ public class HealthScript : MonoBehaviour
     // Method to handle death
     void Die()
     {
-        Debug.Log("death message sent");
         isDead = true;
         OnDeath.Invoke();
     }

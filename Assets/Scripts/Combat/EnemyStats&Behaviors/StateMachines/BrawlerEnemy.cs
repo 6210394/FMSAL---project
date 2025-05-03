@@ -13,7 +13,7 @@ public class BrawlerEnemy : EnemyBlueprint
         var circlingPlayer = new CirclingPlayer(this, _movementController, _combatController, _animator);
         var approachAndAttack = new ApproachAndAttack(this, _movementController, _combatController, _animator);
         var searchAroundGivenArea = new SearchAroundGivenArea(this, _movementController);
-        var retreat = new Retreat(this, _movementController, _animator);
+        var retreat = new Retreat(this, _movementController);
 
         //Create the transitions with their condition
         At(patrol, circlingPlayer, PlayerInDetectionRange());

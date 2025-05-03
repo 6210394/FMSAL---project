@@ -32,7 +32,10 @@ public class CirclingPlayer : IState
                 _enemyStates._isReadyToAttack = false;
                 Vector3 retreatDirection = -_movementController.transform.forward; // Move backwards locally
                 _movementController.MoveEnemyInDirection(retreatDirection, false);
-                _movementController.transform.LookAt(_enemyStates._target);
+
+                Vector3 lookAtTarget = _enemyStates._target.transform.position;
+                lookAtTarget.y = _enemyStates.transform.position.y;
+                _movementController.transform.LookAt(lookAtTarget);
                 return;
             }
             if(IsInComfortRange())
@@ -42,10 +45,14 @@ public class CirclingPlayer : IState
             }
             else
             {   
+
+                Vector3 adjustedPosition = _enemyStates._target.transform.position 
+                + (_movementController.transform.position - _enemyStates._target.transform.position).normalized 
+                * (_randomComfortRange - 0.2f);
+
                 _enemyStates._isReadyToAttack = false;
                 _animator.SetBool("Strafe", false);
-                Vector3 moveDir = (_enemyStates._target.position - _movementController.transform.position).normalized;
-                _movementController.MoveEnemyInDirection(moveDir, true);
+                _movementController.MoveEnemyUntilReached(adjustedPosition , true);
             }
         }
         else
@@ -65,6 +72,7 @@ public class CirclingPlayer : IState
         _randomTime = Random.Range(3f, 5f);
         _randomTimeTimer = _randomTime;
         _combatController.isAvailableForEnemyManager = true;
+        _movementController.StopNavmeshMovement();
         ChangeDirection();
     }
 

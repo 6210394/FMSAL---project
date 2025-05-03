@@ -1,14 +1,12 @@
 using UnityEngine;
-using DG.Tweening;
 using System.Collections;
-using UnityEngine.Events;
+using System;
 
 public class MovementScript : MonoBehaviour
 {
     private CharacterController characterController;
 
     [Header("Movement Variable")]
-    [HideInInspector]
     public float currentMovementSpeed = 5f;
     public bool isSprinting;
 
@@ -21,19 +19,6 @@ public class MovementScript : MonoBehaviour
     [SerializeField] public bool isGrounded;
     float gravityScale = 9.8f;
 
-    /*
-    [Header("Dodging/Dashing Values")]
-    public float dodgeMoveDuration;
-    public float dodgeForce; // to be made private
-
-    [Header("Dodging/Dashing Cooldown")]
-    public float maxDodgeCooldown = 0.5f;
-    float dodgeCooldownRemaining = 0;
-    public bool isDodging = false;
-
-    public bool isInvincibleFromDodge = false;
-    */
-
     [Header("Component References")]
     public Animator animator;
     public Rigidbody rb;
@@ -43,7 +28,7 @@ public class MovementScript : MonoBehaviour
     public Coroutine TweenCoroutine;
 
     [Header("Ultimate Bool")]
-    protected bool ultimateCanMove = true;
+    [SerializeField] protected bool ultimateCanMove = true;
 
 
     protected void Start()
@@ -76,7 +61,7 @@ public class MovementScript : MonoBehaviour
 
     public virtual void Move(Vector3 moveDirection, bool isSprinting)
     {
-        if(ultimateCanMove && TweenCoroutine == null)
+        if(ultimateCanMove)
         {
             SprintCheckAndSpeedSetup(isSprinting);
             if(moveDirection != Vector3.zero)
@@ -204,22 +189,20 @@ public class MovementScript : MonoBehaviour
 
     protected virtual IEnumerator IKnockBack(float knockBackTime, Vector3 knockBackOrigin, float knockbackStrength)
     {
-        float currentTime = 0;
+        ultimateCanMove = false;
         Vector3 knockBackDirection = (transform.position - knockBackOrigin).normalized;
-        Vector3 knockbackVector = knockBackDirection * knockbackStrength;
-        knockbackVector.y = 0;
-        
-        Vector3 knockbackVelocity = knockbackVector / knockBackTime;
+        float elapsedTime = 0f;
 
-        // Knockback
-        while (currentTime < knockBackTime)
+        while (elapsedTime < knockBackTime)
         {
-            characterController.Move(knockbackVelocity * Time.deltaTime);
-            currentTime += Time.deltaTime;
+            float knockBackStep = (knockbackStrength / knockBackTime) * Time.deltaTime;
+            characterController.Move(knockBackDirection * knockBackStep);
+            elapsedTime += Time.deltaTime;
             yield return null;
         }
 
-        yield return null;
+        ultimateCanMove = true;
+        KnockBackCoroutine = null; 
     }
 
     public void FaceTowards(Vector3 orientation, float rotationSpeed)

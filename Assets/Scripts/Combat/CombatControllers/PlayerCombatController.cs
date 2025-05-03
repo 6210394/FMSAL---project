@@ -4,6 +4,7 @@ using DG.Tweening;
 using Unity.Cinemachine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System.Collections;
 
 [RequireComponent(typeof(CombatScript))]
 [RequireComponent(typeof(PlayerMovementController))]
@@ -16,24 +17,21 @@ public class PlayerCombatController : MonoBehaviour
 
 #region Variables & States
 
-    public float autoLockDetectionRange = 5;
     private EnemyCombatController bulletHitTarget;
     
     [Header("States")]
     
     private bool isAiming = false;
-    public bool isAttackingEnemy = false;
 #endregion
 
 #region Component References
     public PlayerMovementController playerMovementController {get; private set;}
     public CombatScript combatScript {get; private set;}
-    private EnemyManager enemyManager;
     private EnemyDetection enemyDetection;
 
-    public Image crosshairReference;
-    public Transform barrelAnchorReference;
-    public LayerMask playerLayermask;
+    [SerializeField] Image crosshairReference;
+    [SerializeField] Transform barrelAnchorReference;
+    [SerializeField] LayerMask playerLayermask;
 #endregion
 
 #region Camera References & Targeting
@@ -208,7 +206,9 @@ public class PlayerCombatController : MonoBehaviour
         
         if(currentLockedTarget)
         {
-            transform.LookAt(currentLockedTarget.transform.position);
+            Vector3 lookAtTarget = currentLockedTarget.transform.position;
+            lookAtTarget.y = transform.position.y;
+            transform.LookAt(lookAtTarget);
             if(TargetDistance(currentLockedTarget.transform) > combatScript.punchTargetDistanceOffset)
             {
                 if(TargetDistance(currentLockedTarget.transform) < combatScript.meleeReach)
@@ -420,8 +420,19 @@ public class PlayerCombatController : MonoBehaviour
         playerMovementController.animator.SetTrigger("RecieveHit");
         if(hitEventArgs.damageSource != null)
         {
-            playerMovementController.movementScript.Knockback(0.3f, hitEventArgs.damageSource.position, 1);
+            playerMovementController.movementScript.Knockback(0.2f, hitEventArgs.damageSource.position, 1);
+            StartCoroutine(ITakeHitSequence());
         }
+    }
+
+    IEnumerator ITakeHitSequence()
+    {
+        PostProcessManager.instance.VignetteFadeIn(0.6f, 0.05f);
+        yield return new WaitForSecondsRealtime(0.05f);
+        Time.timeScale = 0.05f;
+        yield return new WaitForSecondsRealtime(0.1f);
+        Time.timeScale = 1;
+        PostProcessManager.instance.VignetteFadeOut(0.5f);
     }
 
     void AdjustLockOnCamera()

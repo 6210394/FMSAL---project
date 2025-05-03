@@ -62,7 +62,7 @@ public class Interactable : MonoBehaviour
 
     public virtual void Interact()
     {
-        Debug.Log("Interacting with " + transform.name);
+        
     }
 
     void OnDrawGizmosSelected()
@@ -92,7 +92,6 @@ public class Interactable : MonoBehaviour
 
             if (angle <= 45f)
             {
-                Debug.Log("Player is looking");
                 icon.SetIconActive(true);
                 if(Input.GetKeyDown(interactKey))
                 {

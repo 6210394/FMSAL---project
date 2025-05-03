@@ -4,7 +4,8 @@ using UnityEngine.AI;
 
 public class NavMeshMovementScript : MovementScript
 {
-    private NavMeshAgent navMeshAgent;
+    public NavMeshAgent navMeshAgent;
+    public NavMeshPath CurrentPath;
 
     //Handle knockback so that the agent stops at obstacles instead of going around them
     NavMeshHit pushHit;
@@ -22,14 +23,17 @@ public class NavMeshMovementScript : MovementScript
         
     }
 
-    public override void Move(Vector3 moveDirection, bool isSprinting)
+    public void NavMeshMove(Vector3 moveDestination, bool isSprinting)
     {
         if(ultimateCanMove && KnockBackCoroutine == null)
         {
             SprintCheckAndSpeedSetup(isSprinting);
-            if(moveDirection != Vector3.zero)
+            if(moveDestination != Vector3.zero)
             {
-                navMeshAgent.Move(moveDirection.normalized * currentMovementSpeed * Time.deltaTime);
+                navMeshAgent.speed = currentMovementSpeed;
+                navMeshAgent.SetDestination(moveDestination);
+
+                CurrentPath = navMeshAgent.path;
                 isMoving = true;
             }
             else
@@ -42,6 +46,42 @@ public class NavMeshMovementScript : MovementScript
         {
             isMoving = false;
             currentMovementSpeed = 0;
+            isSprinting = false;
+
+            CurrentPath = null;
+        }
+
+        animator.SetFloat("Speed", currentMovementSpeed);
+        animator.SetBool("Sprinting", isSprinting);
+    }
+
+    public override void Move(Vector3 moveDirection, bool isSprinting)
+    {
+        if(ultimateCanMove)
+        {
+            Debug.Log("Moving towards " + moveDirection);
+            SprintCheckAndSpeedSetup(isSprinting);
+            if(moveDirection != Vector3.zero)
+            {
+                navMeshAgent.Move(moveDirection * currentMovementSpeed * Time.deltaTime);
+                isMoving = true;
+            }
+            else
+            {
+                isMoving = false;
+                currentMovementSpeed = 0;
+            }
+        }
+        else
+        {
+            if(!ultimateCanMove)
+            {
+                Debug.Log("Movement has been disabled");
+            }
+            
+            isMoving = false;
+            isSprinting = false;
+            currentMovementSpeed = 0;
         }
 
         animator.SetFloat("Speed", currentMovementSpeed);
@@ -50,8 +90,6 @@ public class NavMeshMovementScript : MovementScript
 
     public override void Knockback(float knockBackTime, Vector3 knockBackOrigin, float knockbackStrength)
     {        
-        Debug.Log("Knocking back!");
-
         if(KnockBackCoroutine!=null)
         {
             StopCoroutine(KnockBackCoroutine);
@@ -62,28 +100,25 @@ public class NavMeshMovementScript : MovementScript
 
     protected override IEnumerator IKnockBack(float knockBackTime, Vector3 knockBackOrigin, float knockbackStrength)
     {
-        Debug.Log("Knocking back ENUMERATOR!");
-        float currentTime = 0;
+        ultimateCanMove = false;
+
         Vector3 knockBackDirection = (transform.position - knockBackOrigin).normalized;
-        Vector3 knockbackVector = knockBackDirection * knockbackStrength;
-        knockbackVector.y = 0;
+        float elapsedTime = 0f;
 
-        if (navMeshAgent.Raycast(knockbackVector, out pushHit))
+        while (elapsedTime < knockBackTime)
         {
-            knockbackVector = transform.position - pushHit.position;
-        }
+            if (navMeshAgent.Raycast(transform.position + knockBackDirection * knockbackStrength * Time.deltaTime, out pushHit))
+            {
+                break;
+            }
 
-        Vector3 knockbackVelocity = knockbackVector / knockBackTime;
-
-        // Knockback
-        while (currentTime < knockBackTime)
-        {
-            navMeshAgent.Move(knockbackVelocity * Time.deltaTime);
-            currentTime += Time.deltaTime;
+            float knockBackStep = (knockbackStrength / knockBackTime) * Time.deltaTime;
+            navMeshAgent.Move(knockBackDirection * knockBackStep);
+            elapsedTime += Time.deltaTime;
             yield return null;
         }
 
-        KnockBackCoroutine = null;
+        ultimateCanMove = true;
         yield return null;
     }
 }

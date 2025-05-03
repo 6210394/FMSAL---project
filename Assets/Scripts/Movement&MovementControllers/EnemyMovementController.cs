@@ -22,15 +22,14 @@ public class EnemyMovementController : MonoBehaviour
     [Header("Component References")]
     public Animator animator;
 
-    public MovementScript movementScript;
-    [SerializeField] NavMeshAgent navMeshAgent;
-
+    public NavMeshMovementScript movementScript;
+    public NavMeshAgent navMeshAgent {get; private set;}
 
     void Awake()
     {
-        movementScript = GetComponent<MovementScript>();
+        movementScript = GetComponent<NavMeshMovementScript>();
         animator = GetComponent<Animator>();
-        navMeshAgent = GetComponent<NavMeshAgent>();
+        navMeshAgent = movementScript.navMeshAgent;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -41,20 +40,39 @@ public class EnemyMovementController : MonoBehaviour
 
     #region Enemy Movement
 
-    public void MoveEnemyUntilReached(Vector3 desiredPositionFromOrigin, bool isSprinting)
-    {   
-        if(Vector3.Distance(transform.position, desiredPositionFromOrigin) > 0.5f)
+    public void StopNavmeshMovement()
+    {
+        if(navMeshAgent.hasPath)
         {
-            Vector3 moveDir = (desiredPositionFromOrigin - transform.position).normalized;
-            MoveEnemyInDirection(moveDir, isSprinting);
+            navMeshAgent.ResetPath();
         }
+
+        animator.SetFloat("Speed", 0);
+        animator.SetBool("Sprinting", false);
+    }
+
+    public bool MoveEnemyUntilReached(Vector3 desiredPositionFromOrigin, bool isSprinting)
+    {   
+        if(movementScript.CurrentPath == null)
+        {
+            movementScript.NavMeshMove(desiredPositionFromOrigin, isSprinting);
+        }
+
+        if(movementScript.CurrentPath != navMeshAgent.path)
+        {
+            movementScript.NavMeshMove(desiredPositionFromOrigin, isSprinting);
+        }
+        if(Vector3.Distance(transform.position, desiredPositionFromOrigin) < 0.5f)
+        {
+            return true;
+        }
+        return false;
     }
 
     public void MoveEnemyInDirection(Vector3 targetDirection, bool isSprinting)
     {
         Vector3 moveDir = targetDirection.normalized;
         movementScript.Move(moveDir, isSprinting);
-        moveDir.y = 0;
         transform.LookAt(moveDir + transform.position);
     }
 

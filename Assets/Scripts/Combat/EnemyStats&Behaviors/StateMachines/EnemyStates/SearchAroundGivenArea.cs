@@ -41,7 +41,10 @@ public class SearchAroundGivenArea : IState
         }
         else
         {
-            _movementController.transform.LookAt(_enemyStates._damageSource);
+            Vector3 lookAtTarget = _enemyStates._damageSource;
+            lookAtTarget.y = _enemyStates.transform.position.y;
+            _movementController.transform.LookAt(lookAtTarget);
+            
             MoveToSearchPosition();
         }
     }
@@ -66,8 +69,8 @@ public class SearchAroundGivenArea : IState
 
     private void MoveToSearchPosition()
     {
-        Vector3 direction = (_enemyStates._damageSource - _movementController.transform.position).normalized;
-        _movementController.MoveEnemyInDirection(direction, true);
+        Vector3 moveVector = (_enemyStates._damageSource - _movementController.transform.position).normalized;
+        _movementController.MoveEnemyInDirection(moveVector, true);
 
         if(Vector3.Distance(_movementController.transform.position, _searchPosition) < 1f)
         {

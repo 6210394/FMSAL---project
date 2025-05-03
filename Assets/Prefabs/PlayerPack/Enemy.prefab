@@ -237,7 +237,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   seeksRetaliation: 0
-  maximumChainStun: 2
+  maximumChainStun: 3
   comfortRange: 5
   detectionRange: 10
   fieldOfViewAngle: 135
@@ -267,12 +267,11 @@ MonoBehaviour:
   isControlled: 1
   canSprint: 1
   doesPatrol: 0
-  tiedPatrol: 1
+  tiedPatrol: 0
   spawnPoint: {x: 0, y: 0, z: 0}
   patrolRangeFromSpawn: 10
   animator: {fileID: 0}
   movementScript: {fileID: 0}
-  navMeshAgent: {fileID: 0}
 --- !u!114 &6572845248092313315
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -294,6 +293,7 @@ MonoBehaviour:
   isGrounded: 0
   animator: {fileID: 0}
   rb: {fileID: 0}
+  navMeshAgent: {fileID: 3311708598348927681}
 --- !u!114 &2058122964224401961
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -314,7 +314,7 @@ MonoBehaviour:
   punchReach: 4
   punchDuration: 0.5
   punchStunDuration: 0.3
-  punchTargetDistanceOffset: 2
+  punchTargetDistanceOffset: 0.5
   gunHipFireBulletAccuracyRange: 10
   gunAimAssistSize: 1
   gunStunDuration: 0
@@ -394,9 +394,9 @@ NavMeshAgent:
   m_AgentTypeID: 0
   m_Radius: 0.5
   m_Speed: 1
-  m_Acceleration: 8
+  m_Acceleration: 100
   avoidancePriority: 50
-  m_AngularSpeed: 120
+  m_AngularSpeed: 178
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1

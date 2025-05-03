@@ -5,14 +5,12 @@ public class Retreat : IState
     EnemyBlueprint _enemyStates;
 
     private EnemyMovementController _movementController;
-    private Animator _animator;
 
     bool hasRetreated = false;
 
-    public Retreat(EnemyBlueprint enemyStates, EnemyMovementController movementController, Animator animator)
+    public Retreat(EnemyBlueprint enemyStates, EnemyMovementController movementController)
     {
         _movementController = movementController;
-        _animator = animator;
         _enemyStates = enemyStates;
     }
 
@@ -40,7 +38,10 @@ public class Retreat : IState
         {
             Vector3 retreatDirection = -_movementController.transform.forward; // Move backwards locally
             _movementController.MoveEnemyInDirection(retreatDirection, false);
-            _movementController.transform.LookAt(_enemyStates._target);
+
+            Vector3 lookAtTarget = _enemyStates._target.transform.position;
+            lookAtTarget.y = _enemyStates.transform.position.y;
+            _movementController.transform.LookAt(lookAtTarget);
             return;
         }
     }
@@ -53,7 +54,6 @@ public class Retreat : IState
         }
         else
         {
-            Debug.LogWarning("HAS RETREATED!");
             hasRetreated = true;
             return false;
         }

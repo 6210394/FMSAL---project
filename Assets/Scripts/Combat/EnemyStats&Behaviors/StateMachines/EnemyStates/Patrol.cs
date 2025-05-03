@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Patrol : IState
 {
@@ -24,17 +25,17 @@ public class Patrol : IState
 
     public void Tick()
     {
-        if(_movementController.doesPatrol)
+        if(_movementController.doesPatrol && _movementController.navMeshAgent.path != null)
         {
             WaitRandomTime();
-            if(Vector3.Distance(_movementController.transform.position, Destination) > 0.5f && !_reachedPosition)
-            {
-                _movementController.MoveEnemyUntilReached(Destination, false);
-            }
-            else
+            if(_movementController.MoveEnemyUntilReached(Destination, false))
             {
                 _reachedPosition = true;
                 _animator.SetFloat("Speed", 0);
+            }
+            else
+            {
+                return;
             }
         }
     }
@@ -42,6 +43,10 @@ public class Patrol : IState
     public void OnEnter()
     {
         ChangeDirection();
+        if(_movementController.doesPatrol)
+        {
+            _movementController.MoveEnemyUntilReached(Destination, false);
+        }
     }
 
     public void OnExit()
@@ -74,7 +79,13 @@ public class Patrol : IState
 
     private void ChangeDirection()
     {
-        Destination = new Vector3(Random.Range(-10f, 10f), 0, Random.Range(-10f, 10f));
+        Destination = _enemyStates.transform.position + new Vector3(Random.Range(-10f, 10f), 0, Random.Range(-10f, 10f));
+
+        NavMeshHit navMeshHit;
+        if(_movementController.navMeshAgent.Raycast(Destination, out navMeshHit))
+        {
+            Destination = navMeshHit.position;
+        }
     }
 
     public Color GizmoColor()

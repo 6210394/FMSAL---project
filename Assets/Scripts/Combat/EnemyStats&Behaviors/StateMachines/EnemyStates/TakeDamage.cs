@@ -39,6 +39,8 @@ public class TakeDamage : IState
 
     void RecieveHit(Vector3 hitOrigin)
     {
+        _movementController.StopNavmeshMovement();
+
         if(!_combatController.combatScript.healthScript.isDead)
         {
             _animator.SetTrigger("RecieveHit");
@@ -47,8 +49,8 @@ public class TakeDamage : IState
         if(_enemyStates._damageSource != null && currentChainStun < _combatController.maximumChainStun)
         {
             _combatController.combatScript.ClearHurtboxes();
-            _movementController.movementScript.Knockback(0.5f, hitOrigin, 1f);
-            Debug.Log("Should knockback");
+            _movementController.StopNavmeshMovement();
+            _movementController.movementScript.Knockback(0.2f, hitOrigin, 0.8f);
             _combatController.isPreparingAttack = false;
         }
         
