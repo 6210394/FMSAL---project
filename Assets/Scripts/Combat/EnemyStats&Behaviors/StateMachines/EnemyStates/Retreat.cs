@@ -61,6 +61,7 @@ public class Retreat : IState
 
     public bool HasRetreated()
     {
+        Debug.Log("Has Retreated!!");
         return hasRetreated;
     }
 

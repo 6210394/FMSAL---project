@@ -27,7 +27,7 @@ public class PlayerCombatController : MonoBehaviour
 #region Component References
     public PlayerMovementController playerMovementController {get; private set;}
     public CombatScript combatScript {get; private set;}
-    private EnemyDetection enemyDetection;
+    private EnemyDetectionManager enemyDetection;
 
     [SerializeField] Image crosshairReference;
     [SerializeField] Transform barrelAnchorReference;
@@ -45,7 +45,6 @@ public class PlayerCombatController : MonoBehaviour
     [Header("Combat References")]
     private Queue<CombatScript.CombatActionType> attackQueue = new Queue<CombatScript.CombatActionType>();
     public EnemyCombatController currentLockedTarget;
-    public EnemyCombatController lastTarget;
 
 #endregion
 
@@ -57,7 +56,7 @@ public class PlayerCombatController : MonoBehaviour
 
     void Awake()
     {
-        enemyDetection = FindFirstObjectByType<EnemyDetection>();
+        enemyDetection = FindFirstObjectByType<EnemyDetectionManager>();
         combatScript = GetComponent<CombatScript>();
         playerMovementController = GetComponent<PlayerMovementController>();
     }
@@ -73,6 +72,8 @@ public class PlayerCombatController : MonoBehaviour
         GetCameraReferences();
         combatScript.healthScript.OnTakeDamage.AddListener((CombatScript.HitEventArgs hitEventArgs) => OnTakeHit(hitEventArgs));
         combatScript.healthScript.OnDeath.AddListener(Die);
+
+        enemyDetection.OnTargetSelected.AddListener((EnemyCombatController currentTarget) => GetTarget(currentTarget));
 
         combatScript.SwitchWeapons(1);
     }
@@ -130,13 +131,13 @@ public class PlayerCombatController : MonoBehaviour
         {
             GiveControl();
 
-            if(currentLockedTarget != enemyDetection.CurrentTarget())
-            {
-                lastTarget = currentLockedTarget;
-                currentLockedTarget = enemyDetection.CurrentTarget();
-            }
             SwitchWeapons();
         }
+    }
+
+    void GetTarget(EnemyCombatController target)
+    {
+        currentLockedTarget = target;
     }
 
     void QueueAttack(CombatScript.CombatActionType attackType)
@@ -323,6 +324,7 @@ public class PlayerCombatController : MonoBehaviour
         }
     }
 
+    /*                           DOESN'T FEEL GOOD
     void PlayerLockOn()
     {
         if(Input.GetKeyDown(KeyCode.Q) && !playerMovementController.isFocused) //Lock On Command
@@ -341,6 +343,7 @@ public class PlayerCombatController : MonoBehaviour
             playerMovementController.animator.SetBool("Strafe", false);
         }
     }
+    */
 
     void PlayerFaceTarget()
     {
@@ -354,6 +357,7 @@ public class PlayerCombatController : MonoBehaviour
     {
         combatScript.Attack(CombatScript.CombatActionType.Parry);
     }
+
 #endregion
 
 #region Controller Functions
@@ -451,9 +455,12 @@ public class PlayerCombatController : MonoBehaviour
             }
             else
             {
-                if(lastTarget != null)
+                if(enemyDetection.lastTarget != null)
                 {
-                    cinemachineTargetGroup.RemoveMember(lastTarget.transform);
+                    cinemachineTargetGroup.FindMember(enemyDetection.lastTarget.gameObject.transform);
+                    {
+                        cinemachineTargetGroup.RemoveMember(enemyDetection.lastTarget.transform);
+                    }
                 }
                 playerMovementController.isFocused = false;
                 SwitchCamera(CameraType.Default);

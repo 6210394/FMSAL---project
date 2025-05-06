@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
-public class EnemyDetection : MonoBehaviour
+public class EnemyDetectionManager : MonoBehaviour
 {
     private PlayerCombatController playerCombatController;
 
@@ -11,7 +12,12 @@ public class EnemyDetection : MonoBehaviour
     public float sphereCastAOESize = 3f;
 
     private Vector3 inputDirection;
-    [SerializeField] private EnemyCombatController currentTarget;
+    
+    private EnemyCombatController potentialTarget;
+    [SerializeField] public EnemyCombatController currentTarget;
+    public EnemyCombatController lastTarget;
+
+    public UnityEvent<EnemyCombatController> OnTargetSelected;
 
     void Awake()
     {
@@ -42,15 +48,49 @@ public class EnemyDetection : MonoBehaviour
 
             TargetLock(inputDirection);
 
-            if (currentTarget != null )
+            if(Vector3.Distance(potentialTarget.transform.position, gameObject.transform.position) <= playerCombatController.combatScript.meleeReach)
             {
+                if(currentTarget)
+                {
+                    currentTarget.ClearTargetVisuals();
+                    lastTarget = currentTarget;
+                }
+                currentTarget = potentialTarget;
+                currentTarget.MarkTargetVisuals();
+                OnTargetSelected.Invoke(currentTarget);
+            }
+            else
+            {
+                if(currentTarget)
+                {
+                    currentTarget.ClearTargetVisuals();
+                    lastTarget = currentTarget;
+                    currentTarget = null;
+                }
+            }
+
+            if (currentTarget != null )  //Get rid of target if player looks away from target / gets too far;
+            {
+                if(Vector3.Distance(currentTarget.transform.position, transform.position) > autoLockOnRange)
+                {
+                    currentTarget.ClearTargetVisuals();
+                    lastTarget = currentTarget;
+                    currentTarget = null;
+                }
+
                 Vector3 toTarget = (currentTarget.transform.position - transform.position).normalized;
                 float angle = Vector3.Angle(inputDirection, toTarget);
                 if (angle > 80f)
                 {
-                    ClearTarget();
+                    if(currentTarget)
+                    {
+                        currentTarget.ClearTargetVisuals();
+                        lastTarget = currentTarget;
+                        currentTarget = null;
+                    }
                 }
             }
+            
         }
     }
 
@@ -81,47 +121,8 @@ public class EnemyDetection : MonoBehaviour
 
             if(closestTarget != null && closestTarget.GetComponent<EnemyCombatController>().IsAttackable())
             {
-                currentTarget = closestTarget.transform.GetComponent<EnemyCombatController>();
-                if(Vector3.Distance(currentTarget.transform.position, gameObject.transform.position) <= playerCombatController.combatScript.meleeReach)
-                {
-                    foreach(SkinnedMeshRenderer meshRenderer in currentTarget.gameObject.GetComponentsInChildren<SkinnedMeshRenderer>())
-                    {
-                        if(meshRenderer.gameObject.CompareTag("HighlightableMaterial"))
-                        {
-                            Material material = meshRenderer.material;
-                            if (material.HasProperty("_OutlineOpacity"))
-                            {
-                                material.SetFloat("_OutlineOpacity", 3f);
-                            }
-                        }
-                    }
-                }
-                
+                potentialTarget = closestTarget.GetComponent<EnemyCombatController>();
             }
-        }
-        
-        if (currentTarget != null && Vector3.Distance(transform.position, currentTarget.transform.position) > playerCombatController.combatScript.meleeReach)
-        {   
-            ClearTarget();
-        }
-    }
-
-    void ClearTarget()
-    {
-        if(currentTarget != null)
-        {
-            foreach(SkinnedMeshRenderer meshRenderer in currentTarget.gameObject.GetComponentsInChildren<SkinnedMeshRenderer>())
-                {
-                    if(meshRenderer.gameObject.CompareTag("HighlightableMaterial"))
-                    {
-                        Material material = meshRenderer.material;
-                        if (material.HasProperty("_OutlineOpacity"))
-                        {
-                            material.SetFloat("_OutlineOpacity", 0f);
-                        }
-                    }
-                }
-            currentTarget = null;
         }
     }
 

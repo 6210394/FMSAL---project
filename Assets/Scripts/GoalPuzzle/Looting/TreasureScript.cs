@@ -33,5 +33,5 @@ public class TreasureScript : Pickupable
         }
     }
 
-    
+
 }

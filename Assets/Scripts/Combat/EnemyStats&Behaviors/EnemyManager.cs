@@ -191,8 +191,8 @@ public class EnemyManager : MonoBehaviour
             }
         }
 
-        if (FindFirstObjectByType<EnemyDetection>().CurrentTarget() == enemy)
-            FindFirstObjectByType<EnemyDetection>().SetCurrentTarget(null);
+        if (FindFirstObjectByType<EnemyDetectionManager>().CurrentTarget() == enemy)
+            FindFirstObjectByType<EnemyDetectionManager>().SetCurrentTarget(null);
 
         AI_Loop_Coroutine = StartCoroutine(AI_Loop(null));
     }

@@ -1,9 +1,13 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(SphereCollider))]
 public class Interactable : MonoBehaviour
 {   
+    protected bool highlighted = false;
+    protected List<Material> materials = new List<Material>();
+
     public float interactRadius = 3f;
     public float interactionAngle = 360;
     public SphereCollider interactCollider;
@@ -92,15 +96,21 @@ public class Interactable : MonoBehaviour
 
             if (angle <= 45f)
             {
-                icon.SetIconActive(true);
+                if(icon)
+                {
+                    icon.SetIconActive(true);
+                }
                 if(Input.GetKeyDown(interactKey))
                 {
                     Interact();
                 }
             }
             else
-            {
-                icon.SetIconActive(false);
+            {   
+                if(icon)
+                {
+                    icon.SetIconActive(false);
+                }
             }
         }
     }

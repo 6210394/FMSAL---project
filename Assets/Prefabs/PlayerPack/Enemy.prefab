@@ -262,14 +262,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6de8946289073ec4ba510581854b7216, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  givenMoveDirection: {x: 0, y: 0, z: 0}
-  givenMoveDestination: {x: 0, y: 0, z: 0}
-  isControlled: 1
   canSprint: 1
   doesPatrol: 0
-  tiedPatrol: 0
   spawnPoint: {x: 0, y: 0, z: 0}
-  patrolRangeFromSpawn: 10
   animator: {fileID: 0}
   movementScript: {fileID: 0}
 --- !u!114 &6572845248092313315
@@ -293,6 +288,7 @@ MonoBehaviour:
   isGrounded: 0
   animator: {fileID: 0}
   rb: {fileID: 0}
+  ultimateCanMove: 1
   navMeshAgent: {fileID: 3311708598348927681}
 --- !u!114 &2058122964224401961
 MonoBehaviour:

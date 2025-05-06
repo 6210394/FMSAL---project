@@ -425,10 +425,14 @@ public class CombatScript : MonoBehaviour
     public IEnumerator IStunned(float time)
     {
         isStunned = true;
+        animator.SetBool("IsStunned", true);
         
         ClearHurtboxes();
         yield return new WaitForSeconds(time);
+
         isStunned = false;
+        animator.SetBool("IsStunned", false);
+
     }
 
     void OnDrawGizmos()

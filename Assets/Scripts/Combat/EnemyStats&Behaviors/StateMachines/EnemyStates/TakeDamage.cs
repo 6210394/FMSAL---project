@@ -39,7 +39,6 @@ public class TakeDamage : IState
 
     void RecieveHit(Vector3 hitOrigin)
     {
-        _movementController.StopNavmeshMovement();
 
         if(!_combatController.combatScript.healthScript.isDead)
         {

@@ -4,20 +4,12 @@ using UnityEngine.AI;
 
 public class EnemyMovementController : MonoBehaviour
 {
-    [Header("Stats")]
-    public Vector3 givenMoveDirection;
-    public Vector3 givenMoveDestination;
-
     [Header("Booleans")]
-    public bool isControlled = true;
     public bool canSprint = true;
 
     [Header("Patrol Options and Detection")]
-    [Tooltip ("If true, the enemy will patrol around its spawn point. Otherwise, it will wander freely.")]
     public bool doesPatrol = true;
-    public bool tiedPatrol = true;
     public Vector3 spawnPoint;
-    public float patrolRangeFromSpawn = 10f;
 
     [Header("Component References")]
     public Animator animator;
@@ -32,7 +24,6 @@ public class EnemyMovementController : MonoBehaviour
         navMeshAgent = movementScript.navMeshAgent;
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         spawnPoint = transform.position;
@@ -51,39 +42,39 @@ public class EnemyMovementController : MonoBehaviour
         animator.SetBool("Sprinting", false);
     }
 
-    public bool MoveEnemyUntilReached(Vector3 desiredPositionFromOrigin, bool isSprinting)
+    public bool MoveEnemyUntilReached(Vector3 desiredPositionFromOrigin, bool isSprinting) //Meant to be run in a loop until it returns true. Creates navMesh paths.
     {   
-        if(movementScript.CurrentPath == null)
+        if(movementScript.CurrentPath == null) //Create new path to destination
+        {
+            movementScript.NavMeshMove(desiredPositionFromOrigin, isSprinting);
+        }
+        if(movementScript.CurrentPath != navMeshAgent.path) //Destination changed: Recalculating path
         {
             movementScript.NavMeshMove(desiredPositionFromOrigin, isSprinting);
         }
 
-        if(movementScript.CurrentPath != navMeshAgent.path)
-        {
-            movementScript.NavMeshMove(desiredPositionFromOrigin, isSprinting);
-        }
         if(Vector3.Distance(transform.position, desiredPositionFromOrigin) < 0.5f)
         {
-            return true;
+            return true; //Reached destination!
         }
         return false;
     }
 
-    public void MoveEnemyInDirection(Vector3 targetDirection, bool isSprinting)
+    public void MoveEnemyInDirection(Vector3 targetDirection, bool isSprinting) //Simply move in a direction and look forward along the navMesh. No pathing.
     {
         Vector3 moveDir = targetDirection.normalized;
         movementScript.Move(moveDir, isSprinting);
         transform.LookAt(moveDir + transform.position);
     }
 
-    public void EnemyCirclingMovement(Vector3 axisPoint, Vector3 direction)
+    public void EnemyCirclingMovement(Vector3 axisPoint, Vector3 direction) //Simply move around an axisPoint and look at it along the navMesh. No pathing.
     {
         //Set Animator values
         animator.SetBool("Strafe", direction.normalized == Vector3.right || direction.normalized == Vector3.left);
         animator.SetFloat("StrafeDirection", direction.normalized.x);
 
         Vector3 dir = (axisPoint - transform.position).normalized;
-        Vector3 pDir = Quaternion.AngleAxis(90, Vector3.up) * dir; //Vector perpendicular to direction
+        Vector3 pDir = Quaternion.AngleAxis(90, Vector3.up) * dir;
 
         Vector3 finalDirection = pDir * direction.normalized.x;
 

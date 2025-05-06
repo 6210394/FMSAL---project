@@ -26,7 +26,7 @@ public class PostProcessManager : MonoBehaviour
         postProcessingVolume = GetComponent<Volume>();
         if (postProcessingVolume != null && postProcessingVolume.profile.TryGet(out vignetteEffect))
         {
-            defaultVignette = vignetteEffect.intensity;
+            defaultVignette = new ClampedFloatParameter(vignetteEffect.intensity.value, 0f, 1f); // Store the value
             Debug.Log(defaultVignette.value);
         }
     }
@@ -48,22 +48,22 @@ public class PostProcessManager : MonoBehaviour
 
     public void VignetteFadeOut(float fadeOutLength)
     {
-        if (vignetteEffect != null)
+         if (vignetteEffect != null)
         {
             StartCoroutine(IFadeVignetteIntensity(vignetteEffect.intensity.value, defaultVignette.value, fadeOutLength));
         }
     }
 
-    private IEnumerator IFadeVignetteIntensity(float startValue, float endValue, float duration)
-    {
-        float elapsed = 0f;
-        while (elapsed < duration)
+        private IEnumerator IFadeVignetteIntensity(float startValue, float endValue, float duration)
         {
-            elapsed += Time.deltaTime;
-            float newValue = Mathf.Lerp(startValue, endValue, elapsed / duration);
-            vignetteEffect.intensity.value = newValue;
-            yield return null;
+            float elapsed = 0f;
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                float newValue = Mathf.Lerp(startValue, endValue, elapsed / duration);
+                vignetteEffect.intensity.value = newValue;
+                yield return null;
+            }
+            vignetteEffect.intensity.value = endValue;
         }
-        vignetteEffect.intensity.value = endValue;
-    }
 }

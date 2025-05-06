@@ -69,8 +69,7 @@ public class SearchAroundGivenArea : IState
 
     private void MoveToSearchPosition()
     {
-        Vector3 moveVector = (_enemyStates._damageSource - _movementController.transform.position).normalized;
-        _movementController.MoveEnemyInDirection(moveVector, true);
+        _movementController.MoveEnemyUntilReached(_enemyStates._damageSource, true);
 
         if(Vector3.Distance(_movementController.transform.position, _searchPosition) < 1f)
         {

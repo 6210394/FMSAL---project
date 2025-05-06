@@ -12,6 +12,7 @@ public class EnemyCombatController : MonoBehaviour
 {
     [Header("States")]
     public bool seeksRetaliation = false;
+    bool highlighted = false;
 
     [Header("Stun Tolerance")]
     public int maximumChainStun = 2;
@@ -32,7 +33,7 @@ public class EnemyCombatController : MonoBehaviour
 
     [Header("Player References")]
     public GameObject[] players;
-    public List<EnemyDetection> playerEnemyDetections = new List<EnemyDetection>();
+    public List<EnemyDetectionManager> playerEnemyDetections = new List<EnemyDetectionManager>();
     public Transform target;
 
     [Header("Debug Tools")]
@@ -49,6 +50,9 @@ public class EnemyCombatController : MonoBehaviour
         enemyManager = FindFirstObjectByType<EnemyManager>();
         combatScript.healthScript.OnTakeDamage.AddListener((CombatScript.HitEventArgs hitEventArgs) => OnTakeHit(hitEventArgs));
         players = GameObject.FindGameObjectsWithTag("Player");
+
+        //players[0].GetComponent<EnemyDetectionManager>().OnTargetSelected.AddListener(MarkTargetVisuals);
+        //players[0].GetComponent<EnemyDetectionManager>().OnTargetSelected.AddListener(ClearTargetVisuals);
     }
     
     public void OnTakeHit(CombatScript.HitEventArgs hitEventArgs)
@@ -83,12 +87,13 @@ public class EnemyCombatController : MonoBehaviour
 
     public void Die()
     {   
-        foreach(EnemyDetection enemyDetection in playerEnemyDetections)
+        foreach(EnemyDetectionManager enemyDetection in playerEnemyDetections)
         {
             enemyDetection.SetCurrentTarget(null);
         }
 
-        ClearOutline();
+        ClearTargetVisuals();
+        enemyMovementController.movementScript.navMeshAgent.ResetPath();
         combatScript.ultimateCanAttack = false;
         enemyManager.SetEnemyAvailiability(this, false);
         
@@ -100,19 +105,45 @@ public class EnemyCombatController : MonoBehaviour
 
     }
 
-    void ClearOutline()
+    public void MarkTargetVisuals()
     {
-        foreach(SkinnedMeshRenderer meshRenderer in GetComponentsInChildren<SkinnedMeshRenderer>())
+        if(!highlighted)
         {
-            if(meshRenderer.gameObject.CompareTag("HighlightableMaterial"))
+            highlighted = true;
+
+            foreach(SkinnedMeshRenderer meshRenderer in gameObject.GetComponentsInChildren<SkinnedMeshRenderer>())
             {
-                Material material = meshRenderer.material;
-                if (material.HasProperty("_OutlineOpacity"))
+                if(meshRenderer.gameObject.CompareTag("HighlightableMaterial"))
                 {
-                    material.SetFloat("_OutlineOpacity", 0f);
+                    Material material = meshRenderer.material;
+                    if (material.HasProperty("_OutlineOpacity"))
+                    {
+                        material.SetFloat("_OutlineOpacity", 3f);
+                    }
                 }
             }
         }
+    }
+
+    public void ClearTargetVisuals()
+    {
+        if(highlighted)
+        {
+            highlighted = false;
+            
+            foreach(SkinnedMeshRenderer meshRenderer in gameObject.GetComponentsInChildren<SkinnedMeshRenderer>())
+            {
+                if(meshRenderer.gameObject.CompareTag("HighlightableMaterial"))
+                {
+                    Material material = meshRenderer.material;
+                    if (material.HasProperty("_OutlineOpacity"))
+                    {
+                        material.SetFloat("_OutlineOpacity", 0f);
+                    }
+                }
+            }
+        }
+        
     }
 
     public void OnDrawGizmos()

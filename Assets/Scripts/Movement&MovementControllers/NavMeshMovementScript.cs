@@ -1,4 +1,5 @@
 using System.Collections;
+using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -44,6 +45,14 @@ public class NavMeshMovementScript : MovementScript
         }
         else
         {
+            if(!ultimateCanMove)
+            {
+                Debug.Log("Prevented from moving");
+            }
+            if(KnockBackCoroutine != null)
+            {
+                Debug.Log("Knockback isn't over");
+            }
             isMoving = false;
             currentMovementSpeed = 0;
             isSprinting = false;
@@ -59,7 +68,6 @@ public class NavMeshMovementScript : MovementScript
     {
         if(ultimateCanMove)
         {
-            Debug.Log("Moving towards " + moveDirection);
             SprintCheckAndSpeedSetup(isSprinting);
             if(moveDirection != Vector3.zero)
             {
@@ -119,6 +127,7 @@ public class NavMeshMovementScript : MovementScript
         }
 
         ultimateCanMove = true;
+        KnockBackCoroutine = null;
         yield return null;
     }
 }
