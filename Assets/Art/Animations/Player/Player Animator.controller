@@ -76,6 +76,9 @@ AnimatorStateTransition:
   - m_ConditionMode: 1
     m_ConditionEvent: Punch
     m_EventTreshold: 0
+  - m_ConditionMode: 2
+    m_ConditionEvent: IsStunned
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -43837175497296796}
   m_Solo: 0
@@ -1001,6 +1004,9 @@ AnimatorStateTransition:
   - m_ConditionMode: 1
     m_ConditionEvent: RecieveHit
     m_EventTreshold: 0
+  - m_ConditionMode: 2
+    m_ConditionEvent: IsStunned
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 8023038037961918476}
   m_Solo: 0
@@ -1079,6 +1085,9 @@ AnimatorStateTransition:
   - m_ConditionMode: 1
     m_ConditionEvent: EnemySlash
     m_EventTreshold: 0
+  - m_ConditionMode: 2
+    m_ConditionEvent: IsStunned
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -6083990342686492490}
   m_Solo: 0
@@ -1153,6 +1162,9 @@ AnimatorStateTransition:
   m_Conditions:
   - m_ConditionMode: 1
     m_ConditionEvent: RecieveHit
+    m_EventTreshold: 0
+  - m_ConditionMode: 1
+    m_ConditionEvent: IsStunned
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 8023038037961918476}
@@ -1492,6 +1504,9 @@ AnimatorStateTransition:
     m_EventTreshold: 0
   - m_ConditionMode: 6
     m_ConditionEvent: ComboIndex
+    m_EventTreshold: 0
+  - m_ConditionMode: 2
+    m_ConditionEvent: IsStunned
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -1517181536815304587}

@@ -17,7 +17,7 @@ public class GameData
         this.hungerPoints = 10;
         this.week = 1;
         this.day = 1;
-        this.money = 10;
+        this.money = 0;
         this.weekQuota = 150;
     }
 }

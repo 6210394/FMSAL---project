@@ -47,12 +47,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameOverScene: MainMenu
   hungerPoints: 4
-  hungerState: 3
+  hungerState: 4
   money: 0
   weekQuota: 0
   week: 0
   day: 0
-  quotaMultiplier: 0
+  quotaMultiplier: 1.2
   hasFailedQuota: 0
   hasCompletedDailyMission: 0
   interactEnabled: 1

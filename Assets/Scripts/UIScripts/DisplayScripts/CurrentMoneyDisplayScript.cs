@@ -14,6 +14,6 @@ public class CurrentMoneyDisplayScript : MonoBehaviour
 
     public void UpdateMoneyText(int money)
     {
-        moneyText.text = money.ToString() + "$";
+        moneyText.text = money.ToString() + "$ / 1385$" ;   
     }
 }

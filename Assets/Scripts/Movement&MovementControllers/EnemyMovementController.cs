@@ -60,11 +60,11 @@ public class EnemyMovementController : MonoBehaviour
         return false;
     }
 
-    public void MoveEnemyInDirection(Vector3 targetDirection, bool isSprinting) //Simply move in a direction and look forward along the navMesh. No pathing.
+    public void MoveEnemyInDirection(Vector3 targetDirection, Vector3 lookAtDirection, bool isSprinting) //Simply move in a direction and look forward along the navMesh. No pathing.
     {
         Vector3 moveDir = targetDirection.normalized;
         movementScript.Move(moveDir, isSprinting);
-        transform.LookAt(moveDir + transform.position);
+        transform.LookAt(lookAtDirection);
     }
 
     public void EnemyCirclingMovement(Vector3 axisPoint, Vector3 direction) //Simply move around an axisPoint and look at it along the navMesh. No pathing.

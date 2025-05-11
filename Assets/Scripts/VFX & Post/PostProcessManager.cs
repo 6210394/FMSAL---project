@@ -5,24 +5,12 @@ using UnityEngine.Rendering.Universal;
 
 public class PostProcessManager : MonoBehaviour
 {
-    static public PostProcessManager instance;
-
     [SerializeField] Volume postProcessingVolume;
     private Vignette vignetteEffect;
     ClampedFloatParameter defaultVignette;
 
     void Awake()
     {
-        if (instance == null)
-        {
-            instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-
         postProcessingVolume = GetComponent<Volume>();
         if (postProcessingVolume != null && postProcessingVolume.profile.TryGet(out vignetteEffect))
         {

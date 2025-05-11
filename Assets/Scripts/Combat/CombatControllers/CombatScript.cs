@@ -21,10 +21,10 @@ public class CombatScript : MonoBehaviour
     public float meleeStunDuration;
     public float targetDistanceOffset = 1f;
 
-    public float punchReach = 4f; //Range within which the attack will tween
-    public float punchDuration = 0.5f; //Duration of the attack
-    public float punchStunDuration = 0.3f; //Duration of the stun
-    public float punchTargetDistanceOffset = 1f;
+    float punchReach = 4f; //Range within which the attack will tween
+    float punchDuration = 0.5f; //Duration of the attack
+    float punchStunDuration = 0.3f; //Duration of the stun
+    float punchTargetDistanceOffset = 1f;
 
     [Space]
     public float gunHipFireBulletAccuracyRange = 10f;
@@ -33,7 +33,6 @@ public class CombatScript : MonoBehaviour
     public float gunRateOfFireTime = 140f; //in round per minute
 
     [Header ("States")]
-
     //Stun & Resistance
     public bool isStunned = false;
     public bool stunImmune = false;
@@ -56,36 +55,45 @@ public class CombatScript : MonoBehaviour
     
     [Header ("Object & Component References ")]
     public HealthScript healthScript;
-    public MovementScript movementScript;
     public DiogenicInventory diogenicInventory;
-
-    [SerializeField] Vector3 reticleOffset;
-    [SerializeField] GameObject bulletVisualsPrefab;
-    [SerializeField] Transform bulletSpawnOriginOffset;
-
-    [Space]
     public Animator animator;
 
-    public List<GameObject> currentHurtboxReferences;
+    Vector3 reticleOffset;
+    GameObject bulletVisualsPrefab;
+    Transform bulletSpawnOriginOffset;
 
+    [Space]
+
+    //Lists
+    List<GameObject> currentHurtboxReferences = new List<GameObject>();
+
+    //Events
     public UnityEvent OnAttackCompleted;
 
     [Header ("Coroutines")]
-    public Coroutine CombatActionCoroutine;
-    public Coroutine StunCoroutine;
+    Coroutine CombatActionCoroutine;
+    Coroutine StunCoroutine;
 
     [SerializeField] public bool ultimateCanAttack = false; //debug variable
+
+    public struct HitEventArgs
+    {
+        public int damageReceived;
+        public float stunDuration;
+        public float cameraShakeAmplitude;
+        public Transform damageSource;
+    }
 
     void Awake()
     {
         diogenicInventory = GetComponent<DiogenicInventory>();
         healthScript = GetComponent<HealthScript>();
+        animator = GetComponent<Animator>();
     }
 
     public void Start()
     {
         attackCooldownTimer = 0;
-        //animator = GetComponent<Animator>();
     }
     
     void Update()
@@ -95,15 +103,7 @@ public class CombatScript : MonoBehaviour
 
     public void ProcessAttackList(Dictionary<CombatActionType, int> stringOfAttacks)
     {
-        //
-    }
-
-    public struct HitEventArgs
-    {
-        public int damageReceived;
-        public float stunDuration;
-        public float cameraShakeAmplitude;
-        public Transform damageSource;
+        //for when attacks (probably from enemies) will contain attack chains that can be divided in portions
     }
 
     public HitEventArgs BuildAttack(int damageReceived, float stunDuration, float cameraShakeAmplitude, Transform damageSource)
@@ -120,23 +120,15 @@ public class CombatScript : MonoBehaviour
 
     public GameObject BuildHurtbox(Transform parent, HitEventArgs attackInformation, GameObject hurtBox, int hurtboxIndex)
     {
-        if(currentAnimationComboChain <= diogenicInventory.currentHeldWeapon.listOfAttacks.Count - 1)
-        {
-            GameObject hurtboxInstance = Instantiate(hurtBox, parent);
-            hurtboxInstance.GetComponent<HurtboxScript>()._hitEventArgs = attackInformation;
-            hurtboxInstance.GetComponent<HurtboxScript>().particleEffect = diogenicInventory.currentHeldWeapon.listOfAttacks[currentAnimationComboChain].particleEffect;
+        GameObject hurtboxInstance = Instantiate(hurtBox, parent);
+        hurtboxInstance.GetComponent<HurtboxScript>()._hitEventArgs = attackInformation;
+        hurtboxInstance.GetComponent<HurtboxScript>().particleEffect = diogenicInventory.currentHeldWeapon.listOfAttacks[currentAnimationComboChain].particleEffect;
 
-            hurtboxInstance.transform.localPosition = diogenicInventory.currentHeldWeapon.listOfAttacks[currentAnimationComboChain].hurtboxes[hurtboxIndex].hurtboxOffset;
-            hurtboxInstance.transform.localRotation = diogenicInventory.currentHeldWeapon.listOfAttacks[currentAnimationComboChain].hurtboxes[hurtboxIndex].hurtboxRotationOffset;
-            hurtboxInstance.transform.localScale = diogenicInventory.currentHeldWeapon.listOfAttacks[currentAnimationComboChain].hurtboxes[hurtboxIndex].hurtboxScale;
+        hurtboxInstance.transform.localPosition = diogenicInventory.currentHeldWeapon.listOfAttacks[currentAnimationComboChain].hurtboxes[hurtboxIndex].hurtboxOffset;
+        hurtboxInstance.transform.localRotation = diogenicInventory.currentHeldWeapon.listOfAttacks[currentAnimationComboChain].hurtboxes[hurtboxIndex].hurtboxRotationOffset;
+        hurtboxInstance.transform.localScale = diogenicInventory.currentHeldWeapon.listOfAttacks[currentAnimationComboChain].hurtboxes[hurtboxIndex].hurtboxScale;
 
-            return hurtboxInstance;
-        }
-        else
-        {
-            Debug.LogError("The Combo index is too high! It is bigger than the list of attacks!");
-            return null;
-        }
+        return hurtboxInstance;
     }
 
     public void CreateHurtbox(int hurtboxIndex)
@@ -164,11 +156,18 @@ public class CombatScript : MonoBehaviour
 
     public void ClearHurtboxes()
     {
-        foreach(GameObject gameObject in currentHurtboxReferences)
+        if(currentHurtboxReferences != null)
         {
-            Destroy(gameObject);
+            foreach(GameObject gameObject in currentHurtboxReferences)
+            {
+                Destroy(gameObject);
+            }
+            currentHurtboxReferences.Clear();
         }
-        currentHurtboxReferences.Clear();
+        else
+        {
+            Debug.Log("No hurtboxes to clear!");
+        }
     }
 
     public void SwitchWeapons(int slot)
@@ -425,14 +424,12 @@ public class CombatScript : MonoBehaviour
     public IEnumerator IStunned(float time)
     {
         isStunned = true;
-        animator.SetBool("IsStunned", true);
         
         ClearHurtboxes();
         yield return new WaitForSeconds(time);
 
         isStunned = false;
         animator.SetBool("IsStunned", false);
-
     }
 
     void OnDrawGizmos()

@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class SaveManager : MonoBehaviour
 {
+    public bool saveOnQuit = true;
+
     [SerializeField] string fileName;
 
 
@@ -48,6 +50,7 @@ public class SaveManager : MonoBehaviour
     public void LoadGame()
     {
         gameData = fileDataHandler.Load();
+        
 
         if(gameData == null)
         {
@@ -72,7 +75,10 @@ public class SaveManager : MonoBehaviour
 
     private void OnApplicationQuit()
     {
-        SaveGame();
+        if(saveOnQuit)
+        {
+            SaveGame();
+        }
     }
 
     private List<IDataPersistence> FindAllDataPersistenceObjects()

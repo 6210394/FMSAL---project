@@ -31,11 +31,10 @@ public class CirclingPlayer : IState
             {
                 _enemyStates._isReadyToAttack = false;
                 Vector3 retreatDirection = -_movementController.transform.forward; // Move backwards locally
-                _movementController.MoveEnemyInDirection(retreatDirection, false);
-
                 Vector3 lookAtTarget = _enemyStates._target.transform.position;
                 lookAtTarget.y = _enemyStates.transform.position.y;
-                _movementController.transform.LookAt(lookAtTarget);
+                _movementController.MoveEnemyInDirection(retreatDirection, lookAtTarget, false);
+
                 return;
             }
             if(IsInComfortRange())

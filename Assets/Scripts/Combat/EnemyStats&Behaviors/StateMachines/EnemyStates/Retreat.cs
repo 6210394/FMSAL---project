@@ -22,6 +22,7 @@ public class Retreat : IState
         if(Random.Range(1, 4) == 1) //25% chance of the brawler enemy sticking to you
         {
             hasRetreated = true;
+            Debug.Log("Sticking to you");
         }
         
     }
@@ -37,31 +38,39 @@ public class Retreat : IState
         if(IsTooClose())
         {
             Vector3 retreatDirection = -_movementController.transform.forward; // Move backwards locally
-            _movementController.MoveEnemyInDirection(retreatDirection, false);
-
             Vector3 lookAtTarget = _enemyStates._target.transform.position;
             lookAtTarget.y = _enemyStates.transform.position.y;
-            _movementController.transform.LookAt(lookAtTarget);
+            _movementController.MoveEnemyInDirection(retreatDirection, lookAtTarget, false);
             return;
+        }
+        else
+        {
+            Debug.Log("Not too close to target!");
         }
     }
 
     bool IsTooClose()
     {
-        if(Vector3.Distance(_enemyStates._target.position, _movementController.transform.position) < 3)
+        if(_enemyStates._target == null)
         {
+            Debug.Log("NO TARGET WUT DA HELL");
+            return false;
+        }
+        if(Vector3.Distance(_enemyStates._target.position, _movementController.transform.position) < _enemyStates._combatController.comfortRange)
+        {
+            Debug.Log("Too close to target!");
             return true;
         }
         else
         {
             hasRetreated = true;
+            Debug.Log("Has Retreated!");
             return false;
         }
     }
 
     public bool HasRetreated()
     {
-        Debug.Log("Has Retreated!!");
         return hasRetreated;
     }
 

@@ -32,6 +32,8 @@ public class PlayerCombatController : MonoBehaviour
     [SerializeField] Image crosshairReference;
     [SerializeField] Transform barrelAnchorReference;
     [SerializeField] LayerMask playerLayermask;
+
+    PostProcessManager postProcessManager;
 #endregion
 
 #region Camera References & Targeting
@@ -63,6 +65,7 @@ public class PlayerCombatController : MonoBehaviour
 
     void Start()
     {
+        postProcessManager = FindFirstObjectByType<PostProcessManager>();
         playerLayermask = LayerMask.GetMask("Player");
 
         //CHANGE THIS TO SUPPLY OUR OWN CROSSHAIR BASED ON THE WEAPON HELD
@@ -89,6 +92,15 @@ public class PlayerCombatController : MonoBehaviour
         PlayerAim();
         //or
         PlayerFaceTarget();
+
+        if(currentLockedTarget)
+        {   
+            if(!currentLockedTarget.IsAttackable())
+            {
+                currentLockedTarget = null;
+            }
+        }
+        
 
         //Process player inputs
         //PlayerLockOn();
@@ -210,11 +222,11 @@ public class PlayerCombatController : MonoBehaviour
             Vector3 lookAtTarget = currentLockedTarget.transform.position;
             lookAtTarget.y = transform.position.y;
             transform.LookAt(lookAtTarget);
-            if(TargetDistance(currentLockedTarget.transform) > combatScript.punchTargetDistanceOffset)
+            if(TargetDistance(currentLockedTarget.transform) > combatScript.targetDistanceOffset)
             {
                 if(TargetDistance(currentLockedTarget.transform) < combatScript.meleeReach)
                 {
-                    playerMovementController.movementScript.LerpToTransform(currentLockedTarget.gameObject.transform, combatScript.meleeDuration/1.75f, combatScript.punchTargetDistanceOffset);
+                    playerMovementController.movementScript.LerpToTransform(currentLockedTarget.gameObject.transform, combatScript.meleeDuration/1.75f, combatScript.targetDistanceOffset);
                 }
             }
         }
@@ -422,6 +434,8 @@ public class PlayerCombatController : MonoBehaviour
     public void OnTakeHit(CombatScript.HitEventArgs hitEventArgs)
     {
         playerMovementController.animator.SetTrigger("RecieveHit");
+        playerMovementController.animator.SetBool("IsStunned", false);
+
         if(hitEventArgs.damageSource != null)
         {
             playerMovementController.movementScript.Knockback(0.2f, hitEventArgs.damageSource.position, 1);
@@ -431,12 +445,12 @@ public class PlayerCombatController : MonoBehaviour
 
     IEnumerator ITakeHitSequence()
     {
-        PostProcessManager.instance.VignetteFadeIn(0.6f, 0.05f);
+        postProcessManager.VignetteFadeIn(0.6f, 0.05f);
         yield return new WaitForSecondsRealtime(0.05f);
         Time.timeScale = 0.05f;
         yield return new WaitForSecondsRealtime(0.1f);
         Time.timeScale = 1;
-        PostProcessManager.instance.VignetteFadeOut(0.5f);
+        postProcessManager.VignetteFadeOut(0.5f);
     }
 
     void AdjustLockOnCamera()

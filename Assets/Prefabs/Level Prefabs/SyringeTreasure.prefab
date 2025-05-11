@@ -97,7 +97,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7466fc32e89644a4ab021fe5dab058b3, type: 2}
+  - {fileID: 2100000, guid: d56dbc7cb901b114b88299c8287a25e4, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -219,11 +219,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5fcbfcc7f0559b478ac79a4b94872b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  materials: []
   interactRadius: 2.25
   interactionAngle: 360
   interactCollider: {fileID: 0}
   icon: {fileID: 0}
   player: {fileID: 0}
+  interactable: 0
   interactKey: 101
   treasureObject: {fileID: 7581113801360134041}
   treasureData: {fileID: 11400000, guid: d09405c181d2edf4c9e6b164dc7072b6, type: 2}

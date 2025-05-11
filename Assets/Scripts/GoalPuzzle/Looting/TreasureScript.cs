@@ -9,7 +9,7 @@ public class TreasureScript : Pickupable
     public static UnityEvent<int, int, int> onPickup = new UnityEvent<int, int, int>();
 
     public TreasureScriptable treasureData;
-    int rewardMoney = 100;
+    public int rewardMoney = 100;
     int carryWeight = 1;
     int dropTime = 1;
 
@@ -17,6 +17,15 @@ public class TreasureScript : Pickupable
     {
         rewardMoney = treasureData.rewardMoney;
         carryWeight = treasureData.carryWeight;
+    }
+
+    public override void Update()
+    {
+        base.Update();
+        if(Input.GetKeyDown(KeyCode.J))
+        {
+            Interact();
+        }
     }
 
     public override void OnPickup()
@@ -33,5 +42,5 @@ public class TreasureScript : Pickupable
         }
     }
 
-
+    
 }

@@ -5,46 +5,38 @@ using UnityEngine.UI;
 
 public class DialogueProgressionScript : MonoBehaviour
 {
-    public TextMeshProUGUI dialogueText; // Reference to the TextMeshProUGUI component
-    public string[] dialogueLines; // Array of dialogue lines
-    private int currentLineIndex = 0; // Tracks the current dialogue line
+    public TextMeshProUGUI dialogueText;
+    public string[] dialogueLines;
+    int currentLineIndex = 0;
     public float typingSpeed = 0.05f; // Speed at which characters appear
-    public float wobbleSpeed = 2f; // Speed of the wobble effect
-    public float wobbleAmount = 5f; // Amount of wobble
+    public float wobbleSpeed = 2f;
+    public float wobbleAmount = 5f;
 
-    private bool isTyping = false; // Prevents skipping while typing
+    private bool isTyping = false;
     public string sceneToLoad;
 
     public bool unique;
     public Animator animator;
 
-    // Start is called before the first execution of Update
     void Start()
     {
         if (dialogueLines.Length > 0)
         {
-            StartCoroutine(TypeDialogue(dialogueLines[currentLineIndex])); // Start typing the first line
+            StartCoroutine(TypeDialogue(dialogueLines[currentLineIndex]));
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && !isTyping) // Check if the spacebar is pressed and not typing
+        if (Input.GetKeyDown(KeyCode.E) && !isTyping) // Move dialogue forward - Couldn't manage dialogue skipping yet
         {
             AdvanceDialogue();
         }
     }
 
-    IEnumerator StartMission()
-    {
-        yield return new WaitForSeconds(3);
-        GameManager.instance.LoadMission(sceneToLoad);
-    }
-
     void AdvanceDialogue()
     {
-        currentLineIndex++; // Move to the next line
+        currentLineIndex++;
 
         if (currentLineIndex < dialogueLines.Length)
         {
@@ -59,31 +51,33 @@ public class DialogueProgressionScript : MonoBehaviour
             }
 
             Debug.Log("Dialogue finished.");
+            isTyping = true;
             StartCoroutine(FadeInOutScript.instance.IFadeOut(1f));
-            StartCoroutine(StartMission());
+            StartCoroutine(GameManager.instance.ILoadMission(sceneToLoad, 3));
         }
     }
 
     IEnumerator TypeDialogue(string line)
     {
-        isTyping = true; // Set typing flag
-        dialogueText.text += "\n"; // Add a new line before typing the next line
+        isTyping = true;
+        dialogueText.text += "\n"; //Skip line
         foreach (char letter in line.ToCharArray())
         {
-            dialogueText.text += letter; // Add one character at a time
+            dialogueText.text += letter;
             yield return new WaitForSeconds(typingSpeed); // Wait before adding the next character
         }
-        isTyping = false; // Reset typing flag
+        isTyping = false;
     }
 
-        void LateUpdate()
+    void LateUpdate()
     {
         ApplyWobbleEffect();
     }
 
+    #region Text Effects
     void ApplyWobbleEffect()
     {
-        dialogueText.ForceMeshUpdate(); // Update the text mesh
+        dialogueText.ForceMeshUpdate();
         TMP_TextInfo textInfo = dialogueText.textInfo;
 
         for (int i = 0; i < textInfo.characterCount; i++)
@@ -111,4 +105,5 @@ public class DialogueProgressionScript : MonoBehaviour
     {
         return new Vector3(Mathf.Sin(time * wobbleSpeed) * wobbleAmount, Mathf.Cos(time * wobbleSpeed) * wobbleAmount, 0);
     }
+    #endregion
 }

@@ -26,7 +26,7 @@ public class StartScript : MonoBehaviour
         SceneManager.LoadScene(sceneName);
     }
 
-    public void StartNewGame()
+    public void StartNewGame(float waitTime)
     {
         /*
         if(SaveManager.instance.fileDataHandler.Load() != null && !overwrite)
@@ -38,15 +38,15 @@ public class StartScript : MonoBehaviour
         */
         SaveManager.instance.NewGame();
 
-        StartCoroutine(StartMission());
+        StartCoroutine(IStartMission(waitTime));
     }
 
-    IEnumerator StartMission()
+    IEnumerator IStartMission(float waitTime)
     {
         fadeOutScreen.SetActive(true);
         StartCoroutine(FadeInOutScript.instance.IFadeOut(1f));
-        yield return new WaitForSeconds(3);
-        GameManager.instance.LoadMission(sceneName);
+        StartCoroutine(GameManager.instance.ILoadMission(sceneName, waitTime));
+        yield return null;
     }
 
     public void Continue()

@@ -68,6 +68,10 @@ public class NavMeshMovementScript : MovementScript
     {
         if(ultimateCanMove)
         {
+            if(navMeshAgent.hasPath)
+            {
+                navMeshAgent.ResetPath();
+            }
             SprintCheckAndSpeedSetup(isSprinting);
             if(moveDirection != Vector3.zero)
             {

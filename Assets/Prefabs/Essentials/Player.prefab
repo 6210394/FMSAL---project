@@ -754,6 +754,10 @@ MonoBehaviour:
   autoLockOnRange: 10
   sphereCastAOESize: 3
   currentTarget: {fileID: 0}
+  lastTarget: {fileID: 0}
+  OnTargetSelected:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &4300923011328198163
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -786,8 +790,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97be122e5f6df464d8c8ef27e1cd7a73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  autoLockDetectionRange: 5
-  isAttackingEnemy: 0
   crosshairReference: {fileID: 0}
   barrelAnchorReference: {fileID: 4578630470139458280}
   playerLayermask:
@@ -795,7 +797,6 @@ MonoBehaviour:
     m_Bits: 256
   PlayerCameras: {fileID: 0}
   currentLockedTarget: {fileID: 0}
-  lastTarget: {fileID: 0}
   OnHit:
     m_PersistentCalls:
       m_Calls: []
@@ -837,11 +838,7 @@ MonoBehaviour:
   meleeReach: 6
   meleeDuration: 0
   meleeStunDuration: 0
-  targetDistanceOffset: 0.35
-  punchReach: 4
-  punchDuration: 1
-  punchStunDuration: 0.3
-  punchTargetDistanceOffset: 1
+  targetDistanceOffset: 2
   gunHipFireBulletAccuracyRange: 10
   gunAimAssistSize: 1
   gunStunDuration: 0
@@ -856,13 +853,8 @@ MonoBehaviour:
   gunEquipped: 0
   junkEquipped: 0
   healthScript: {fileID: 0}
-  movementScript: {fileID: 0}
   diogenicInventory: {fileID: 0}
-  reticleOffset: {x: 0, y: 0, z: 0}
-  bulletVisualsPrefab: {fileID: 0}
-  bulletSpawnOriginOffset: {fileID: 0}
   animator: {fileID: 3918215746344003973}
-  currentHurtboxReferences: []
   OnAttackCompleted:
     m_PersistentCalls:
       m_Calls: []
@@ -888,6 +880,7 @@ MonoBehaviour:
   isGrounded: 0
   animator: {fileID: 0}
   rb: {fileID: 0}
+  ultimateCanMove: 1
 --- !u!143 &8507021317883215589
 CharacterController:
   m_ObjectHideFlags: 0
@@ -1242,7 +1235,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5866666021909216657, guid: 7c3be85d9ec0e7747980a0507898e32f, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: -5490399226833740410, guid: 7c3be85d9ec0e7747980a0507898e32f, type: 3}

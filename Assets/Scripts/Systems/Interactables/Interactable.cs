@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class Interactable : MonoBehaviour
 {   
     protected bool highlighted = false;
-    protected List<Material> materials = new List<Material>();
+    public List<Material> materials = new List<Material>();
 
     public float interactRadius = 3f;
     public float interactionAngle = 360;
@@ -15,14 +15,16 @@ public class Interactable : MonoBehaviour
     public FloatingIcons icon;
 
     public GameObject player;
-    public KeyCode interactKey = KeyCode.E;
 
+    public bool interactable = false;
+    public KeyCode interactKey = KeyCode.E;
 
     void Start()
     {
+        CollectMaterials();
+
         icon = GetComponentInChildren<FloatingIcons>();
         interactCollider = GetComponent<SphereCollider>();
-
 
         if(interactCollider != null)
         {
@@ -34,14 +36,9 @@ public class Interactable : MonoBehaviour
         {
             icon.SetIconActive(false);
         }
-        else
-        {
-            Debug.LogWarning(this + " is an interactable object but doesnt have an interact icon!!");
-        }
-
     }
 
-    void OnTriggerEnter(Collider other)
+    public virtual void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Player")
         {
@@ -54,19 +51,70 @@ public class Interactable : MonoBehaviour
         if (other.gameObject.tag == "Player")
         {
             player = null;
-            icon.SetIconActive(false);
+            if(icon)
+            {
+                icon.SetIconActive(false);
+            }
         }
     }
 
     public virtual void Update()
     {
         PlayerInRangeCheck();
+        if(Input.GetKeyDown(interactKey) && interactable)
+        {
+            Interact();
+        }
     }
     
 
     public virtual void Interact()
     {
-        
+        Debug.Log("Interacting with " + gameObject.name);
+    }
+
+    void CollectMaterials()
+    {
+        Transform currentParent = transform.parent;
+
+        MeshRenderer[] parentedRenderers = currentParent.GetComponentsInChildren<MeshRenderer>();
+        foreach(MeshRenderer renderer in parentedRenderers)
+        {
+            materials.Add(renderer.material);
+        }
+    }
+
+    private void MarkOutline()
+    {
+        if (!highlighted)
+        {
+            highlighted = true;
+
+            foreach (Material material in materials)
+            {
+                if (material.HasProperty("_OutlineOpacity"))
+                {
+                    material.SetFloat("_OutlineOpacity", 3f);
+                }
+                Debug.Log(material.name + " should be highlighted!");
+            }
+        }
+    }
+
+    private void ClearOutline()
+    {
+        if (highlighted)
+        {
+            highlighted = false;
+
+            foreach (Material material in materials)
+            {
+                if (material.HasProperty("_OutlineOpacity"))
+                {
+                    material.SetFloat("_OutlineOpacity", 0f); 
+                }
+            }
+        }
     }
 
     void OnDrawGizmosSelected()
@@ -75,15 +123,17 @@ public class Interactable : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, interactRadius);
     }
 
-    void PlayerInRangeCheck()
+    protected void PlayerInRangeCheck()
     {
         if(!GameManager.instance.interactEnabled)
         {
+            Debug.Log("Interact is disabled");
             return;
         }
 
         if(player != null && Vector3.Distance(player.transform.position, transform.position) <= interactRadius)
-        {   
+        { 
+            Debug.Log("Player is in range of " + gameObject.name);
             PlayerMovementController playerMovement = player.GetComponent<PlayerMovementController>();
 
             Vector3 directionToInteractable = (transform.position - player.transform.position).normalized;
@@ -100,18 +150,32 @@ public class Interactable : MonoBehaviour
                 {
                     icon.SetIconActive(true);
                 }
-                if(Input.GetKeyDown(interactKey))
+                interactable = true;
+
+                if(!highlighted)
                 {
-                    Interact();
+                    MarkOutline();
                 }
+                
             }
+
             else
             {   
                 if(icon)
                 {
                     icon.SetIconActive(false);
                 }
+
+                if(interactable)
+                {
+                    interactable = false;
+
+                    if(highlighted)
+                    {
+                        ClearOutline();
+                    }
+                }                
             }
-        }
+        }        
     }
 }

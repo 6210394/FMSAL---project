@@ -13,17 +13,18 @@ public class WeaponScript : IObjectType
 
     [Header("Weapon Stats")]
     
-        public int damage;
+        public int damage; //Average health is 3-5
         public float stunTime;
     [Header("Melee Weapon")]
 
         //Melee
         public float swingTime;
-        public float weaponReach;
+        public float weaponReach; //How far will the player lunge (PLAYER ONLY)
         public float weaponTargetOffset;
 
         public List<AttackAnimationData> listOfAttacks;
 
+    #region UNUSED
     [Header("Ranged Weapon")]
         //Guns
         public float rateOfFire; //RPM - Rounds per minute, example: 140RPM
@@ -34,4 +35,5 @@ public class WeaponScript : IObjectType
         public int magSize;
         public int totalAmmoRemaining;
         public int currentAmmoInMag;
+    #endregion
 }

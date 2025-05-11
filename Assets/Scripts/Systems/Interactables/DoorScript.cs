@@ -18,11 +18,7 @@ public class DoorScript : Interactable
             {
                 player.GetComponent<PlayerMovementController>().isControlled = false;
                 StartCoroutine(FadeInOutScript.instance.IFadeOut(1f));
-                StartCoroutine(StartMission());
-            }
-            else
-            {
-
+                StartCoroutine(GameManager.instance.ILoadMission(missionName, 3));
             }
         }
         else
@@ -32,9 +28,4 @@ public class DoorScript : Interactable
         
     }
 
-    IEnumerator StartMission()
-    {
-        yield return new WaitForSeconds(3);
-        GameManager.instance.LoadMission(missionName);
-    }
 }

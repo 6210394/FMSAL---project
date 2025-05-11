@@ -27,11 +27,11 @@ public class ApproachAndAttack : IState
                 return;
             }
             
-            if(Vector3.Distance(_movementController.transform.position, _enemyStates._target.transform.position) > _combatController.combatScript.punchTargetDistanceOffset + 0.5f && !hasAttacked)
+            if(Vector3.Distance(_movementController.transform.position, _enemyStates._target.transform.position) > _combatController.combatScript.targetDistanceOffset + 0.5f && !hasAttacked)
             {
                 Vector3 adjustedPosition = _enemyStates._target.transform.position 
                 + (_movementController.transform.position - _enemyStates._target.transform.position).normalized 
-                * _combatController.combatScript.punchTargetDistanceOffset;
+                * _combatController.combatScript.targetDistanceOffset;
                 _movementController.MoveEnemyUntilReached(adjustedPosition, true);
             }
             else if (!hasAttacked)

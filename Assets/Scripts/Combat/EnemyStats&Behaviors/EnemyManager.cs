@@ -20,6 +20,14 @@ public class EnemyManager : MonoBehaviour
         StartAI();
     }
 
+    void Update()
+    {
+        if (AliveEnemyCount() > 0 && AI_Loop_Coroutine == null)
+        {
+            StartCoroutine(AI_Loop(null));
+        }
+    }
+
     public void InitializeEnemies()
     {
         
@@ -35,17 +43,10 @@ public class EnemyManager : MonoBehaviour
     }
 
     IEnumerator AI_Loop(EnemyBlueprint enemy)
-    {
-        if (AliveEnemyCount() == 0)
-        {
-            StopCoroutine(AI_Loop(null));
-            Debug.Log("No enemies available");
-            yield break;
-        }
-        
-        yield return new WaitForSeconds(Random.Range(.5f,4f));
-
+    {        
         EnemyBlueprint attackingEnemy;
+
+        yield return new WaitForSeconds(Random.Range(0.4f, 1));
 
         attackingEnemy = RandomEnemyExcludingOne(enemy);
 
@@ -54,19 +55,15 @@ public class EnemyManager : MonoBehaviour
 
         if (attackingEnemy == null)
         {
-            AI_Loop_Coroutine = StartCoroutine(AI_Loop(null));
+            AI_Loop_Coroutine = null;
             yield break;
         }
 
-        if(attackingEnemy._combatController.combatScript.isStunned)
-        {
-           yield break; 
-        }
-
-        if (!attackingEnemy.isActiveAndEnabled)
+        if (attackingEnemy._combatController.combatScript.healthScript.isDead)
         {
             Debug.Log(attackingEnemy + " is no longer active. Resetting AI loop.");
-            AI_Loop_Coroutine = StartCoroutine(AI_Loop(null));
+            availableEnemies.Clear();
+            AI_Loop_Coroutine = null;
             yield break;
         }
             
@@ -77,7 +74,8 @@ public class EnemyManager : MonoBehaviour
         if (!attackingEnemy.isActiveAndEnabled)
         {
             Debug.Log(attackingEnemy + " is no longer active. Resetting AI loop.");
-            AI_Loop_Coroutine = StartCoroutine(AI_Loop(null));
+            availableEnemies.Clear();
+            AI_Loop_Coroutine = null;
             yield break;
         }
         
@@ -181,19 +179,24 @@ public class EnemyManager : MonoBehaviour
 
     public void SetEnemyAvailiability (EnemyCombatController enemy, bool state)
     {
-        StopCoroutine(AI_Loop_Coroutine);
+        if(AI_Loop_Coroutine != null)
+        {
+            StopCoroutine(AI_Loop_Coroutine);
+            AI_Loop_Coroutine = null;
+        }
 
         for (int i = 0; i < availableEnemies.Count; i++)
         {
             if (availableEnemies[i] == enemy)
             {
-                availableEnemies[i]._combatController.isAvailableForEnemyManager = state;
+                availableEnemies.RemoveAt(i);
             }
         }
 
         if (FindFirstObjectByType<EnemyDetectionManager>().CurrentTarget() == enemy)
             FindFirstObjectByType<EnemyDetectionManager>().SetCurrentTarget(null);
 
+        
         AI_Loop_Coroutine = StartCoroutine(AI_Loop(null));
     }
 }

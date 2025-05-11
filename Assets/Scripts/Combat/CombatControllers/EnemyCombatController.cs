@@ -89,8 +89,13 @@ public class EnemyCombatController : MonoBehaviour
     {   
         foreach(EnemyDetectionManager enemyDetection in playerEnemyDetections)
         {
-            enemyDetection.SetCurrentTarget(null);
+            if(enemyDetection.CurrentTarget() == this)
+            {
+                enemyDetection.SetCurrentTarget(null);
+            }
         }
+        
+        combatScript.ClearHurtboxes();
 
         ClearTargetVisuals();
         enemyMovementController.movementScript.navMeshAgent.ResetPath();
@@ -160,7 +165,7 @@ public class EnemyCombatController : MonoBehaviour
 
     public bool IsAttackable()
     {
-        return combatScript.healthScript.currentHealth > 0;
+        return !combatScript.healthScript.isDead;
     }
 
     public bool IsPreparingAttack()
@@ -169,5 +174,4 @@ public class EnemyCombatController : MonoBehaviour
     }
 
     #endregion
-
 }

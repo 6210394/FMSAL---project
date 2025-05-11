@@ -46,28 +46,38 @@ public class EnemyDetectionManager : MonoBehaviour
                 inputDirection = transform.forward;
             }
 
+            if(currentTarget && currentTarget.combatScript.healthScript.isDead)
+            {
+                currentTarget.ClearTargetVisuals();
+                lastTarget = currentTarget;
+                currentTarget = null;
+            }
+
             TargetLock(inputDirection);
 
-            if(Vector3.Distance(potentialTarget.transform.position, gameObject.transform.position) <= playerCombatController.combatScript.meleeReach)
+            if(potentialTarget)
             {
-                if(currentTarget)
+                if(Vector3.Distance(potentialTarget.transform.position, gameObject.transform.position) <= playerCombatController.combatScript.meleeReach)
                 {
-                    currentTarget.ClearTargetVisuals();
-                    lastTarget = currentTarget;
+                    if(currentTarget)
+                    {
+                        currentTarget.ClearTargetVisuals();
+                        lastTarget = currentTarget;
+                    }
+                    currentTarget = potentialTarget;
+                    currentTarget.MarkTargetVisuals();
+                    OnTargetSelected.Invoke(currentTarget);
                 }
-                currentTarget = potentialTarget;
-                currentTarget.MarkTargetVisuals();
-                OnTargetSelected.Invoke(currentTarget);
-            }
-            else
-            {
-                if(currentTarget)
+                else
                 {
-                    currentTarget.ClearTargetVisuals();
-                    lastTarget = currentTarget;
-                    currentTarget = null;
+                    if(currentTarget)
+                    {
+                        currentTarget.ClearTargetVisuals();
+                        lastTarget = currentTarget;
+                        currentTarget = null;
+                    }
                 }
-            }
+            }            
 
             if (currentTarget != null )  //Get rid of target if player looks away from target / gets too far;
             {
@@ -90,7 +100,6 @@ public class EnemyDetectionManager : MonoBehaviour
                     }
                 }
             }
-            
         }
     }
 
@@ -119,9 +128,13 @@ public class EnemyDetectionManager : MonoBehaviour
                 }
             }
 
-            if(closestTarget != null && closestTarget.GetComponent<EnemyCombatController>().IsAttackable())
+            if(closestTarget != null && !closestTarget.GetComponent<EnemyCombatController>().combatScript.healthScript.isDead)
             {
                 potentialTarget = closestTarget.GetComponent<EnemyCombatController>();
+            }
+            else
+            {
+                potentialTarget = null;
             }
         }
     }

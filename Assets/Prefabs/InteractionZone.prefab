@@ -67,11 +67,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1bcced4871e0bd9418c12062f45c4761, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  materials: []
   interactRadius: 2.66
   interactionAngle: 360
   interactCollider: {fileID: 0}
   icon: {fileID: 7067486645282551811}
   player: {fileID: 0}
+  interactable: 0
   interactKey: 101
 --- !u!1001 &2426509793859446912
 PrefabInstance:

@@ -69,8 +69,9 @@ public class GameManager : MonoBehaviour, IDataPersistence
         }
     }
 
-    public void LoadMission(string missionName)
+    public IEnumerator ILoadMission(string missionName, float waitTime)
     {
+        yield return new WaitForSeconds(waitTime);
         SceneManager.LoadScene(missionName);
     }
 

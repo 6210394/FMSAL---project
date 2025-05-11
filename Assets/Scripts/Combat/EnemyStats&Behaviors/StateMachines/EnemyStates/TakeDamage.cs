@@ -39,14 +39,14 @@ public class TakeDamage : IState
 
     void RecieveHit(Vector3 hitOrigin)
     {
-
         if(!_combatController.combatScript.healthScript.isDead)
         {
             _animator.SetTrigger("RecieveHit");
         }
-        
+      
         if(_enemyStates._damageSource != null && currentChainStun < _combatController.maximumChainStun)
         {
+            _animator.SetBool("IsStunned", false);
             _combatController.combatScript.ClearHurtboxes();
             _movementController.StopNavmeshMovement();
             _movementController.movementScript.Knockback(0.2f, hitOrigin, 0.8f);

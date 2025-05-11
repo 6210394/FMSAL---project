@@ -20,10 +20,10 @@ MonoBehaviour:
   isThrowable: 1
   weaponType: 0
   damage: 1
-  stunTime: 0.2
-  swingTime: 0.53
+  stunTime: 0.5
+  swingTime: 0.5
   weaponReach: 4
-  weaponTargetOffset: 0.6
+  weaponTargetOffset: 0.8
   listOfAttacks:
   - {fileID: 11400000, guid: 1d780a5f47268904f914e620bab7339b, type: 2}
   rateOfFire: 0
