@@ -17,14 +17,7 @@ public class Retreat : IState
     public void OnEnter()
     {
         hasRetreated = false;
-        _enemyStates.wantsToRetreat = false;
-
-        if(Random.Range(1, 4) == 1) //25% chance of the brawler enemy sticking to you
-        {
-            hasRetreated = true;
-            Debug.Log("Sticking to you");
-        }
-        
+        _enemyStates.wantsToRetreat = false;        
     }
 
     public void OnExit()
