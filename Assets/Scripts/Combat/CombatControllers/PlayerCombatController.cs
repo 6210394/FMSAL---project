@@ -69,9 +69,12 @@ public class PlayerCombatController : MonoBehaviour
         playerLayermask = LayerMask.GetMask("Player");
 
         //CHANGE THIS TO SUPPLY OUR OWN CROSSHAIR BASED ON THE WEAPON HELD
-        crosshairReference = GameObject.Find("Crosshair").GetComponent<Image>();
-        crosshairReference.enabled = false;
-
+        if(GameObject.Find("Crosshair"))
+        {
+            crosshairReference = GameObject.Find("Crosshair").GetComponent<Image>();
+            crosshairReference.enabled = false;
+        }
+        
         GetCameraReferences();
         combatScript.healthScript.OnTakeDamage.AddListener((CombatScript.HitEventArgs hitEventArgs) => OnTakeHit(hitEventArgs));
         combatScript.healthScript.OnDeath.AddListener(Die);
