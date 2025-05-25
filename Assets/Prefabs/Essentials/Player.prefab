@@ -680,11 +680,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4170848390567775362}
+  - component: {fileID: 4300923011328198163}
+  - component: {fileID: 6779007132249043213}
   - component: {fileID: 1054404184456134323}
   - component: {fileID: 7700586179343452143}
-  - component: {fileID: 4300923011328198163}
   - component: {fileID: 1102951906637046753}
-  - component: {fileID: 6779007132249043213}
   - component: {fileID: 5720523247777047060}
   - component: {fileID: 161812321840275169}
   - component: {fileID: 8507021317883215589}
@@ -715,6 +715,52 @@ Transform:
   - {fileID: 6081960031976705168}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4300923011328198163
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6739474880526340487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfc0a2134a68e1d45aa5eb169212c5d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inventorySize: 10
+  OnInventoryChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  canDropItem: 0
+  handAnchor: {fileID: 4817420977425685848}
+  currentHeldWeapon: {fileID: 0}
+  currentHeldObject: {fileID: 0}
+  mainHeldObject: {fileID: 0}
+  secondaryHeldItem: {fileID: 0}
+  mainWeapon: {fileID: 11400000, guid: 8629cfa026f8f4e41b63e0ca7cbdb34e, type: 2}
+  sidearm: {fileID: 0}
+--- !u!114 &6779007132249043213
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6739474880526340487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab3ccdd6d5ed6b149958122680c79883, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isControlled: 1
+  canSprint: 1
+  isFocused: 0
+  normalFOV: 60
+  sprintingFOV: 80
+  playerRotationSpeed: 20
+  PlayerCameras: {fileID: 0}
+  animator: {fileID: 0}
+  movementScript: {fileID: 0}
+  cameraTransform: {fileID: 0}
 --- !u!114 &1054404184456134323
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -758,26 +804,6 @@ MonoBehaviour:
   OnTargetSelected:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &4300923011328198163
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6739474880526340487}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bfc0a2134a68e1d45aa5eb169212c5d8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  canDropItem: 0
-  handAnchor: {fileID: 4817420977425685848}
-  currentHeldWeapon: {fileID: 0}
-  currentHeldObject: {fileID: 0}
-  mainHeldObject: {fileID: 0}
-  secondaryHeldItem: {fileID: 0}
-  mainWeapon: {fileID: 11400000, guid: 8629cfa026f8f4e41b63e0ca7cbdb34e, type: 2}
-  sidearm: {fileID: 0}
 --- !u!114 &1102951906637046753
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -795,33 +821,11 @@ MonoBehaviour:
   playerLayermask:
     serializedVersion: 2
     m_Bits: 256
-  PlayerCameras: {fileID: 0}
   currentLockedTarget: {fileID: 0}
   OnHit:
     m_PersistentCalls:
       m_Calls: []
   debugDeadBoolean: 0
---- !u!114 &6779007132249043213
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6739474880526340487}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ab3ccdd6d5ed6b149958122680c79883, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isControlled: 1
-  canSprint: 1
-  isFocused: 0
-  normalFOV: 60
-  sprintingFOV: 80
-  playerRotationSpeed: 20
-  cameraTransform: {fileID: 0}
-  animator: {fileID: 0}
-  movementScript: {fileID: 0}
 --- !u!114 &5720523247777047060
 MonoBehaviour:
   m_ObjectHideFlags: 0

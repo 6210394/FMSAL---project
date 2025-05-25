@@ -76,11 +76,19 @@ public class Interactable : MonoBehaviour
     void CollectMaterials()
     {
         Transform currentParent = transform.parent;
+        if (currentParent == null)
+        {
+            Debug.LogWarning("No Parent found for " + gameObject.name + ". Please separate the interaction zone from the visuals.");
+            return;
+        }
 
         MeshRenderer[] parentedRenderers = currentParent.GetComponentsInChildren<MeshRenderer>();
-        foreach(MeshRenderer renderer in parentedRenderers)
+        if (parentedRenderers.Length > 0)
         {
-            materials.Add(renderer.material);
+            foreach (MeshRenderer renderer in parentedRenderers)
+            {
+                materials.Add(renderer.material);
+            }
         }
     }
 

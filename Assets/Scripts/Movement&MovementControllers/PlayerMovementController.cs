@@ -6,6 +6,11 @@ using DG.Tweening;
 
 public class PlayerMovementController : MonoBehaviour
 {
+    public enum CameraType 
+    {
+        Default, Aim, Focus
+    }
+
     [Header("Booleans")]
     public bool isControlled = true;
     public bool canSprint = true;
@@ -18,22 +23,28 @@ public class PlayerMovementController : MonoBehaviour
     public float sprintingFOV;
     public float playerRotationSpeed = 5f;
 
-    [Header("Component References")]
-    public Transform cameraTransform;
-    
-    public Animator animator;
+    [Header("Camera References")]
+    public PlayerCameraInitializer PlayerCameras;
+    [HideInInspector] public CinemachineCamera defaultCamera { get; private set; }
+    [HideInInspector] public CinemachineCamera targetCamera { get; private set; }
+    [HideInInspector] public CinemachineCamera aimCamera { get; private set; }
 
-    public MovementScript movementScript;
+    [Header("Component References")]
+
+    [HideInInspector] public Animator animator;
+    [HideInInspector] public MovementScript movementScript;
+    [HideInInspector] public Transform cameraTransform;
 
 #region Initialization
     void Awake()
     {
         Initialize();
     }
-    
+
     void Start()
     {
         DebugTools();
+        GetCameraReferences();
     }
 
     void Initialize()
@@ -57,6 +68,64 @@ public class PlayerMovementController : MonoBehaviour
     {
         animator.SetFloat("Speed", movementScript.currentMovementSpeed);
         animator.SetBool("Sprinting", isSprinting);
+    }
+
+    private void GetCameraReferences()
+    {
+        if (PlayerCameras == null)
+        {
+            Debug.LogWarning("No reference to the player cameras!");
+            return;
+        }
+
+        defaultCamera = PlayerCameras.defaultPlayerCamera.GetComponent<CinemachineCamera>();
+        targetCamera = PlayerCameras.targetCamera.GetComponent<CinemachineCamera>();
+        aimCamera = PlayerCameras.aimCamera.GetComponent<CinemachineCamera>();
+
+        if (defaultCamera != null)
+        {
+            defaultCamera.Follow = transform;
+            defaultCamera.LookAt = transform;
+        }
+        if (targetCamera != null)
+        {
+            targetCamera.Follow = transform;
+        }
+        if (aimCamera != null)
+        {
+            aimCamera.Follow = transform;
+        }
+    }
+
+    public void SwitchCamera(CameraType cameraType)
+    {
+        switch(cameraType)
+        {
+            case CameraType.Default:
+            {
+                CinemachineShake.Instance.SetActiveCamera(0);
+                defaultCamera.Priority = 1;
+                targetCamera.Priority = 0;
+                aimCamera.Priority = 0;
+                break;
+            }
+            case CameraType.Aim:
+            {
+                CinemachineShake.Instance.SetActiveCamera(1);
+                aimCamera.Priority = 1;
+                defaultCamera.Priority = 0;
+                targetCamera.Priority = 0;
+                break;
+            }
+            case CameraType.Focus:
+            {
+                CinemachineShake.Instance.SetActiveCamera(2);
+                targetCamera.Priority = 1;
+                aimCamera.Priority = 0;
+                defaultCamera.Priority = 0;
+                break;
+            }
+        }
     }
 
     void MovePlayer()

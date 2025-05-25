@@ -10,10 +10,6 @@ using System.Collections;
 [RequireComponent(typeof(PlayerMovementController))]
 public class PlayerCombatController : MonoBehaviour
 {
-    enum CameraType 
-    {
-        Default, Aim, Focus
-    }
 
 #region Variables & States
 
@@ -37,12 +33,7 @@ public class PlayerCombatController : MonoBehaviour
 #endregion
 
 #region Camera References & Targeting
-    [Header("Camera References")]
-    public PlayerCameraInitializer PlayerCameras;
 
-    private CinemachineCamera defaultCamera;
-    private CinemachineCamera targetCamera;
-    private CinemachineCamera aimCamera;
 
     [Header("Combat References")]
     private Queue<CombatScript.CombatActionType> attackQueue = new Queue<CombatScript.CombatActionType>();
@@ -75,7 +66,6 @@ public class PlayerCombatController : MonoBehaviour
             crosshairReference.enabled = false;
         }
         
-        GetCameraReferences();
         combatScript.healthScript.OnTakeDamage.AddListener((CombatScript.HitEventArgs hitEventArgs) => OnTakeHit(hitEventArgs));
         combatScript.healthScript.OnDeath.AddListener(Die);
 
@@ -235,21 +225,14 @@ public class PlayerCombatController : MonoBehaviour
         }
         else
         {
-            Vector3 direction;
+            Vector3 direction = (forward * inputDirection.z + right * inputDirection.x).normalized;
 
-            if (inputDirection == Vector3.zero)
+            if (direction != Vector3.zero)
             {
-                direction = (forward + right).normalized; // Default push towards the camera direction
-                direction.y = 0;
+                transform.LookAt(transform.position + direction);
             }
-            else
-            {
-                direction = (forward * inputDirection.z + right * inputDirection.x).normalized;
-            }
-
-            transform.LookAt(transform.position + direction);
         }
-        
+        playerMovementController.movementScript.FaceTowards(transform.forward, playerMovementController.playerRotationSpeed);    
         combatScript.Attack(CombatScript.CombatActionType.LightMelee);
         RemoveControl();
     }
@@ -314,7 +297,7 @@ public class PlayerCombatController : MonoBehaviour
                 playerMovementController.isFocused = false;
                 enemyDetection.SetCurrentTarget(null);
 
-                SwitchCamera(CameraType.Aim);
+                playerMovementController.SwitchCamera(PlayerMovementController.CameraType.Aim);
 
                 combatScript.animator.SetTrigger("enterAim");
                 combatScript.animator.SetBool("isAiming", true);
@@ -327,14 +310,14 @@ public class PlayerCombatController : MonoBehaviour
             playerMovementController.canSprint = true;
             crosshairReference.enabled = false;
 
-            SwitchCamera(CameraType.Default);
+            playerMovementController.SwitchCamera(PlayerMovementController.CameraType.Default);
 
             combatScript.animator.SetBool("isAiming", false);
         }
         
         if(isAiming) //While Aiming
         {
-            Vector3 direction = new Vector3(aimCamera.transform.forward.x, 0, aimCamera.transform.forward.z);
+            Vector3 direction = new Vector3(playerMovementController.aimCamera.transform.forward.x, 0, playerMovementController.aimCamera.transform.forward.z);
             playerMovementController.movementScript.FaceTowards(direction, playerMovementController.playerRotationSpeed);
         }
     }
@@ -377,12 +360,6 @@ public class PlayerCombatController : MonoBehaviour
 
 #region Controller Functions
 
-    private void GetCameraReferences()
-    {
-        defaultCamera = PlayerCameras.defaultPlayerCamera.GetComponent<CinemachineCamera>();
-        targetCamera = PlayerCameras.targetCamera.GetComponent<CinemachineCamera>();
-        aimCamera = PlayerCameras.aimCamera.GetComponent<CinemachineCamera>();
-    }
 
     private void RemoveControl()
     {
@@ -400,37 +377,6 @@ public class PlayerCombatController : MonoBehaviour
         {
             var nextAttack = attackQueue.Dequeue();
             PlayerAttack(nextAttack);
-        }
-    }
-
-    void SwitchCamera(CameraType cameraType)
-    {
-        switch(cameraType)
-        {
-            case CameraType.Default:
-            {
-                CinemachineShake.Instance.SetActiveCamera(0);
-                defaultCamera.Priority = 1;
-                targetCamera.Priority = 0;
-                aimCamera.Priority = 0;
-                break;
-            }
-            case CameraType.Aim:
-            {
-                CinemachineShake.Instance.SetActiveCamera(1);
-                aimCamera.Priority = 1;
-                defaultCamera.Priority = 0;
-                targetCamera.Priority = 0;
-                break;
-            }
-            case CameraType.Focus:
-            {
-                CinemachineShake.Instance.SetActiveCamera(2);
-                targetCamera.Priority = 1;
-                aimCamera.Priority = 0;
-                defaultCamera.Priority = 0;
-                break;
-            }
         }
     }
 
@@ -458,9 +404,9 @@ public class PlayerCombatController : MonoBehaviour
 
     void AdjustLockOnCamera()
     {   
-        if(!isAiming) //Manage the target group by remembering the last target and comparing with the current target
+        if(!isAiming && playerMovementController.targetCamera != null) //Manage the target group by remembering the last target and comparing with the current target
         {
-            CinemachineTargetGroup cinemachineTargetGroup = targetCamera.GetComponentInChildren<CinemachineTargetGroup>();
+            CinemachineTargetGroup cinemachineTargetGroup = playerMovementController.targetCamera.GetComponentInChildren<CinemachineTargetGroup>();
 
             if (currentLockedTarget != null && playerMovementController.isFocused) 
             {
@@ -468,7 +414,7 @@ public class PlayerCombatController : MonoBehaviour
                 {
                     cinemachineTargetGroup.AddMember(currentLockedTarget.transform, 1, 2);
                 }
-                SwitchCamera(CameraType.Focus);
+                playerMovementController.SwitchCamera(PlayerMovementController.CameraType.Focus);
             }
             else
             {
@@ -480,7 +426,7 @@ public class PlayerCombatController : MonoBehaviour
                     }
                 }
                 playerMovementController.isFocused = false;
-                SwitchCamera(CameraType.Default);
+                playerMovementController.SwitchCamera(PlayerMovementController.CameraType.Default);
             }
         }
     }
@@ -509,7 +455,7 @@ public class PlayerCombatController : MonoBehaviour
         Debug.Log("Player got knocked out");
         debugDeadBoolean = true;
 
-        int dieAnimAnex = UnityEngine.Random.Range(1,4);
+        int dieAnimAnex = Random.Range(1,4);
         combatScript.animator.SetFloat("deathIndex", dieAnimAnex);
         combatScript.animator.SetTrigger("Die");
 

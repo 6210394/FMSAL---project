@@ -108,7 +108,7 @@ GameObject:
   - component: {fileID: 8174544363230357267}
   - component: {fileID: 3311708598348927681}
   m_Layer: 7
-  m_Name: Enemy
+  m_Name: Brawler
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -193,6 +193,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bfc0a2134a68e1d45aa5eb169212c5d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inventorySize: 1
+  OnInventoryChanged:
+    m_PersistentCalls:
+      m_Calls: []
   canDropItem: 0
   handAnchor: {fileID: 2714720161071344030}
   currentHeldWeapon: {fileID: 0}
@@ -307,10 +311,6 @@ MonoBehaviour:
   meleeDuration: 0
   meleeStunDuration: 0
   targetDistanceOffset: 1
-  punchReach: 4
-  punchDuration: 0.5
-  punchStunDuration: 0.3
-  punchTargetDistanceOffset: 0.5
   gunHipFireBulletAccuracyRange: 10
   gunAimAssistSize: 1
   gunStunDuration: 0
@@ -325,13 +325,8 @@ MonoBehaviour:
   gunEquipped: 0
   junkEquipped: 0
   healthScript: {fileID: 0}
-  movementScript: {fileID: 0}
   diogenicInventory: {fileID: 0}
-  reticleOffset: {x: 0, y: 0, z: 0}
-  bulletVisualsPrefab: {fileID: 0}
-  bulletSpawnOriginOffset: {fileID: 0}
   animator: {fileID: 6659547010701238330}
-  currentHurtboxReferences: []
   OnAttackCompleted:
     m_PersistentCalls:
       m_Calls: []
