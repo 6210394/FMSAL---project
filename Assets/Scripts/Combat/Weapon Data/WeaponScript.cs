@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "HoldableItem", menuName = "Scriptable Objects/Weapon")]
+[CreateAssetMenu(fileName = "HoldableItem", menuName = "Combat/Weapon Type")]
 public class WeaponScript : IObjectType
 {
     public enum WeaponType {Melee, Gun, Junk}

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Object", menuName = "Object")]
+[CreateAssetMenu(fileName = "Object", menuName = "Objects/Simple Object Type")]
 public class IObjectType : ScriptableObject
 {
     [Header("Basic Info")]

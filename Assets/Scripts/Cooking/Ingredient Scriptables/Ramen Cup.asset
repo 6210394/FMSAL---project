@@ -9,17 +9,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a3b8b81d4f8cd6e4e89d5e7d23a89e9c, type: 3}
-  m_Name: RiceBag
+  m_Script: {fileID: 11500000, guid: 8f9d65c93ea8e4e40a1494dfac03482c, type: 3}
+  m_Name: Ramen Cup
   m_EditorClassIdentifier: 
-  itemName: Rice Bag
-  description: A bag of rice.
+  itemName: 
+  description: 
   icon: {fileID: 0}
   maxStackSize: 1
   value: 0
   isConsumable: 0
   grabPoint: {x: 0, y: 0, z: 0}
-  itemMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
-  itemMaterial: {fileID: -8771166627424403242, guid: 496dcf68c7776504da2dbbb68ff65fb7, type: 3}
-  scale: 0.1
+  itemMesh: {fileID: 0}
+  itemMaterial: {fileID: 0}
+  scale: 1
   rotation: {x: 0, y: 0, z: 0}
+  saturationValue: 0
+  waysToCook: []

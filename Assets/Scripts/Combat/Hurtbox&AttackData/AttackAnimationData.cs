@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "AttackAnimationData", menuName = "Scriptable Objects/AttackAnimationData")]
+[CreateAssetMenu(fileName = "AttackAnimationData", menuName = "Combat/Attack Animation Data")]
 public class AttackAnimationData : ScriptableObject
 {
     //This serves to give animations/parts of combos their specific hitboxes. Different hitboxes can be created by the animation using their index.
